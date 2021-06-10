@@ -21,7 +21,7 @@ import views.html.FeatureNotAvailableView
 
 class FeatureNotAvailableViewSpec extends ViewBehaviours {
 
-  "Feature Not Available view" must {
+  "FeatureNotAvailableView" must {
 
     val messageKeyPrefix: String = "featureNotAvailable"
 

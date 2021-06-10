@@ -23,12 +23,19 @@ import javax.inject.Inject
 
 class StandardActionSets @Inject()(identify: IdentifierAction,
                                    getData: DataRetrievalAction,
+                                   saveSession: SaveActiveSessionProvider,
                                    requireData: DataRequiredAction) {
 
-  def authorised: ActionBuilder[IdentifierRequest, AnyContent] = identify
+  def authorised: ActionBuilder[IdentifierRequest, AnyContent] =
+    identify
 
-  def authorisedWithOptionalData: ActionBuilder[OptionalDataRequest, AnyContent] = authorised andThen getData
+  def authorisedWithOptionalData: ActionBuilder[OptionalDataRequest, AnyContent] =
+    authorised andThen getData
 
-  def authorisedWithRequiredData: ActionBuilder[DataRequest, AnyContent] = authorisedWithOptionalData andThen requireData
+  def authorisedWithSavedSession(identifier: String): ActionBuilder[OptionalDataRequest, AnyContent] =
+    authorised andThen saveSession(identifier) andThen getData
+
+  def authorisedWithRequiredData: ActionBuilder[DataRequest, AnyContent] =
+    authorisedWithOptionalData andThen requireData
 
 }

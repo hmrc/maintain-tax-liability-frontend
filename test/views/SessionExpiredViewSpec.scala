@@ -21,7 +21,7 @@ import views.html.SessionExpiredView
 
 class SessionExpiredViewSpec extends ViewBehaviours {
 
-  "Session Expired view" must {
+  "SessionExpiredView" must {
 
     val application = applicationBuilder().build()
 

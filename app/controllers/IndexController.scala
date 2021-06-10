@@ -16,6 +16,7 @@
 
 package controllers
 
+import controllers.actions.StandardActionSets
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionLogging
@@ -25,11 +26,14 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class IndexController @Inject()(
-                                 mcc: MessagesControllerComponents
+                                 mcc: MessagesControllerComponents,
+                                 actions: StandardActionSets
                                )(implicit ec: ExecutionContext) extends FrontendController(mcc) with SessionLogging {
 
-  def onPageLoad(identifier: String): Action[AnyContent] = Action { implicit request =>
-    Ok
+  def onPageLoad(identifier: String): Action[AnyContent] = actions.authorisedWithSavedSession(identifier) {
+    implicit request =>
+
+      Redirect(routes.FeatureNotAvailableController.onPageLoad())
   }
 
 }

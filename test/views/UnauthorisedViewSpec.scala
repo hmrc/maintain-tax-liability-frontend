@@ -21,7 +21,7 @@ import views.html.UnauthorisedView
 
 class UnauthorisedViewSpec extends ViewBehaviours {
 
-  "Unauthorised view" must {
+  "UnauthorisedView" must {
 
     val application = applicationBuilder().build()
 
