@@ -17,6 +17,7 @@
 package config
 
 import play.api.Configuration
+import play.api.i18n.{Lang, Messages}
 import play.api.mvc.Request
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
@@ -25,6 +26,14 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
+
+  val en: String = "en"
+  val cy: String = "cy"
+
+  def languageMap: Map[String, Lang] = Map(
+    "english" -> Lang(en),
+    "cymraeg" -> Lang(cy)
+  )
 
   val welshLanguageSupportEnabled: Boolean = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
 
@@ -51,5 +60,13 @@ class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig)
 
   lazy val countdownLength: Int = config.get[Int]("timeout.countdown")
   lazy val timeoutLength: Int = config.get[Int]("timeout.length")
+
+  def helplineUrl(implicit messages: Messages): String = {
+    val path = messages.lang.code match {
+      case `cy` => "urls.welshHelpline"
+      case _ => "urls.trustsHelpline"
+    }
+    config.get[String](path)
+  }
 
 }

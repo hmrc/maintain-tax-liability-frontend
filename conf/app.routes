@@ -11,6 +11,8 @@ GET        /unauthorised                            controllers.UnauthorisedCont
 
 GET        /logout                                  controllers.LogoutController.logout
 
+GET        /feature-not-available                   controllers.FeatureNotAvailableController.onPageLoad
+
 GET        /keep-alive                              controllers.SessionTimeoutController.keepAlive
 GET        /timeout                                 controllers.SessionTimeoutController.timeout
 

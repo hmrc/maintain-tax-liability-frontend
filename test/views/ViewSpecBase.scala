@@ -68,6 +68,14 @@ trait ViewSpecBase extends SpecBase {
     assert(doc.getElementById(id) != null, "\n\nElement " + id + " was not rendered on the page.\n")
   }
 
+  def assertContainsLink(doc: Document, linkUrl: String, linkText: String): Assertion = {
+    val links = doc.getElementsByTag("a")
+    assert(
+      links.stream().anyMatch(x => x.attr("href") == linkUrl && x.text() == linkText),
+      s"\n\nLink with href $linkUrl and text $linkText was not rendered on the page.\n"
+    )
+  }
+
   def assertNotRenderedById(doc: Document, id: String): Assertion = {
     assert(doc.getElementById(id) == null, "\n\nElement " + id + " was rendered on the page.\n")
   }
