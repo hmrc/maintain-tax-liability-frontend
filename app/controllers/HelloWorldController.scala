@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.maintaintaxliabilityfrontend.controllers
+package controllers
 
-import uk.gov.hmrc.maintaintaxliabilityfrontend.views.html.HelloWorldPage
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.HelloWorldPage
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
