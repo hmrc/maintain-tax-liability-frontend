@@ -25,7 +25,7 @@ import java.net.{URI, URLEncoder}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
+class AppConfig @Inject()(val config: Configuration, servicesConfig: ServicesConfig) {
 
   val en: String = "en"
   val cy: String = "cy"
