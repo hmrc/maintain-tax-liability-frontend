@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package controllers
+package navigation
 
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.HelloWorldPage
+import models._
+import pages._
+import play.api.mvc.Call
 
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+trait Navigator {
 
-@Singleton
-class HelloWorldController @Inject()(
-  mcc: MessagesControllerComponents,
-  helloWorldPage: HelloWorldPage)
-    extends FrontendController(mcc) {
+  def nextPage(page: Page, userAnswers: UserAnswers): Call
 
-  val helloWorld: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(helloWorldPage()))
+  def yesNoNav(ua: UserAnswers, fromPage: QuestionPage[Boolean], yesCall: => Call, noCall: => Call): Call = {
+    ua.get(fromPage)
+      .map(if (_) yesCall else noCall)
+      .getOrElse(controllers.routes.SessionExpiredController.onPageLoad())
   }
 
 }

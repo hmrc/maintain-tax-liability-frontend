@@ -19,28 +19,28 @@ package controllers
 import com.google.inject.{Inject, Singleton}
 import config.AppConfig
 import controllers.actions.StandardActionSets
-import play.api.Logging
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import utils.Session
+import utils.{Session, SessionLogging}
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class LogoutController @Inject()(appConfig: AppConfig,
-                                 val controllerComponents: MessagesControllerComponents,
-                                 actions: StandardActionSets,
-                                 auditConnector: AuditConnector
-                                )(implicit val ec: ExecutionContext) extends FrontendBaseController with Logging {
+class LogoutController @Inject()(
+                                  appConfig: AppConfig,
+                                  val controllerComponents: MessagesControllerComponents,
+                                  actions: StandardActionSets,
+                                  auditConnector: AuditConnector
+                                )(implicit val ec: ExecutionContext) extends FrontendBaseController with SessionLogging {
 
   def logout: Action[AnyContent] = actions.authorisedWithRequiredData { request =>
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    logger.info(s"[Session ID: ${utils.Session.id(hc)}] user signed out from the service, asking for feedback")
+    infoLog("user signed out from the service, asking for feedback")
 
     if(appConfig.logoutAudit) {
 
