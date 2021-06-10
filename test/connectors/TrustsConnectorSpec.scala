@@ -30,7 +30,7 @@ import java.time.LocalDate
 
 class TrustsConnectorSpec extends SpecBase with ScalaFutures
   with Inside with BeforeAndAfterAll with BeforeAndAfterEach with IntegrationPatience {
-  
+
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
   protected val server: WireMockServer = new WireMockServer(wireMockConfig().dynamicPort())
