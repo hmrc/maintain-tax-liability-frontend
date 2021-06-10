@@ -31,11 +31,12 @@ class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig)
   lazy val loginUrl: String = config.get[String]("urls.login")
   lazy val loginContinueUrl: String = config.get[String]("urls.loginContinue")
   lazy val logoutUrl: String = config.get[String]("urls.logout")
+  lazy val maintainATrustOverviewUrl: String = config.get[String]("urls.maintainATrustOverview")
 
   lazy val trustsUrl: String = servicesConfig.baseUrl("trusts")
   lazy val trustsAuthUrl: String = servicesConfig.baseUrl("trusts-auth")
 
-  lazy val logoutAudit: Boolean = config.get[Boolean]("microservice.services.features.auditing.logout")
+  lazy val logoutAudit: Boolean = config.get[Boolean]("features.auditing.logout")
 
   private lazy val contactHost: String = config.get[String]("microservice.services.contact-frontend.host")
   private lazy val contactFormServiceIdentifier: String = "trusts"

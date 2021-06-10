@@ -36,10 +36,18 @@ lazy val microservice = Project(appName, file("."))
     libraryDependencies ++= Seq(
       compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full),
       "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
-    )
+    ),
     // ***************
+    inConfig(Test)(testSettings)
   )
   .settings(publishingSettings: _*)
   .configs(IntegrationTest)
   .settings(integrationTestSettings(): _*)
   .settings(resolvers += Resolver.jcenterRepo)
+
+lazy val testSettings: Seq[Def.Setting[_]] = Seq(
+  fork := true,
+  javaOptions ++= Seq(
+    "-Dconfig.resource=test.application.conf"
+  )
+)
