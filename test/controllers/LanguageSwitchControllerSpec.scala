@@ -28,7 +28,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 class LanguageSwitchControllerSpec extends SpecBase {
 
-  private def switchLanguageRoute(lang: String): String = routes.LanguageSwitchController.switchToLanguage(lang).url
+  private def languageSwitchRoute(lang: String): String = routes.LanguageSwitchController.switchToLanguage(lang).url
 
   private val english = "english"
   private val welsh = "cymraeg"
@@ -56,7 +56,7 @@ class LanguageSwitchControllerSpec extends SpecBase {
 
           val requestHeaders: Headers = new Headers(Seq(("Referer", fakeUrl)))
 
-          val request = FakeRequest(GET, switchLanguageRoute(english)).withHeaders(requestHeaders)
+          val request = FakeRequest(GET, languageSwitchRoute(english)).withHeaders(requestHeaders)
 
           val result = route(application, request).value
 
@@ -79,7 +79,7 @@ class LanguageSwitchControllerSpec extends SpecBase {
 
           val requestHeaders: Headers = new Headers(Seq(("Referer", fakeUrl)))
 
-          val request = FakeRequest(GET, switchLanguageRoute(welsh)).withHeaders(requestHeaders)
+          val request = FakeRequest(GET, languageSwitchRoute(welsh)).withHeaders(requestHeaders)
 
           val result = route(application, request).value
 
@@ -104,7 +104,7 @@ class LanguageSwitchControllerSpec extends SpecBase {
 
         val requestHeaders: Headers = new Headers(Seq(("Referer", fakeUrl)))
 
-        val request = FakeRequest(GET, switchLanguageRoute(english)).withHeaders(requestHeaders)
+        val request = FakeRequest(GET, languageSwitchRoute(english)).withHeaders(requestHeaders)
 
         val result = route(application, request).value
 
@@ -126,7 +126,7 @@ class LanguageSwitchControllerSpec extends SpecBase {
           .overrides(bind[AppConfig].toInstance(frontendAppConfig()))
           .build()
 
-        val request = FakeRequest(GET, switchLanguageRoute(welsh))
+        val request = FakeRequest(GET, languageSwitchRoute(welsh))
 
         val result = route(application, request).value
 

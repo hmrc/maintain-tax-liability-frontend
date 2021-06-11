@@ -23,7 +23,7 @@ import views.html.FeatureNotAvailableView
 
 class FeatureNotAvailableControllerSpec extends SpecBase {
 
-  lazy val onPageLoad: String = routes.FeatureNotAvailableController.onPageLoad().url
+  lazy val featureNotAvailableRoute: String = routes.FeatureNotAvailableController.onPageLoad().url
 
   "FeatureNotAvailable Controller" must {
 
@@ -31,7 +31,7 @@ class FeatureNotAvailableControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-      val request = FakeRequest(GET, onPageLoad)
+      val request = FakeRequest(GET, featureNotAvailableRoute)
 
       val result = route(application, request).value
 

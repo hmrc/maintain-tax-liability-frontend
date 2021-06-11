@@ -39,13 +39,15 @@ import views.html.SessionExpiredView
 
 class SessionExpiredControllerSpec extends SpecBase {
 
+  lazy val sessionExpiredRoute: String = routes.SessionExpiredController.onPageLoad().url
+
   "SessionExpiredController" must {
 
     "return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, routes.SessionExpiredController.onPageLoad().url)
+      val request = FakeRequest(GET, sessionExpiredRoute)
 
       val result = route(application, request).value
 

@@ -19,27 +19,31 @@ package controllers
 import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.UnauthorisedView
 
-class IndexControllerSpec extends SpecBase {
+class UnauthorisedControllerSpec extends SpecBase {
 
-  lazy val indexRoute: String = routes.IndexController.onPageLoad(identifier).url
+  lazy val unauthorisedRoute: String = routes.UnauthorisedController.onPageLoad().url
 
-  "IndexController" must {
+  "FeatureNotAvailable Controller" must {
 
-    "redirect to feature unavailable" in {
+    "return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-      val request = FakeRequest(GET, indexRoute)
+      val request = FakeRequest(GET, unauthorisedRoute)
 
       val result = route(application, request).value
 
-      status(result) mustEqual SEE_OTHER
+      val view = application.injector.instanceOf[UnauthorisedView]
 
-      redirectLocation(result).value mustBe routes.FeatureNotAvailableController.onPageLoad().url
+      status(result) mustEqual OK
+
+      contentAsString(result) mustEqual
+        view()(request, messages).toString
 
       application.stop()
     }
+
   }
 }

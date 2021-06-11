@@ -26,6 +26,8 @@ import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
 class LogoutControllerSpec extends SpecBase {
 
+  lazy val logoutRoute: String = routes.LogoutController.logout().url
+
   "LogoutController" must {
 
     "audit and redirect to feedback" in {
@@ -36,7 +38,7 @@ class LogoutControllerSpec extends SpecBase {
         .overrides(bind[AuditConnector].toInstance(mockAuditConnector))
         .build()
 
-      val request = FakeRequest(GET, routes.LogoutController.logout().url)
+      val request = FakeRequest(GET, logoutRoute)
 
       val result = route(application, request).value
 
