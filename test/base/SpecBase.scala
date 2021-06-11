@@ -17,7 +17,7 @@
 package base
 
 import controllers.actions._
-import models.UserAnswers
+import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, UserAnswers}
 import navigation.FakeNavigator
 import org.scalatest.{BeforeAndAfter, TestSuite, TryValues}
 import org.scalatestplus.play.PlaySpec
@@ -39,6 +39,13 @@ trait SpecBaseHelpers extends GuiceOneAppPerSuite with TryValues with Mocked wit
   def emptyUserAnswers: UserAnswers = UserAnswers(
     internalId = internalId,
     identifier = identifier
+  )
+
+  val taxYears = Seq(
+    CYMinus4TaxYear,
+    CYMinus3TaxYear,
+    CYMinus2TaxYear,
+    CYMinus1TaxYear
   )
 
   val bodyParsers: BodyParsers.Default = injector.instanceOf[BodyParsers.Default]

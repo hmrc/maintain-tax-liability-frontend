@@ -1,3 +1,4 @@
+import play.sbt.routes.RoutesKeys
 import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 import scoverage.ScoverageKeys
@@ -13,6 +14,8 @@ lazy val microservice = Project(appName, file("."))
     scalaVersion                     := "2.12.12",
     libraryDependencies              ++= AppDependencies.compile ++ AppDependencies.test,
     dependencyOverrides ++= AppDependencies.overrides,
+    RoutesKeys.routesImport += "models._",
+    RoutesKeys.routesImport += "models.TaxYear._",
     TwirlKeys.templateImports ++= Seq(
       "play.twirl.api.HtmlFormat",
       "play.twirl.api.HtmlFormat._",

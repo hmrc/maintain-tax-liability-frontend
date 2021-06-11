@@ -31,4 +31,16 @@ POST       /need-to-pay-tax-2-years-ago             controllers.CYMinusTwoYesNoC
 GET        /need-to-pay-tax-1-year-ago              controllers.CYMinusOneYesNoController.onPageLoad()
 POST       /need-to-pay-tax-1-year-ago              controllers.CYMinusOneYesNoController.onSubmit()
 
+GET        /declared-tax-4-years-ago                controllers.DeclaredTaxToHMRCYesNoController.onPageLoad(taxYear: TaxYear = CYMinus4TaxYear)
+POST       /declared-tax-4-years-ago                controllers.DeclaredTaxToHMRCYesNoController.onSubmit(taxYear: TaxYear = CYMinus4TaxYear)
+
+GET        /declared-tax-3-years-ago                controllers.DeclaredTaxToHMRCYesNoController.onPageLoad(taxYear: TaxYear = CYMinus3TaxYear)
+POST       /declared-tax-3-years-ago                controllers.DeclaredTaxToHMRCYesNoController.onSubmit(taxYear: TaxYear = CYMinus3TaxYear)
+
+GET        /declared-tax-2-years-ago                controllers.DeclaredTaxToHMRCYesNoController.onPageLoad(taxYear: TaxYear = CYMinus2TaxYear)
+POST       /declared-tax-2-years-ago                controllers.DeclaredTaxToHMRCYesNoController.onSubmit(taxYear: TaxYear = CYMinus2TaxYear)
+
+GET        /declared-tax-1-year-ago                 controllers.DeclaredTaxToHMRCYesNoController.onPageLoad(taxYear: TaxYear = CYMinus1TaxYear)
+POST       /declared-tax-1-year-ago                 controllers.DeclaredTaxToHMRCYesNoController.onSubmit(taxYear: TaxYear = CYMinus1TaxYear)
+
 GET        /:identifier                             controllers.IndexController.onPageLoad(identifier: String)

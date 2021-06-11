@@ -16,7 +16,8 @@
 
 package models
 
-import play.api.mvc.JavascriptLiteral
+import play.api.mvc.{JavascriptLiteral, PathBindable}
+
 sealed trait TaxYear {
   val year: Int
   val messagePrefix: String
@@ -46,6 +47,17 @@ case object CYMinus1TaxYear extends TaxYear {
 object TaxYear {
 
   implicit val jsLiteral: JavascriptLiteral[TaxYear] = (value: TaxYear) => value.toString
+
+  implicit def pathBindable(implicit intBinder: PathBindable[Int]): PathBindable[TaxYear] = new PathBindable[TaxYear] {
+    override def bind(key: String, value: String): Either[String, TaxYear] = {
+      for {
+        id <- intBinder.bind(key, value).right
+        taxYear <- TaxYear.from(id).toRight("Not a valid tax year").right
+      } yield taxYear
+    }
+
+    override def unbind(key: String, value: TaxYear): String = value.toString.trim.toLowerCase
+  }
 
   def from(int: Int): Option[TaxYear] = {
     int match {

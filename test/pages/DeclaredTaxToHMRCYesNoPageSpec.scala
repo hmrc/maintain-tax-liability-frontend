@@ -16,13 +16,18 @@
 
 package pages
 
-import models.TaxYear
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-case class DidDeclareTaxToHMRCYesNoPage(taxYear: TaxYear) extends QuestionPage[Boolean] {
+class DeclaredTaxToHMRCYesNoPageSpec extends PageBehaviours {
 
-  override def path: JsPath = JsPath \ toString
+  taxYears.foreach { taxYear =>
+    s"DidDeclareTaxToHMRCYesNoPage for ${taxYear.messagePrefix}" must {
 
-  override def toString: String = s"didDeclareTaxToHMRCForYear$taxYear"
+      beRetrievable[Boolean](DeclaredTaxToHMRCYesNoPage(taxYear))
 
+      beSettable[Boolean](DeclaredTaxToHMRCYesNoPage(taxYear))
+
+      beRemovable[Boolean](DeclaredTaxToHMRCYesNoPage(taxYear))
+    }
+  }
 }

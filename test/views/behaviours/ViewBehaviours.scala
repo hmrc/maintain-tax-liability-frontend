@@ -105,4 +105,14 @@ trait ViewBehaviours extends ViewSpecBase {
     }
   }
 
+  def pageWithContent(view: HtmlFormat.Appendable,
+                      content: String): Unit = {
+
+    "behave like a page with content" in {
+
+      val doc = asDocument(view)
+      assertContainsText(doc, content)
+    }
+  }
+
 }
