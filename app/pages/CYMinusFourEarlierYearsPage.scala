@@ -18,10 +18,10 @@ package pages
 
 import play.api.libs.json.JsPath
 
-case object CYMinusFourEarlierYearsPage extends QuestionPage[Boolean] {
+case object CYMinusFourEarlierYearsPage extends QuestionPage[Nothing] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "cyMinusFourEarlierYearsYesNo"
+  override def toString: String = "cyMinusFourEarlierYears"
 
 }
