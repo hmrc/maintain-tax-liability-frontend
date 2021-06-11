@@ -54,6 +54,9 @@ trait SpecBaseHelpers extends GuiceOneAppPerSuite with TryValues with Mocked wit
         bind[PlaybackRepository].toInstance(playbackRepository),
         bind[ActiveSessionRepository].toInstance(mockSessionRepository)
       )
+      .configure(
+        "play.filters.csp.nonce.enabled" -> false
+      )
 }
 
 trait SpecBase extends PlaySpec with SpecBaseHelpers

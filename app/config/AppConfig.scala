@@ -19,13 +19,14 @@ package config
 import play.api.Configuration
 import play.api.i18n.{Lang, Messages}
 import play.api.mvc.Request
+import uk.gov.hmrc.hmrcfrontend.config.ContactFrontendConfig
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.net.{URI, URLEncoder}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class AppConfig @Inject()(val config: Configuration, servicesConfig: ServicesConfig) {
+class AppConfig @Inject()(val config: Configuration, servicesConfig: ServicesConfig, contactFrontendConfig: ContactFrontendConfig) {
 
   val en: String = "en"
   val cy: String = "cy"
@@ -48,10 +49,7 @@ class AppConfig @Inject()(val config: Configuration, servicesConfig: ServicesCon
 
   lazy val logoutAudit: Boolean = config.get[Boolean]("features.auditing.logout")
 
-  private lazy val contactHost: String = config.get[String]("microservice.services.contact-frontend.host")
-  private lazy val contactFormServiceIdentifier: String = "trusts"
-  lazy val betaFeedbackUrl: String = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
-  lazy val betaFeedbackUnauthenticatedUrl: String = s"$contactHost/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
+  val betaFeedbackUrl = s"${contactFrontendConfig.baseUrl.get}/contact/beta-feedback?service=${contactFrontendConfig.serviceId.get}"
 
   def accessibilityLinkUrl(implicit request: Request[_]): String = {
     lazy val accessibilityBaseLinkUrl: String = config.get[String]("urls.accessibility")
