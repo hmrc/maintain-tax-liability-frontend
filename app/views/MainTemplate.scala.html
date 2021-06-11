@@ -91,7 +91,7 @@
         phaseBanner = Some(standardBetaBanner(url = appConfig.betaFeedbackUrl))
     )),
     beforeContentBlock = Some(beforeContentBlock),
-    scriptsBlock = Some(hmrcScripts()),
+    scriptsBlock = Some(hmrcScripts(nonce = CSPNonce.get)),
     footerBlock = Some(hmrcStandardFooter(
         accessibilityStatementUrl = Some(appConfig.accessibilityLinkUrl)
     ))
