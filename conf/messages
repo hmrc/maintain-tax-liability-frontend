@@ -1,5 +1,6 @@
-site.service_name = Register and Maintain a Trust
-site.service_section = Years of tax liability
+service.name = Register and Maintain a Trust
+service.section = Years of tax liability
+
 site.sign_out = Sign out
 site.sign_in = Sign in
 site.error = Error:
