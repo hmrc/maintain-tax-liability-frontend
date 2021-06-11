@@ -22,4 +22,13 @@ GET        /timeout                                 controllers.SessionTimeoutCo
 GET        /need-to-pay-tax-4-years-ago             controllers.CYMinusFourYesNoController.onPageLoad()
 POST       /need-to-pay-tax-4-years-ago             controllers.CYMinusFourYesNoController.onSubmit()
 
+GET        /need-to-pay-tax-3-years-ago             controllers.CYMinusThreeYesNoController.onPageLoad()
+POST       /need-to-pay-tax-3-years-ago             controllers.CYMinusThreeYesNoController.onSubmit()
+
+GET        /need-to-pay-tax-2-years-ago             controllers.CYMinusTwoYesNoController.onPageLoad()
+POST       /need-to-pay-tax-2-years-ago             controllers.CYMinusTwoYesNoController.onSubmit()
+
+GET        /need-to-pay-tax-1-year-ago              controllers.CYMinusOneYesNoController.onPageLoad()
+POST       /need-to-pay-tax-1-year-ago              controllers.CYMinusOneYesNoController.onSubmit()
+
 GET        /:identifier                             controllers.IndexController.onPageLoad(identifier: String)
