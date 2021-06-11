@@ -17,7 +17,9 @@
 package controllers
 
 import controllers.actions.StandardActionSets
+import models.UserAnswers
 import play.api.mvc._
+import repositories.PlaybackRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionLogging
 
@@ -27,13 +29,18 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class IndexController @Inject()(
                                  mcc: MessagesControllerComponents,
-                                 actions: StandardActionSets
+                                 actions: StandardActionSets,
+                                 repository: PlaybackRepository
                                )(implicit ec: ExecutionContext) extends FrontendController(mcc) with SessionLogging {
 
-  def onPageLoad(identifier: String): Action[AnyContent] = actions.authorisedWithSavedSession(identifier) {
+  def onPageLoad(identifier: String): Action[AnyContent] = actions.authorisedWithSavedSession(identifier).async {
     implicit request =>
 
-      Redirect(routes.FeatureNotAvailableController.onPageLoad())
+      val userAnswers = request.userAnswers.getOrElse(UserAnswers(request.user.internalId, identifier))
+
+      repository.set(userAnswers) map { _ =>
+        Redirect(routes.FeatureNotAvailableController.onPageLoad())
+      }
   }
 
 }

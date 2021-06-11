@@ -17,29 +17,76 @@
 package controllers
 
 import base.SpecBase
+import models.UserAnswers
+import org.mockito.ArgumentCaptor
+import org.mockito.Matchers.any
+import org.mockito.Mockito.{reset, verify, when}
+import org.scalatest.BeforeAndAfterEach
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-class IndexControllerSpec extends SpecBase {
+import scala.concurrent.Future
+
+class IndexControllerSpec extends SpecBase with BeforeAndAfterEach {
 
   lazy val indexRoute: String = routes.IndexController.onPageLoad(identifier).url
 
-  "IndexController" must {
+  override def beforeEach(): Unit = {
+    reset(playbackRepository)
+    when(playbackRepository.set(any())).thenReturn(Future.successful(true))
+  }
 
-    "redirect to feature unavailable" in {
+  "IndexController" when {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .build()
+    "there are no previously saved answers" must {
+      "set new user answers in repository and redirect to feature unavailable" in {
 
-      val request = FakeRequest(GET, indexRoute)
+        val application = applicationBuilder(userAnswers = None)
+          .build()
 
-      val result = route(application, request).value
+        val request = FakeRequest(GET, indexRoute)
 
-      status(result) mustEqual SEE_OTHER
+        val result = route(application, request).value
 
-      redirectLocation(result).value mustBe routes.FeatureNotAvailableController.onPageLoad().url
+        status(result) mustEqual SEE_OTHER
 
-      application.stop()
+        redirectLocation(result).value mustBe routes.FeatureNotAvailableController.onPageLoad().url
+
+        val uaCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(playbackRepository).set(uaCaptor.capture)
+        uaCaptor.getValue.internalId mustBe internalId
+        uaCaptor.getValue.identifier mustBe identifier
+
+        application.stop()
+      }
+    }
+
+    "there are previously saved answers" must {
+      "set existing answers in repository and redirect to feature unavailable" in {
+
+        val internalId = "existingInternalId"
+        val identifier = "existingIdentifier"
+
+        val userAnswers = emptyUserAnswers.copy(internalId = internalId, identifier = identifier)
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .build()
+
+        val request = FakeRequest(GET, indexRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustBe routes.FeatureNotAvailableController.onPageLoad().url
+
+        val uaCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(playbackRepository).set(uaCaptor.capture)
+        uaCaptor.getValue.internalId mustBe internalId
+        uaCaptor.getValue.identifier mustBe identifier
+
+        application.stop()
+      }
     }
   }
 }
