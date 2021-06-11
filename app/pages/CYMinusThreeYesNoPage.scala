@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-import models._
-import org.scalacheck.{Arbitrary, Gen}
+import models.{CYMinus3TaxYear, UserAnswers}
+import play.api.libs.json.JsPath
 
-trait ModelGenerators {
+import scala.util.Try
 
-  implicit lazy val arbitraryTaxYear: Arbitrary[TaxYear] = {
-    Arbitrary {
-      Gen.oneOf(
-        CYMinus4TaxYear,
-        CYMinus3TaxYear,
-        CYMinus2TaxYear,
-        CYMinus1TaxYear
-      )
+case object CYMinusThreeYesNoPage extends QuestionPage[Boolean] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "cyMinusThreeYesNo"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
+    value match {
+      case Some(false) =>
+        userAnswers.remove(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYear))
+      case _ =>  super.cleanup(value, userAnswers)
     }
   }
-
 }

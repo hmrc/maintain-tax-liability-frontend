@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-import models._
-import org.scalacheck.{Arbitrary, Gen}
+import pages.behaviours.PageBehaviours
 
-trait ModelGenerators {
+class CYMinusThreeEarlierYearsYesNoPageSpec extends PageBehaviours {
 
-  implicit lazy val arbitraryTaxYear: Arbitrary[TaxYear] = {
-    Arbitrary {
-      Gen.oneOf(
-        CYMinus4TaxYear,
-        CYMinus3TaxYear,
-        CYMinus2TaxYear,
-        CYMinus1TaxYear
-      )
-    }
+  "CYMinusThreeEarlierYearsYesNoPage" must {
+
+    beRetrievable[Boolean](CYMinusThreeEarlierYearsYesNoPage)
+
+    beSettable[Boolean](CYMinusThreeEarlierYearsYesNoPage)
+
+    beRemovable[Boolean](CYMinusThreeEarlierYearsYesNoPage)
   }
-
 }
