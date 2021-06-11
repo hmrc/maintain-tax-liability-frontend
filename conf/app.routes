@@ -19,4 +19,7 @@ GET        /feature-not-available                   controllers.FeatureNotAvaila
 GET        /keep-alive                              controllers.SessionTimeoutController.keepAlive
 GET        /timeout                                 controllers.SessionTimeoutController.timeout
 
+GET        /need-to-pay-tax-4-years-ago             controllers.CYMinusFourYesNoController.onPageLoad()
+POST       /need-to-pay-tax-4-years-ago             controllers.CYMinusFourYesNoController.onSubmit()
+
 GET        /:identifier                             controllers.IndexController.onPageLoad(identifier: String)

@@ -34,7 +34,7 @@ class FeatureNotAvailableViewSpec extends ViewBehaviours {
     behave like normalPage(
       view = applyView,
       messageKeyPrefix = messageKeyPrefix,
-      messageKeyParam = "",
+      messageKeyParams = Nil,
       expectedGuidanceKeys = "p1", "p2"
     )
 

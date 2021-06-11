@@ -25,7 +25,9 @@ class YesNoFormProviderSpec extends BooleanFieldBehaviours {
   val requiredKey = s"$messagePrefix.error.required"
   val invalidKey = "error.boolean"
 
-  val form: Form[Boolean] = new YesNoFormProvider().withPrefix(messagePrefix)
+  val args: Seq[String] = Seq("arg1", "arg2")
+
+  val form: Form[Boolean] = new YesNoFormProvider().withPrefix(messagePrefix, args)
 
   "YesNoFormProvider" must {
 
@@ -34,13 +36,13 @@ class YesNoFormProviderSpec extends BooleanFieldBehaviours {
     behave like booleanField(
       form = form,
       fieldName = fieldName,
-      invalidError = FormError(fieldName, invalidKey)
+      invalidError = FormError(fieldName, invalidKey, args)
     )
 
     behave like mandatoryField(
       form = form,
       fieldName = fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      requiredError = FormError(fieldName, requiredKey, args)
     )
   }
 

@@ -16,15 +16,28 @@
 
 package navigation
 
+import controllers.routes._
 import models._
 import pages._
 import play.api.mvc.Call
 
-trait Navigator {
+class Navigator {
 
-  def nextPage(page: Page, userAnswers: UserAnswers): Call
+  def nextPage(page: Page, userAnswers: UserAnswers): Call = routes(page)(userAnswers)
 
-  def yesNoNav(ua: UserAnswers, fromPage: QuestionPage[Boolean], yesCall: => Call, noCall: => Call): Call = {
+  private def conditionalNavigation: PartialFunction[Page, UserAnswers => Call] = {
+    case CYMinusFourYesNoPage => ua => yesNoNav(
+      ua = ua,
+      fromPage = CYMinusFourYesNoPage,
+      yesCall = FeatureNotAvailableController.onPageLoad(),
+      noCall = FeatureNotAvailableController.onPageLoad()
+    )
+  }
+
+  private def routes: PartialFunction[Page, UserAnswers => Call] =
+    conditionalNavigation
+
+  private def yesNoNav(ua: UserAnswers, fromPage: QuestionPage[Boolean], yesCall: => Call, noCall: => Call): Call = {
     ua.get(fromPage)
       .map(if (_) yesCall else noCall)
       .getOrElse(controllers.routes.SessionExpiredController.onPageLoad())

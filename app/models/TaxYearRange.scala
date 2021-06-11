@@ -14,28 +14,24 @@
  * limitations under the License.
  */
 
-package views
+package models
 
-import views.behaviours.ViewBehaviours
-import views.html.SessionExpiredView
+import play.api.i18n.Messages
+import uk.gov.hmrc.play.language.LanguageUtils
 
-class SessionExpiredViewSpec extends ViewBehaviours {
+import javax.inject.Inject
 
-  "SessionExpiredView" must {
+class TaxYearRange @Inject()(languageUtils: LanguageUtils) {
 
-    val application = applicationBuilder().build()
+  def taxYearDates(taxYear: TaxYear)(implicit messages: Messages): Seq[String] = {
 
-    val view = application.injector.instanceOf[SessionExpiredView]
+    val taxYearYear = uk.gov.hmrc.time.TaxYear.current.back(taxYear.year)
 
-    val applyView = view.apply()(fakeRequest, messages)
+    lazy val startDate: String = languageUtils.Dates.formatDate(taxYearYear.starts)
 
-    behave like normalPage(
-      view = applyView,
-      messageKeyPrefix = "session_expired",
-      messageKeyParams = Nil,
-      expectedGuidanceKeys = "guidance", "guidance.2"
-    )
+    lazy val endDate: String = languageUtils.Dates.formatDate(taxYearYear.finishes)
 
-    behave like pageWithSubmitButton(applyView)
+    startDate :: endDate :: Nil
   }
+
 }

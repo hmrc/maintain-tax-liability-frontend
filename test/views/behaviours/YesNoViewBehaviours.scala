@@ -25,7 +25,7 @@ trait YesNoViewBehaviours extends QuestionViewBehaviours[Boolean] {
   def yesNoPage(form: Form[Boolean],
                 createView: Form[Boolean] => HtmlFormat.Appendable,
                 messageKeyPrefix: String,
-                messageKeyParam: Option[String]): Unit = {
+                messageKeyParams: Seq[String] = Nil): Unit = {
 
     "behave like a page with a Yes/No question" when {
 
@@ -36,7 +36,7 @@ trait YesNoViewBehaviours extends QuestionViewBehaviours[Boolean] {
           val doc = asDocument(createView(form))
           val legends = doc.getElementsByTag("legend")
           legends.size mustBe 1
-          legends.first.text mustBe messages(s"$messageKeyPrefix.heading", messageKeyParam.getOrElse(""))
+          legends.first.text mustBe messages(s"$messageKeyPrefix.heading", messageKeyParams: _*)
         }
 
         "contain an input for the value" in {
@@ -75,21 +75,20 @@ trait YesNoViewBehaviours extends QuestionViewBehaviours[Boolean] {
         "show an error summary" in {
 
           val doc = asDocument(createView(form.withError(error)))
-          assertRenderedById(doc, "error-summary-heading")
+          assertRenderedByClass(doc, "govuk-error-summary")
         }
 
-        "show an error associated with the value field" in {
+        "show an error in the value field's label" in {
 
           val doc = asDocument(createView(form.withError(error)))
-          val errorSpan = doc.getElementsByClass("error-message").first
-          errorSpan.text mustBe s"""${messages("site.error")} ${messages(errorMessage)}"""
-          doc.getElementsByTag("fieldset").first.attr("aria-describedby") contains errorSpan.attr("id")
+          val errorSpan = doc.getElementsByClass("govuk-error-message").first
+          errorSpan.text mustBe (s"""${messages(errorPrefix)} ${messages(errorMessage)}""")
         }
 
         "show an error prefix in the browser title" in {
 
           val doc = asDocument(createView(form.withError(error)))
-          assertEqualsValue(doc, "title", ViewUtils.breadcrumbTitle(s"""${messages("site.error")} ${messages(s"$messageKeyPrefix.title", messageKeyParam.getOrElse(""))}"""))
+          assertEqualsValue(doc, "title", ViewUtils.breadcrumbTitle(s"""${messages("site.error")} ${messages(s"$messageKeyPrefix.title", messageKeyParams: _*)}"""))
         }
       }
     }
