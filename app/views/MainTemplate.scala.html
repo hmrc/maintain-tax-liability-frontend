@@ -63,7 +63,9 @@
 }
 
 @beforeContentBlock = {
-    @hmrcLanguageSelectHelper()
+    @if(appConfig.welshLanguageSupportEnabled) {
+        @hmrcLanguageSelectHelper()
+    }
     @if(showBackLink) {
         @govukBackLink(BackLink(
             attributes = Map("id" -> "back-link"), classes="js-enabled", href="javascript:history.back()", content = HtmlContent(messages("site.back"))

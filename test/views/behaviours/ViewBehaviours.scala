@@ -60,7 +60,7 @@ trait ViewBehaviours extends ViewSpecBase {
         "not display language toggles" in {
 
           val doc = asDocument(view)
-          assertNotRenderedById(doc, "cymraeg-switch")
+          assertNotRenderedByClass(doc, "hmrc-language-select__list")
         }
       }
     }
