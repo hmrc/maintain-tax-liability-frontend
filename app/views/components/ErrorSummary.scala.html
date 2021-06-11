@@ -25,8 +25,8 @@
 @if(errors.nonEmpty) {
     @govUkErrorSummary(ErrorSummary(
         errorList = errors
-            .map(err => err.copy(key = s"${err.key}--yes", args = err.args))
+            .map(err => err.copy(key = s"${err.key}-yes", args = err.args))
             .asTextErrorLinks,
-        title = Text(messages("error.summary.title"))
+        title = Text(messages("site.error.summary.title"))
     ))
 }

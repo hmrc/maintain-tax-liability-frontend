@@ -4,9 +4,11 @@ service.section = Years of tax liability
 site.sign_out = Sign out
 site.sign_in = Sign in
 site.error = Error:
+site.error.summary.title = There is a problem
 site.back = Back
 site.yes = Yes
 site.no = No
+site.continue = Continue
 
 featureNotAvailable.title = This part of the online service is not available yet
 featureNotAvailable.heading = This part of the online service is not available yet
