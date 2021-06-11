@@ -34,4 +34,6 @@ class TaxYearRange @Inject()(languageUtils: LanguageUtils) {
     startDate :: endDate :: Nil
   }
 
+  def yearAtStart(taxYear: TaxYear): String = uk.gov.hmrc.time.TaxYear.current.back(taxYear.year).startYear.toString
+
 }

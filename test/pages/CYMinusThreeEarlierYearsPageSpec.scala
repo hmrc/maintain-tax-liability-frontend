@@ -18,14 +18,14 @@ package pages
 
 import pages.behaviours.PageBehaviours
 
-class CYMinusFourEarlierYearsYesNoPageSpec extends PageBehaviours {
+class CYMinusThreeEarlierYearsPageSpec extends PageBehaviours {
 
-  "CYMinusFourEarlierYearsYesNoPage" must {
+  "CYMinusThreeEarlierYearsYesNoPage" must {
 
-    beRetrievable[Boolean](CYMinusFourEarlierYearsYesNoPage)
+    beRetrievable[Boolean](CYMinusThreeEarlierYearsPage)
 
-    beSettable[Boolean](CYMinusFourEarlierYearsYesNoPage)
+    beSettable[Boolean](CYMinusThreeEarlierYearsPage)
 
-    beRemovable[Boolean](CYMinusFourEarlierYearsYesNoPage)
+    beRemovable[Boolean](CYMinusThreeEarlierYearsPage)
   }
 }

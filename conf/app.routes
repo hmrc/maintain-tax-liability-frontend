@@ -19,8 +19,14 @@ GET        /feature-not-available                   controllers.FeatureNotAvaila
 GET        /keep-alive                              controllers.SessionTimeoutController.keepAlive
 GET        /timeout                                 controllers.SessionTimeoutController.timeout
 
+GET        /need-to-pay-more-than-4-tax-years       controllers.CYMinusFourEarlierYearsController.onPageLoad()
+POST       /need-to-pay-more-than-4-tax-years       controllers.CYMinusFourEarlierYearsController.onSubmit()
+
 GET        /need-to-pay-tax-4-years-ago             controllers.CYMinusFourYesNoController.onPageLoad()
 POST       /need-to-pay-tax-4-years-ago             controllers.CYMinusFourYesNoController.onSubmit()
+
+GET        /need-to-pay-more-than-3-tax-years       controllers.CYMinusThreeEarlierYearsController.onPageLoad()
+POST       /need-to-pay-more-than-3-tax-years       controllers.CYMinusThreeEarlierYearsController.onSubmit()
 
 GET        /need-to-pay-tax-3-years-ago             controllers.CYMinusThreeYesNoController.onPageLoad()
 POST       /need-to-pay-tax-3-years-ago             controllers.CYMinusThreeYesNoController.onSubmit()

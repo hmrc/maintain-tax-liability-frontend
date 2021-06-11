@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,16 +12,31 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package pages
+@import views.html.components.{Heading, SubmitButton}
 
-import play.api.libs.json.JsPath
+@this(
+    main_template: MainTemplate,
+    formHelper: FormWithCSRF,
+    heading: Heading,
+    submitButton: SubmitButton
+)
 
-case object CYMinusThreeEarlierYearsYesNoPage extends QuestionPage[Boolean] {
+@(year: String, route: Call)(implicit request: Request[_], messages: Messages)
 
-  override def path: JsPath = JsPath \ toString
+@main_template(
+    title = messages("earlierYearsLiability.title", year),
+    showBackLink = true
+) {
 
-  override def toString: String = "cyMinusThreeEarlierYearsYesNo"
+    @heading("earlierYearsLiability.heading", year)
 
+    <p>@messages("earlierYearsLiability.p1")</p>
+
+    @formHelper(action = route, 'autoComplete -> "off") {
+
+        @submitButton()
+
+    }
 }
