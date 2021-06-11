@@ -44,6 +44,7 @@ class AppConfig @Inject()(val config: Configuration, servicesConfig: ServicesCon
 
   lazy val trustsUrl: String = servicesConfig.baseUrl("trusts")
   lazy val trustsAuthUrl: String = servicesConfig.baseUrl("trusts-auth")
+  lazy val trustsStoreUrl: String = servicesConfig.baseUrl("trusts-store")
 
   lazy val logoutAudit: Boolean = config.get[Boolean]("features.auditing.logout")
 
