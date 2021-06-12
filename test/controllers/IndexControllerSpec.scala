@@ -62,14 +62,9 @@ class IndexControllerSpec extends SpecBase with BeforeAndAfterEach {
     }
 
     "there are previously saved answers" must {
-      "set existing answers in repository and redirect to feature unavailable" in {
+      "redirect to CheckYourAnswersController" in {
 
-        val internalId = "existingInternalId"
-        val identifier = "existingIdentifier"
-
-        val userAnswers = emptyUserAnswers.copy(internalId = internalId, identifier = identifier)
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .build()
 
         val request = FakeRequest(GET, indexRoute)
@@ -78,12 +73,7 @@ class IndexControllerSpec extends SpecBase with BeforeAndAfterEach {
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustBe routes.FeatureNotAvailableController.onPageLoad().url
-
-        val uaCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
-        verify(playbackRepository).set(uaCaptor.capture)
-        uaCaptor.getValue.internalId mustBe internalId
-        uaCaptor.getValue.identifier mustBe identifier
+        redirectLocation(result).value mustBe routes.CheckYourAnswersController.onPageLoad().url
 
         application.stop()
       }

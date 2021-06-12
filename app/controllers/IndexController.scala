@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionLogging
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IndexController @Inject()(
@@ -36,10 +36,13 @@ class IndexController @Inject()(
   def onPageLoad(identifier: String): Action[AnyContent] = actions.authorisedWithSavedSession(identifier).async {
     implicit request =>
 
-      val userAnswers = request.userAnswers.getOrElse(UserAnswers(request.user.internalId, identifier))
-
-      repository.set(userAnswers) map { _ =>
-        Redirect(routes.FeatureNotAvailableController.onPageLoad())
+      request.userAnswers match {
+        case Some(_) =>
+          Future.successful(Redirect(routes.CheckYourAnswersController.onPageLoad()))
+        case None =>
+          repository.set(UserAnswers(request.user.internalId, identifier)) map { _ =>
+            Redirect(routes.FeatureNotAvailableController.onPageLoad())
+          }
       }
   }
 
