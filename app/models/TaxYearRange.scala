@@ -17,15 +17,16 @@
 package models
 
 import play.api.i18n.Messages
+import services.TaxYearService
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import javax.inject.Inject
 
-class TaxYearRange @Inject()(languageUtils: LanguageUtils) {
+class TaxYearRange @Inject()(languageUtils: LanguageUtils, taxYearService: TaxYearService) {
 
   def taxYearDates(taxYear: TaxYear)(implicit messages: Messages): Seq[String] = {
 
-    val taxYearYear = uk.gov.hmrc.time.TaxYear.current.back(taxYear.year)
+    val taxYearYear = taxYearService.currentTaxYear.back(taxYear.year)
 
     lazy val startDate: String = languageUtils.Dates.formatDate(taxYearYear.starts)
 
@@ -34,6 +35,6 @@ class TaxYearRange @Inject()(languageUtils: LanguageUtils) {
     startDate :: endDate :: Nil
   }
 
-  def yearAtStart(taxYear: TaxYear): String = uk.gov.hmrc.time.TaxYear.current.back(taxYear.year).startYear.toString
+  def yearAtStart(taxYear: TaxYear): String = taxYearService.currentTaxYear.back(taxYear.year).startYear.toString
 
 }

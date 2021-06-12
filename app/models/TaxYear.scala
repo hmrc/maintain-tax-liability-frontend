@@ -46,6 +46,8 @@ case object CYMinus1TaxYear extends TaxYear {
 
 object TaxYear {
 
+  val taxYears: Seq[TaxYear] = Seq(CYMinus4TaxYear, CYMinus3TaxYear, CYMinus2TaxYear, CYMinus1TaxYear)
+
   implicit val jsLiteral: JavascriptLiteral[TaxYear] = (value: TaxYear) => value.toString
 
   implicit def pathBindable(implicit intBinder: PathBindable[Int]): PathBindable[TaxYear] = new PathBindable[TaxYear] {

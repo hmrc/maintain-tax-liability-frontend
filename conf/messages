@@ -63,3 +63,5 @@ declaredToHMRC.title = Was the tax from {0} to {1} declared?
 declaredToHMRC.heading = Was the tax from {0} to {1} declared?
 declaredToHMRC.p1 = You must have sent a full voluntary disclosure for {0} to {1}.
 declaredToHMRC.error.required = Select yes if you made a full voluntary disclosure for {0} to {1}
+
+checkYourAnswersSection.heading = Tax liability {0} to {1}
