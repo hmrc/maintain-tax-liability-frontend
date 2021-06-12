@@ -105,11 +105,11 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks  {
           .mustBe(controllers.routes.DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus1TaxYear))
       }
 
-      "-> No -> Feature not available" in {
+      "-> No -> CheckYourAnswersController" in {
         val answers = emptyUserAnswers.set(page, false).success.value
 
         navigator.nextPage(page, answers)
-          .mustBe(controllers.routes.FeatureNotAvailableController.onPageLoad())
+          .mustBe(controllers.routes.CheckYourAnswersController.onPageLoad())
       }
     }
 
@@ -139,9 +139,9 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks  {
       }
 
       "CYMinus1TaxYear" must {
-        "-> Feature not available" in {
+        "-> CheckYourAnswersController" in {
           navigator.nextPage(page(CYMinus1TaxYear), emptyUserAnswers)
-            .mustBe(controllers.routes.FeatureNotAvailableController.onPageLoad())
+            .mustBe(controllers.routes.CheckYourAnswersController.onPageLoad())
         }
       }
     }

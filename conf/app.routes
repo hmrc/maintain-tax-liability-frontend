@@ -49,4 +49,7 @@ POST       /declared-tax-2-years-ago                controllers.DeclaredTaxToHMR
 GET        /declared-tax-1-year-ago                 controllers.DeclaredTaxToHMRCYesNoController.onPageLoad(taxYear: TaxYear = CYMinus1TaxYear)
 POST       /declared-tax-1-year-ago                 controllers.DeclaredTaxToHMRCYesNoController.onSubmit(taxYear: TaxYear = CYMinus1TaxYear)
 
+GET        /check-your-answers                      controllers.CheckYourAnswersController.onPageLoad()
+POST       /check-your-answers                      controllers.CheckYourAnswersController.onSubmit()
+
 GET        /:identifier                             controllers.IndexController.onPageLoad(identifier: String)

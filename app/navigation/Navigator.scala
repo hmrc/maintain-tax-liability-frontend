@@ -35,7 +35,7 @@ class Navigator {
     case DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYear) => CYMinusThreeYesNoController.onPageLoad()
     case DeclaredTaxToHMRCYesNoPage(CYMinus3TaxYear) => CYMinusTwoYesNoController.onPageLoad()
     case DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYear) => CYMinusOneYesNoController.onPageLoad()
-    case DeclaredTaxToHMRCYesNoPage(CYMinus1TaxYear) => FeatureNotAvailableController.onPageLoad() // TODO - check your answers
+    case DeclaredTaxToHMRCYesNoPage(CYMinus1TaxYear) => CheckYourAnswersController.onPageLoad()
   }
 
   private def conditionalNavigation: PartialFunction[Page, UserAnswers => Call] = {
@@ -61,7 +61,7 @@ class Navigator {
       ua = ua,
       fromPage = CYMinusOneYesNoPage,
       yesCall = DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus1TaxYear),
-      noCall = FeatureNotAvailableController.onPageLoad() // TODO - check your answers
+      noCall = CheckYourAnswersController.onPageLoad()
     )
   }
 

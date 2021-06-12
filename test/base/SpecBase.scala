@@ -22,17 +22,23 @@ import navigation.FakeNavigator
 import org.scalatest.{BeforeAndAfter, TestSuite, TryValues}
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice._
+import play.api.http.Status.OK
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.BodyParsers
 import repositories._
 import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.http.HttpResponse
+
+import scala.concurrent.Future
 
 trait SpecBaseHelpers extends GuiceOneAppPerSuite with TryValues with Mocked with BeforeAndAfter with FakeApp {
   this: TestSuite =>
 
   val internalId: String = SpecBase.internalId
   val identifier: String = SpecBase.identifier
+
+  lazy val okResponse: Future[HttpResponse] = Future.successful(HttpResponse(OK, ""))
 
   val fakeNavigator = new FakeNavigator()
 

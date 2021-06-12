@@ -9,6 +9,7 @@ site.back = Back
 site.yes = Yes
 site.no = No
 site.continue = Continue
+site.edit = Change
 
 featureNotAvailable.title = This part of the online service is not available yet
 featureNotAvailable.heading = This part of the online service is not available yet
@@ -63,5 +64,8 @@ declaredToHMRC.title = Was the tax from {0} to {1} declared?
 declaredToHMRC.heading = Was the tax from {0} to {1} declared?
 declaredToHMRC.p1 = You must have sent a full voluntary disclosure for {0} to {1}.
 declaredToHMRC.error.required = Select yes if you made a full voluntary disclosure for {0} to {1}
+
+checkYourAnswers.title = Check years of tax liability
+checkYourAnswers.heading = Check years of tax liability
 
 checkYourAnswersSection.heading = Tax liability {0} to {1}
