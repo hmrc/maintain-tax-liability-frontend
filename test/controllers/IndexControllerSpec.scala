@@ -21,13 +21,16 @@ import models.UserAnswers
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, verify, when}
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.TaskCompleted
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
-class IndexControllerSpec extends SpecBase with BeforeAndAfterEach {
+class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with BeforeAndAfterEach {
 
   lazy val indexRoute: String = routes.IndexController.onPageLoad(identifier).url
 
@@ -39,7 +42,7 @@ class IndexControllerSpec extends SpecBase with BeforeAndAfterEach {
   "IndexController" when {
 
     "there are no previously saved answers" must {
-      "set new user answers in repository and redirect to feature unavailable" in {
+      "set new user answers in repository and redirect to FeatureNotAvailableController" in {
 
         val application = applicationBuilder(userAnswers = None)
           .build()
@@ -61,21 +64,49 @@ class IndexControllerSpec extends SpecBase with BeforeAndAfterEach {
       }
     }
 
-    "there are previously saved answers" must {
-      "redirect to CheckYourAnswersController" in {
+    "there are previously saved answers" when {
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .build()
+      "TaskCompleted is true" must {
+        "redirect to CheckYourAnswersController" in {
 
-        val request = FakeRequest(GET, indexRoute)
+          val userAnswers = emptyUserAnswers.set(TaskCompleted, true).success.value
 
-        val result = route(application, request).value
+          val application = applicationBuilder(userAnswers = Some(userAnswers))
+            .build()
 
-        status(result) mustEqual SEE_OTHER
+          val request = FakeRequest(GET, indexRoute)
 
-        redirectLocation(result).value mustBe routes.CheckYourAnswersController.onPageLoad().url
+          val result = route(application, request).value
 
-        application.stop()
+          status(result) mustEqual SEE_OTHER
+
+          redirectLocation(result).value mustBe routes.CheckYourAnswersController.onPageLoad().url
+
+          application.stop()
+        }
+      }
+
+      "TaskCompleted is false or undefined" must {
+        "redirect to FeatureNotAvailableController" in {
+
+          forAll(arbitrary[Option[Boolean]].suchThat(!_.contains(true))) { maybeBool =>
+
+            val userAnswers = emptyUserAnswers.set(TaskCompleted, maybeBool).success.value
+
+            val application = applicationBuilder(userAnswers = Some(userAnswers))
+              .build()
+
+            val request = FakeRequest(GET, indexRoute)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+
+            redirectLocation(result).value mustBe routes.FeatureNotAvailableController.onPageLoad().url
+
+            application.stop()
+          }
+        }
       }
     }
   }

@@ -17,10 +17,10 @@
 package controllers
 
 import base.SpecBase
-import models.TaxYearRange
+import models.{CYMinus3TaxYear, TaxYearRange}
 import navigation.Navigator
 import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -59,6 +59,8 @@ class CYMinusThreeEarlierYearsControllerSpec extends SpecBase with BeforeAndAfte
 
       contentAsString(result) mustEqual
         view(year, onSubmitRoute)(request, messages).toString
+
+      verify(mockTaxYearRange).yearAtStart(CYMinus3TaxYear)
 
       application.stop()
     }

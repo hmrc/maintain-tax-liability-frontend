@@ -18,10 +18,10 @@ package controllers
 
 import base.SpecBase
 import forms.YesNoFormProvider
-import models.TaxYearRange
+import models.{CYMinus1TaxYear, TaxYearRange}
 import navigation.Navigator
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Matchers.{any, eq => eqTo}
+import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import pages.CYMinusOneYesNoPage
 import play.api.data.Form
@@ -65,6 +65,8 @@ class CYMinusOneYesNoControllerSpec extends SpecBase with BeforeAndAfterEach {
       contentAsString(result) mustEqual
         view(form, taxYearDates: _*)(request, messages).toString
 
+      verify(mockTaxYearRange, times(2)).taxYearDates(eqTo(CYMinus1TaxYear))(any())
+
       application.stop()
     }
 
@@ -87,6 +89,8 @@ class CYMinusOneYesNoControllerSpec extends SpecBase with BeforeAndAfterEach {
       contentAsString(result) mustEqual
         view(form.fill(validAnswer), taxYearDates: _*)(request, messages).toString
 
+      verify(mockTaxYearRange, times(2)).taxYearDates(eqTo(CYMinus1TaxYear))(any())
+
       application.stop()
     }
 
@@ -105,6 +109,8 @@ class CYMinusOneYesNoControllerSpec extends SpecBase with BeforeAndAfterEach {
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual fakeNavigator.desiredRoute.url
+
+      verify(mockTaxYearRange, times(1)).taxYearDates(eqTo(CYMinus1TaxYear))(any())
 
       application.stop()
     }
@@ -128,6 +134,8 @@ class CYMinusOneYesNoControllerSpec extends SpecBase with BeforeAndAfterEach {
 
       contentAsString(result) mustEqual
         view(boundForm, taxYearDates: _*)(request, messages).toString
+
+      verify(mockTaxYearRange, times(2)).taxYearDates(eqTo(CYMinus1TaxYear))(any())
 
       application.stop()
     }

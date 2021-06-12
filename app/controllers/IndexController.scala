@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions.StandardActionSets
 import models.UserAnswers
+import pages.TaskCompleted
 import play.api.mvc._
 import repositories.PlaybackRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -37,9 +38,9 @@ class IndexController @Inject()(
     implicit request =>
 
       request.userAnswers match {
-        case Some(_) =>
+        case Some(ua) if ua.get(TaskCompleted).contains(true) =>
           Future.successful(Redirect(routes.CheckYourAnswersController.onPageLoad()))
-        case None =>
+        case _ =>
           repository.set(UserAnswers(request.user.internalId, identifier)) map { _ =>
             Redirect(routes.FeatureNotAvailableController.onPageLoad())
           }
