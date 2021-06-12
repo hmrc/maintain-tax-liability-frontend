@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
-package generators
+package models
 
-trait ModelGenerators
+import play.api.libs.json.{Format, Json}
+
+case class YearsReturns(returns: List[YearReturn])
+
+object YearsReturns {
+  implicit val yearsReturnsFormat: Format[YearsReturns] = Json.format[YearsReturns]
+}

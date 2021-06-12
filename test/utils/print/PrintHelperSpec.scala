@@ -45,7 +45,7 @@ class PrintHelperSpec extends SpecBase {
         .set(CYMinusOneYesNoPage, true).success.value
         .set(DeclaredTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
 
-      val result = printHelper.answerRows(userAnswers)
+      val result = printHelper.apply(userAnswers)
 
       result mustBe Seq(
         AnswerSection(

@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-package services
+package utils
 
-import uk.gov.hmrc.time.TaxYear
+object Constants {
 
-import java.time.LocalDate
+  final val OCTOBER_5TH_MONTH = 10
+  final val OCTOBER_5TH_DAY = 5
 
-class TaxYearService {
-
-  def currentDate: LocalDate = LocalDate.now
-
-  def currentTaxYear: TaxYear = TaxYear.taxYearFor(currentDate)
-
-  def nTaxYearsAgoFinishYear(n: Int): String = currentTaxYear.back(n).finishYear.toString.takeRight(2)
 }

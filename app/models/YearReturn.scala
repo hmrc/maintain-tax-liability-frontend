@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package services
+package models
 
-import uk.gov.hmrc.time.TaxYear
+import play.api.libs.json.{Format, Json}
 
-import java.time.LocalDate
+case class YearReturn(taxReturnYear: String, taxConsequence: Boolean)
 
-class TaxYearService {
-
-  def currentDate: LocalDate = LocalDate.now
-
-  def currentTaxYear: TaxYear = TaxYear.taxYearFor(currentDate)
-
-  def nTaxYearsAgoFinishYear(n: Int): String = currentTaxYear.back(n).finishYear.toString.takeRight(2)
+object YearReturn {
+  implicit val yearReturnTypeFormat: Format[YearReturn] = Json.format[YearReturn]
 }

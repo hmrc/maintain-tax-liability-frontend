@@ -26,7 +26,7 @@ import javax.inject.Inject
 class PrintHelper @Inject()(taxYearRange: TaxYearRange,
                             answerRowConverter: AnswerRowConverter) {
 
-  def answerRows(userAnswers: UserAnswers)(implicit messages: Messages): Seq[AnswerSection] = {
+  def apply(userAnswers: UserAnswers)(implicit messages: Messages): Seq[AnswerSection] = {
 
     val bound = answerRowConverter.bind(userAnswers)
     
