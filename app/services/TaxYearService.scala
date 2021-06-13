@@ -16,7 +16,9 @@
 
 package services
 
+import models.FirstTaxYearAvailable
 import uk.gov.hmrc.time.TaxYear
+import utils.Constants.{DEADLINE_DAY, DEADLINE_MONTH}
 
 import java.time.LocalDate
 
@@ -27,4 +29,30 @@ class TaxYearService {
   def currentTaxYear: TaxYear = TaxYear.taxYearFor(currentDate)
 
   def nTaxYearsAgoFinishYear(n: Int): String = currentTaxYear.back(n).finishYear.toString.takeRight(2)
+
+  def firstTaxYearAvailable(startDate: LocalDate): FirstTaxYearAvailable = {
+    val startYearOfStartDateTaxYear = TaxYear.taxYearFor(startDate).startYear
+
+    val startYearOfOldestTaxYearToShow: Int = {
+      val decemberDeadline = LocalDate.of(currentTaxYear.starts.getYear, DEADLINE_MONTH, DEADLINE_DAY)
+
+      if (!currentDate.isAfter(decemberDeadline)) {
+        currentTaxYear.back(4).startYear
+      } else {
+        currentTaxYear.back(3).startYear
+      }
+    }
+
+    if (startYearOfStartDateTaxYear < startYearOfOldestTaxYearToShow) {
+      FirstTaxYearAvailable(
+        yearsAgo = currentTaxYear.startYear - startYearOfOldestTaxYearToShow,
+        earlierYearsToDeclare = true
+      )
+    } else {
+      FirstTaxYearAvailable(
+        yearsAgo = currentTaxYear.startYear - startYearOfStartDateTaxYear,
+        earlierYearsToDeclare = false
+      )
+    }
+  }
 }

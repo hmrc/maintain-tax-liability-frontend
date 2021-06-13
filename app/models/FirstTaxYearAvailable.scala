@@ -14,14 +14,6 @@
  * limitations under the License.
  */
 
-package utils
+package models
 
-object Constants {
-
-  final val OCTOBER_5TH_MONTH = 10
-  final val OCTOBER_5TH_DAY = 5
-
-  final val DEADLINE_MONTH = 12
-  final val DEADLINE_DAY = 22
-
-}
+case class FirstTaxYearAvailable(yearsAgo: Int, earlierYearsToDeclare: Boolean)
