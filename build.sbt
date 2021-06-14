@@ -15,7 +15,7 @@ lazy val microservice = Project(appName, file("."))
     libraryDependencies              ++= AppDependencies.compile ++ AppDependencies.test,
     dependencyOverrides ++= AppDependencies.overrides,
     RoutesKeys.routesImport += "models._",
-    RoutesKeys.routesImport += "models.TaxYear._",
+    RoutesKeys.routesImport += "models.CYMinusNTaxYears._",
     TwirlKeys.templateImports ++= Seq(
       "play.twirl.api.HtmlFormat",
       "play.twirl.api.HtmlFormat._",

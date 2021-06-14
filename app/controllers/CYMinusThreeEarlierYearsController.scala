@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions.StandardActionSets
-import models.{CYMinus3TaxYear, TaxYearRange}
+import models.{CYMinus3TaxYears, TaxYearRange}
 import navigation.Navigator
 import pages.CYMinusThreeEarlierYearsPage
 import play.api.i18n.I18nSupport
@@ -39,7 +39,7 @@ class CYMinusThreeEarlierYearsController @Inject()(
   def onPageLoad(): Action[AnyContent] = actions.authorisedWithRequiredData {
     implicit request =>
 
-      val year = taxYearRange.yearAtStart(CYMinus3TaxYear)
+      val year = taxYearRange.yearAtStart(CYMinus3TaxYears)
 
       val route = routes.CYMinusThreeEarlierYearsController.onSubmit()
 

@@ -32,9 +32,9 @@ class Navigator {
   private def simpleNavigation: PartialFunction[Page, Call] = {
     case CYMinusFourEarlierYearsPage => CYMinusFourYesNoController.onPageLoad()
     case CYMinusThreeEarlierYearsPage => CYMinusThreeYesNoController.onPageLoad()
-    case DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYear) => CYMinusThreeYesNoController.onPageLoad()
-    case DeclaredTaxToHMRCYesNoPage(CYMinus3TaxYear) => CYMinusTwoYesNoController.onPageLoad()
-    case DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYear) => CYMinusOneYesNoController.onPageLoad()
+    case DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYears) => CYMinusThreeYesNoController.onPageLoad()
+    case DeclaredTaxToHMRCYesNoPage(CYMinus3TaxYears) => CYMinusTwoYesNoController.onPageLoad()
+    case DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYears) => CYMinusOneYesNoController.onPageLoad()
     case DeclaredTaxToHMRCYesNoPage(CYMinus1TaxYear) => CheckYourAnswersController.onPageLoad()
   }
 
@@ -42,19 +42,19 @@ class Navigator {
     case CYMinusFourYesNoPage => ua => yesNoNav(
       ua = ua,
       fromPage = CYMinusFourYesNoPage,
-      yesCall = DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus4TaxYear),
+      yesCall = DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus4TaxYears),
       noCall = CYMinusThreeYesNoController.onPageLoad()
     )
     case CYMinusThreeYesNoPage => ua => yesNoNav(
       ua = ua,
       fromPage = CYMinusThreeYesNoPage,
-      yesCall = DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus3TaxYear),
+      yesCall = DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus3TaxYears),
       noCall = CYMinusTwoYesNoController.onPageLoad()
     )
     case CYMinusTwoYesNoPage => ua => yesNoNav(
       ua = ua,
       fromPage = CYMinusTwoYesNoPage,
-      yesCall = DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus2TaxYear),
+      yesCall = DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus2TaxYears),
       noCall = CYMinusOneYesNoController.onPageLoad()
     )
     case CYMinusOneYesNoPage => ua => yesNoNav(

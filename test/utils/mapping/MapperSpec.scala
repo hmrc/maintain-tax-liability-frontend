@@ -52,9 +52,9 @@ class MapperSpec extends SpecBase with ScalaCheckPropertyChecks with DateGenerat
             when(mockTaxYearService.currentDate).thenReturn(date)
 
             val userAnswers = emptyUserAnswers
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYear), false).success.value
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus3TaxYear), false).success.value
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYear), false).success.value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYears), false).success.value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus3TaxYears), false).success.value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYears), false).success.value
               .set(DeclaredTaxToHMRCYesNoPage(CYMinus1TaxYear), true).success.value
 
             val result = mapper(userAnswers)
@@ -76,9 +76,9 @@ class MapperSpec extends SpecBase with ScalaCheckPropertyChecks with DateGenerat
             when(mockTaxYearService.currentDate).thenReturn(date)
 
             val userAnswers = emptyUserAnswers
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYear), true).success.value
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus3TaxYear), true).success.value
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYear), true).success.value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYears), true).success.value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus3TaxYears), true).success.value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYears), true).success.value
               .set(DeclaredTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
 
             val result = mapper(userAnswers)
@@ -98,9 +98,9 @@ class MapperSpec extends SpecBase with ScalaCheckPropertyChecks with DateGenerat
             when(mockTaxYearService.currentDate).thenReturn(date)
 
             val userAnswers = emptyUserAnswers
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYear), true).success.value
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus3TaxYear), true).success.value
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYear), true).success.value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYears), true).success.value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus3TaxYears), true).success.value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYears), true).success.value
               .set(DeclaredTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
 
             val result = mapper(userAnswers)
@@ -120,9 +120,9 @@ class MapperSpec extends SpecBase with ScalaCheckPropertyChecks with DateGenerat
             when(mockTaxYearService.currentDate).thenReturn(date)
 
             val userAnswers = emptyUserAnswers
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYear), true).success.value
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus3TaxYear), true).success.value
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYear), true).success.value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYears), true).success.value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus3TaxYears), true).success.value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYears), true).success.value
               .set(DeclaredTaxToHMRCYesNoPage(CYMinus1TaxYear), true).success.value
 
             val result = mapper(userAnswers)

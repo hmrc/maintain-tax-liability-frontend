@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions.StandardActionSets
 import forms.YesNoFormProvider
-import models.{CYMinus4TaxYear, TaxYearRange}
+import models.{CYMinus4TaxYears, TaxYearRange}
 import navigation.Navigator
 import pages.CYMinusFourYesNoPage
 import play.api.data.Form
@@ -41,7 +41,7 @@ class CYMinusFourYesNoController @Inject()(
                                             taxYearRange: TaxYearRange
                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  private def taxYearDates(implicit messages: Messages): Seq[String] = taxYearRange.taxYearDates(CYMinus4TaxYear)
+  private def taxYearDates(implicit messages: Messages): Seq[String] = taxYearRange.taxYearDates(CYMinus4TaxYears)
 
   private def form(implicit messages: Messages): Form[Boolean] = formProvider.withPrefix("cyMinusFour.liability", taxYearDates)
 

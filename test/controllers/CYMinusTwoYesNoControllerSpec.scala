@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import forms.YesNoFormProvider
-import models.{CYMinus2TaxYear, TaxYearRange}
+import models.{CYMinus2TaxYears, TaxYearRange}
 import navigation.Navigator
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -65,7 +65,7 @@ class CYMinusTwoYesNoControllerSpec extends SpecBase with BeforeAndAfterEach {
       contentAsString(result) mustEqual
         view(form, taxYearDates: _*)(request, messages).toString
 
-      verify(mockTaxYearRange, times(2)).taxYearDates(eqTo(CYMinus2TaxYear))(any())
+      verify(mockTaxYearRange, times(2)).taxYearDates(eqTo(CYMinus2TaxYears))(any())
 
       application.stop()
     }
@@ -89,7 +89,7 @@ class CYMinusTwoYesNoControllerSpec extends SpecBase with BeforeAndAfterEach {
       contentAsString(result) mustEqual
         view(form.fill(validAnswer), taxYearDates: _*)(request, messages).toString
 
-      verify(mockTaxYearRange, times(2)).taxYearDates(eqTo(CYMinus2TaxYear))(any())
+      verify(mockTaxYearRange, times(2)).taxYearDates(eqTo(CYMinus2TaxYears))(any())
 
       application.stop()
     }
@@ -110,7 +110,7 @@ class CYMinusTwoYesNoControllerSpec extends SpecBase with BeforeAndAfterEach {
 
       redirectLocation(result).value mustEqual fakeNavigator.desiredRoute.url
 
-      verify(mockTaxYearRange, times(1)).taxYearDates(eqTo(CYMinus2TaxYear))(any())
+      verify(mockTaxYearRange, times(1)).taxYearDates(eqTo(CYMinus2TaxYears))(any())
 
       application.stop()
     }
@@ -135,7 +135,7 @@ class CYMinusTwoYesNoControllerSpec extends SpecBase with BeforeAndAfterEach {
       contentAsString(result) mustEqual
         view(boundForm, taxYearDates: _*)(request, messages).toString
 
-      verify(mockTaxYearRange, times(2)).taxYearDates(eqTo(CYMinus2TaxYear))(any())
+      verify(mockTaxYearRange, times(2)).taxYearDates(eqTo(CYMinus2TaxYears))(any())
 
       application.stop()
     }

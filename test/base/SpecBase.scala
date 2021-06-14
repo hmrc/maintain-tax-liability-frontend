@@ -17,7 +17,7 @@
 package base
 
 import controllers.actions._
-import models.{TaxYear, UserAnswers}
+import models.{CYMinusNTaxYears, UserAnswers}
 import navigation.FakeNavigator
 import org.scalatest.{BeforeAndAfter, TestSuite, TryValues}
 import org.scalatestplus.play.PlaySpec
@@ -47,7 +47,7 @@ trait SpecBaseHelpers extends GuiceOneAppPerSuite with TryValues with Mocked wit
     identifier = identifier
   )
 
-  val taxYears: Seq[TaxYear] = TaxYear.taxYears
+  val taxYears: Seq[CYMinusNTaxYears] = CYMinusNTaxYears.taxYears
 
   val bodyParsers: BodyParsers.Default = injector.instanceOf[BodyParsers.Default]
 

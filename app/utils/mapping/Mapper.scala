@@ -35,17 +35,17 @@ class Mapper @Inject()(taxYearService: TaxYearService) {
     )
 
     YearsReturns {
-      TaxYear.taxYears.foldLeft[List[YearReturn]](Nil)((acc, taxYear) => {
+      CYMinusNTaxYears.taxYears.foldLeft[List[YearReturn]](Nil)((acc, taxYear) => {
         if (userAnswers.get(DeclaredTaxToHMRCYesNoPage(taxYear)).contains(false)) {
           taxYear match {
             case CYMinus1TaxYear =>
               acc :+ YearReturn(
-                taxReturnYear = taxYearService.nTaxYearsAgoFinishYear(taxYear.year),
+                taxReturnYear = taxYearService.nTaxYearsAgoFinishYear(taxYear.n),
                 taxConsequence = taxYearService.currentDate.isAfter(october5th)
               )
             case _ =>
               acc :+ YearReturn(
-                taxReturnYear = taxYearService.nTaxYearsAgoFinishYear(taxYear.year),
+                taxReturnYear = taxYearService.nTaxYearsAgoFinishYear(taxYear.n),
                 taxConsequence = true
               )
           }

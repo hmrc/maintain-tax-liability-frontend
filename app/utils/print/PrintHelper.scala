@@ -30,7 +30,7 @@ class PrintHelper @Inject()(taxYearRange: TaxYearRange,
 
     val bound = answerRowConverter.bind(userAnswers)
     
-    TaxYear.taxYears.foldLeft[Seq[AnswerSection]](Nil)((acc, taxYear) => {
+    CYMinusNTaxYears.taxYears.foldLeft[Seq[AnswerSection]](Nil)((acc, taxYear) => {
       
       val taxYearDates = taxYearRange.taxYearDates(taxYear)
       

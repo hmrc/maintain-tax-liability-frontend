@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import models.{CYMinus3TaxYear, TaxYearRange}
+import models.{CYMinus3TaxYears, TaxYearRange}
 import navigation.Navigator
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, verify, when}
@@ -60,7 +60,7 @@ class CYMinusThreeEarlierYearsControllerSpec extends SpecBase with BeforeAndAfte
       contentAsString(result) mustEqual
         view(year, onSubmitRoute)(request, messages).toString
 
-      verify(mockTaxYearRange).yearAtStart(CYMinus3TaxYear)
+      verify(mockTaxYearRange).yearAtStart(CYMinus3TaxYears)
 
       application.stop()
     }

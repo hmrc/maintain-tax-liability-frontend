@@ -62,7 +62,7 @@ class TaxYearRangeSpec extends SpecBase with BeforeAndAfterEach {
 
         "CYMinus2TaxYear" when {
 
-          val taxYear = CYMinus2TaxYear
+          val taxYear = CYMinus2TaxYears
 
           "English" in {
             val result = taxYearRange.taxYearDates(taxYear)(messages("en"))
@@ -77,7 +77,7 @@ class TaxYearRangeSpec extends SpecBase with BeforeAndAfterEach {
 
         "CYMinus3TaxYear" when {
 
-          val taxYear = CYMinus3TaxYear
+          val taxYear = CYMinus3TaxYears
 
           "English" in {
             val result = taxYearRange.taxYearDates(taxYear)(messages("en"))
@@ -92,7 +92,7 @@ class TaxYearRangeSpec extends SpecBase with BeforeAndAfterEach {
 
         "CYMinus4TaxYear" when {
 
-          val taxYear = CYMinus4TaxYear
+          val taxYear = CYMinus4TaxYears
 
           "English" in {
             val result = taxYearRange.taxYearDates(taxYear)(messages("en"))
@@ -118,19 +118,19 @@ class TaxYearRangeSpec extends SpecBase with BeforeAndAfterEach {
 
         "CYMinus2TaxYear" in {
 
-          val result = taxYearRange.yearAtStart(CYMinus2TaxYear)
+          val result = taxYearRange.yearAtStart(CYMinus2TaxYears)
           result mustEqual "2018"
         }
 
         "CYMinus3TaxYear" in {
 
-          val result = taxYearRange.yearAtStart(CYMinus3TaxYear)
+          val result = taxYearRange.yearAtStart(CYMinus3TaxYears)
           result mustEqual "2017"
         }
 
         "CYMinus4TaxYear" in {
 
-          val result = taxYearRange.yearAtStart(CYMinus4TaxYear)
+          val result = taxYearRange.yearAtStart(CYMinus4TaxYears)
           result mustEqual "2016"
         }
       }

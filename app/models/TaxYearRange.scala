@@ -24,17 +24,16 @@ import javax.inject.Inject
 
 class TaxYearRange @Inject()(languageUtils: LanguageUtils, taxYearService: TaxYearService) {
 
-  def taxYearDates(taxYear: TaxYear)(implicit messages: Messages): Seq[String] = {
+  def taxYearDates(cYMinusNTaxYears: CYMinusNTaxYears)(implicit messages: Messages): Seq[String] = {
 
-    val taxYearYear = taxYearService.currentTaxYear.back(taxYear.year)
+    val taxYear = taxYearService.currentTaxYear.back(cYMinusNTaxYears.n)
 
-    lazy val startDate: String = languageUtils.Dates.formatDate(taxYearYear.starts)
-
-    lazy val endDate: String = languageUtils.Dates.formatDate(taxYearYear.finishes)
+    lazy val startDate: String = languageUtils.Dates.formatDate(taxYear.starts)
+    lazy val endDate: String = languageUtils.Dates.formatDate(taxYear.finishes)
 
     startDate :: endDate :: Nil
   }
 
-  def yearAtStart(taxYear: TaxYear): String = taxYearService.currentTaxYear.back(taxYear.year).startYear.toString
+  def yearAtStart(cYMinusNTaxYears: CYMinusNTaxYears): String = taxYearService.currentTaxYear.back(cYMinusNTaxYears.n).startYear.toString
 
 }

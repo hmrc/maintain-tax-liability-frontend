@@ -17,7 +17,7 @@
 package navigation
 
 import base.SpecBase
-import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear}
+import models.{CYMinus1TaxYear, CYMinus2TaxYears, CYMinus3TaxYears, CYMinus4TaxYears}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 
@@ -48,7 +48,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks  {
         val answers = emptyUserAnswers.set(page, true).success.value
 
         navigator.nextPage(page, answers)
-          .mustBe(controllers.routes.DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus4TaxYear))
+          .mustBe(controllers.routes.DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus4TaxYears))
       }
 
       "-> No -> CYMinusThreeYesNoController" in {
@@ -66,7 +66,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks  {
         val answers = emptyUserAnswers.set(page, true).success.value
 
         navigator.nextPage(page, answers)
-          .mustBe(controllers.routes.DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus3TaxYear))
+          .mustBe(controllers.routes.DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus3TaxYears))
       }
 
       "-> No -> CYMinusTwoYesNoController" in {
@@ -84,7 +84,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks  {
         val answers = emptyUserAnswers.set(page, true).success.value
 
         navigator.nextPage(page, answers)
-          .mustBe(controllers.routes.DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus2TaxYear))
+          .mustBe(controllers.routes.DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus2TaxYears))
       }
 
       "-> No -> CYMinusOneYesNoController" in {
@@ -119,21 +119,21 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks  {
 
       "CYMinus4TaxYear" must {
         "-> CYMinusThreeYesNoController" in {
-          navigator.nextPage(page(CYMinus4TaxYear), emptyUserAnswers)
+          navigator.nextPage(page(CYMinus4TaxYears), emptyUserAnswers)
             .mustBe(controllers.routes.CYMinusThreeYesNoController.onPageLoad())
         }
       }
 
       "CYMinus3TaxYear" must {
         "-> CYMinusTwoYesNoController" in {
-          navigator.nextPage(page(CYMinus3TaxYear), emptyUserAnswers)
+          navigator.nextPage(page(CYMinus3TaxYears), emptyUserAnswers)
             .mustBe(controllers.routes.CYMinusTwoYesNoController.onPageLoad())
         }
       }
 
       "CYMinus2TaxYear" must {
         "-> CYMinusOneYesNoController" in {
-          navigator.nextPage(page(CYMinus2TaxYear), emptyUserAnswers)
+          navigator.nextPage(page(CYMinus2TaxYears), emptyUserAnswers)
             .mustBe(controllers.routes.CYMinusOneYesNoController.onPageLoad())
         }
       }

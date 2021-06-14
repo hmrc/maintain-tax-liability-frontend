@@ -16,7 +16,7 @@
 
 package pages
 
-import models.CYMinus4TaxYear
+import models.CYMinus4TaxYears
 import pages.behaviours.PageBehaviours
 
 class CYMinusFourYesNoPageSpec extends PageBehaviours {
@@ -32,11 +32,11 @@ class CYMinusFourYesNoPageSpec extends PageBehaviours {
     "implement cleanup logic when NO selected" in {
       val answers = emptyUserAnswers
         .set(CYMinusFourYesNoPage, true).success.value
-        .set(DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYear), true).success.value
+        .set(DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYears), true).success.value
 
       val cleaned = answers.set(CYMinusFourYesNoPage, false).success.value
 
-      cleaned.get(DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYear)) mustNot be(defined)
+      cleaned.get(DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYears)) mustNot be(defined)
     }
   }
 }

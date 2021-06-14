@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions.StandardActionSets
 import forms.YesNoFormProvider
-import models.{TaxYear, TaxYearRange}
+import models.{CYMinusNTaxYears, TaxYearRange}
 import navigation.Navigator
 import pages.DeclaredTaxToHMRCYesNoPage
 import play.api.data.Form
@@ -32,20 +32,20 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DeclaredTaxToHMRCYesNoController @Inject()(
-                                             val controllerComponents: MessagesControllerComponents,
-                                             navigator: Navigator,
-                                             actions: StandardActionSets,
-                                             formProvider: YesNoFormProvider,
-                                             repository: PlaybackRepository,
-                                             view: DeclaredTaxToHMRCYesNoView,
-                                             taxYearRange: TaxYearRange
-                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                  val controllerComponents: MessagesControllerComponents,
+                                                  navigator: Navigator,
+                                                  actions: StandardActionSets,
+                                                  formProvider: YesNoFormProvider,
+                                                  repository: PlaybackRepository,
+                                                  view: DeclaredTaxToHMRCYesNoView,
+                                                  taxYearRange: TaxYearRange
+                                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  private def taxYearDates(taxYear: TaxYear)(implicit messages: Messages): Seq[String] = taxYearRange.taxYearDates(taxYear)
+  private def taxYearDates(taxYear: CYMinusNTaxYears)(implicit messages: Messages): Seq[String] = taxYearRange.taxYearDates(taxYear)
 
   private def form(taxYearDates: Seq[String]): Form[Boolean] = formProvider.withPrefix("declaredToHMRC", taxYearDates)
 
-  def onPageLoad(taxYear: TaxYear): Action[AnyContent] = actions.authorisedWithRequiredData {
+  def onPageLoad(taxYear: CYMinusNTaxYears): Action[AnyContent] = actions.authorisedWithRequiredData {
     implicit request =>
 
       val tyd = taxYearDates(taxYear)
@@ -58,7 +58,7 @@ class DeclaredTaxToHMRCYesNoController @Inject()(
       Ok(view(preparedForm, taxYear, tyd: _*))
   }
 
-  def onSubmit(taxYear: TaxYear): Action[AnyContent] = actions.authorisedWithRequiredData.async {
+  def onSubmit(taxYear: CYMinusNTaxYears): Action[AnyContent] = actions.authorisedWithRequiredData.async {
     implicit request =>
 
       val tyd = taxYearDates(taxYear)

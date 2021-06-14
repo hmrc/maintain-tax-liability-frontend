@@ -20,54 +20,54 @@ import controllers.routes._
 import pages._
 import play.api.mvc.{JavascriptLiteral, PathBindable}
 
-sealed trait TaxYear {
-  val year: Int
+sealed trait CYMinusNTaxYears {
+  val n: Int
   val messagePrefix: String
-  override def toString: String = year.toString
+  override def toString: String = n.toString
   val page: QuestionPage[Boolean]
   def changeUrl: String
 }
 
-case object CYMinus4TaxYear extends TaxYear {
-  override val year: Int = 4
+case object CYMinus4TaxYears extends CYMinusNTaxYears {
+  override val n: Int = 4
   override val messagePrefix: String = "cyMinusFour"
   override val page: QuestionPage[Boolean] = CYMinusFourYesNoPage
   override def changeUrl: String = CYMinusFourYesNoController.onPageLoad().url
 }
-case object CYMinus3TaxYear extends TaxYear {
-  override val year: Int = 3
+case object CYMinus3TaxYears extends CYMinusNTaxYears {
+  override val n: Int = 3
   override val messagePrefix: String = "cyMinusThree"
   override val page: QuestionPage[Boolean] = CYMinusThreeYesNoPage
   override def changeUrl: String = CYMinusThreeYesNoController.onPageLoad().url
 }
-case object CYMinus2TaxYear extends TaxYear {
-  override val year: Int = 2
+case object CYMinus2TaxYears extends CYMinusNTaxYears {
+  override val n: Int = 2
   override val messagePrefix: String = "cyMinusTwo"
   override val page: QuestionPage[Boolean] = CYMinusTwoYesNoPage
   override def changeUrl: String = CYMinusTwoYesNoController.onPageLoad().url
 }
-case object CYMinus1TaxYear extends TaxYear {
-  override val year: Int = 1
+case object CYMinus1TaxYear extends CYMinusNTaxYears {
+  override val n: Int = 1
   override val messagePrefix: String = "cyMinusOne"
   override val page: QuestionPage[Boolean] = CYMinusOneYesNoPage
   override def changeUrl: String = CYMinusOneYesNoController.onPageLoad().url
 }
 
-object TaxYear {
+object CYMinusNTaxYears {
 
-  val taxYears: Seq[TaxYear] = Seq(CYMinus4TaxYear, CYMinus3TaxYear, CYMinus2TaxYear, CYMinus1TaxYear)
+  val taxYears: Seq[CYMinusNTaxYears] = Seq(CYMinus4TaxYears, CYMinus3TaxYears, CYMinus2TaxYears, CYMinus1TaxYear)
 
-  implicit val jsLiteral: JavascriptLiteral[TaxYear] = (value: TaxYear) => value.toString
+  implicit val jsLiteral: JavascriptLiteral[CYMinusNTaxYears] = (value: CYMinusNTaxYears) => value.toString
 
-  implicit def pathBindable(implicit intBinder: PathBindable[Int]): PathBindable[TaxYear] = new PathBindable[TaxYear] {
-    override def bind(key: String, value: String): Either[String, TaxYear] = {
+  implicit def pathBindable(implicit intBinder: PathBindable[Int]): PathBindable[CYMinusNTaxYears] = new PathBindable[CYMinusNTaxYears] {
+    override def bind(key: String, value: String): Either[String, CYMinusNTaxYears] = {
 
-      def taxYearFromId(id: Int): Option[TaxYear] = {
+      def taxYearFromId(id: Int): Option[CYMinusNTaxYears] = {
         id match {
-          case CYMinus4TaxYear.year => Some(CYMinus4TaxYear)
-          case CYMinus3TaxYear.year => Some(CYMinus3TaxYear)
-          case CYMinus2TaxYear.year => Some(CYMinus2TaxYear)
-          case CYMinus1TaxYear.year => Some(CYMinus1TaxYear)
+          case CYMinus4TaxYears.`n` => Some(CYMinus4TaxYears)
+          case CYMinus3TaxYears.`n` => Some(CYMinus3TaxYears)
+          case CYMinus2TaxYears.`n` => Some(CYMinus2TaxYears)
+          case CYMinus1TaxYear.`n` => Some(CYMinus1TaxYear)
           case _ => None
         }
       }
@@ -78,7 +78,7 @@ object TaxYear {
       } yield taxYear
     }
 
-    override def unbind(key: String, value: TaxYear): String = value.toString.trim.toLowerCase
+    override def unbind(key: String, value: CYMinusNTaxYears): String = value.toString.trim.toLowerCase
   }
 
 }
