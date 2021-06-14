@@ -32,7 +32,7 @@ class UnauthorisedViewSpec extends ViewBehaviours {
     behave like normalPage(
       view = applyView,
       messageKeyPrefix = "unauthorised",
-      messageKeyParam = ""
+      messageKeyParams = Nil
     )
   }
 }

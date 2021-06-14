@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
-package generators
+package viewmodels
 
-trait ModelGenerators
+import play.twirl.api.Html
+
+case class AnswerRow(label: String, answer: Html, changeUrl: String)

@@ -19,4 +19,37 @@ GET        /feature-not-available                   controllers.FeatureNotAvaila
 GET        /keep-alive                              controllers.SessionTimeoutController.keepAlive
 GET        /timeout                                 controllers.SessionTimeoutController.timeout
 
+GET        /need-to-pay-more-than-4-tax-years       controllers.CYMinusFourEarlierYearsController.onPageLoad()
+POST       /need-to-pay-more-than-4-tax-years       controllers.CYMinusFourEarlierYearsController.onSubmit()
+
+GET        /need-to-pay-tax-4-years-ago             controllers.CYMinusFourYesNoController.onPageLoad()
+POST       /need-to-pay-tax-4-years-ago             controllers.CYMinusFourYesNoController.onSubmit()
+
+GET        /need-to-pay-more-than-3-tax-years       controllers.CYMinusThreeEarlierYearsController.onPageLoad()
+POST       /need-to-pay-more-than-3-tax-years       controllers.CYMinusThreeEarlierYearsController.onSubmit()
+
+GET        /need-to-pay-tax-3-years-ago             controllers.CYMinusThreeYesNoController.onPageLoad()
+POST       /need-to-pay-tax-3-years-ago             controllers.CYMinusThreeYesNoController.onSubmit()
+
+GET        /need-to-pay-tax-2-years-ago             controllers.CYMinusTwoYesNoController.onPageLoad()
+POST       /need-to-pay-tax-2-years-ago             controllers.CYMinusTwoYesNoController.onSubmit()
+
+GET        /need-to-pay-tax-1-year-ago              controllers.CYMinusOneYesNoController.onPageLoad()
+POST       /need-to-pay-tax-1-year-ago              controllers.CYMinusOneYesNoController.onSubmit()
+
+GET        /declared-tax-4-years-ago                controllers.DeclaredTaxToHMRCYesNoController.onPageLoad(taxYear: CYMinusNTaxYears = CYMinus4TaxYears)
+POST       /declared-tax-4-years-ago                controllers.DeclaredTaxToHMRCYesNoController.onSubmit(taxYear: CYMinusNTaxYears = CYMinus4TaxYears)
+
+GET        /declared-tax-3-years-ago                controllers.DeclaredTaxToHMRCYesNoController.onPageLoad(taxYear: CYMinusNTaxYears = CYMinus3TaxYears)
+POST       /declared-tax-3-years-ago                controllers.DeclaredTaxToHMRCYesNoController.onSubmit(taxYear: CYMinusNTaxYears = CYMinus3TaxYears)
+
+GET        /declared-tax-2-years-ago                controllers.DeclaredTaxToHMRCYesNoController.onPageLoad(taxYear: CYMinusNTaxYears = CYMinus2TaxYears)
+POST       /declared-tax-2-years-ago                controllers.DeclaredTaxToHMRCYesNoController.onSubmit(taxYear: CYMinusNTaxYears = CYMinus2TaxYears)
+
+GET        /declared-tax-1-year-ago                 controllers.DeclaredTaxToHMRCYesNoController.onPageLoad(taxYear: CYMinusNTaxYears = CYMinus1TaxYear)
+POST       /declared-tax-1-year-ago                 controllers.DeclaredTaxToHMRCYesNoController.onSubmit(taxYear: CYMinusNTaxYears = CYMinus1TaxYear)
+
+GET        /check-your-answers                      controllers.CheckYourAnswersController.onPageLoad()
+POST       /check-your-answers                      controllers.CheckYourAnswersController.onSubmit()
+
 GET        /:identifier                             controllers.IndexController.onPageLoad(identifier: String)

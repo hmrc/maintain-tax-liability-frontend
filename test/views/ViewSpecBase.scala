@@ -39,7 +39,7 @@ trait ViewSpecBase extends SpecBase {
   def assertEqualsMessage(doc: Document, cssSelector: String, expectedMessageKey: String, args: Any*): Assertion =
     assertEqualsValue(doc, cssSelector, ViewUtils.breadcrumbTitle(messages(expectedMessageKey, args: _*)))
 
-  def assertEqualsValue(doc : Document, cssSelector : String, expectedValue: String): Assertion = {
+  def assertEqualsValue(doc: Document, cssSelector: String, expectedValue: String): Assertion = {
     val elements = doc.select(cssSelector)
 
     if(elements.isEmpty) throw new IllegalArgumentException(s"CSS Selector $cssSelector wasn't rendered.")
@@ -66,6 +66,10 @@ trait ViewSpecBase extends SpecBase {
 
   def assertRenderedById(doc: Document, id: String): Assertion = {
     assert(doc.getElementById(id) != null, "\n\nElement " + id + " was not rendered on the page.\n")
+  }
+
+  def assertRenderedByClass(doc: Document, cssClass: String): Assertion = {
+    assert(doc.getElementsByClass(cssClass) != null, "\n\nElement " + cssClass + " was not rendered on the page.\n")
   }
 
   def assertContainsLink(doc: Document, linkUrl: String, linkText: String): Assertion = {

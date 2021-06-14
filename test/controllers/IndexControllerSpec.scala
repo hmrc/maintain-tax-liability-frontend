@@ -17,29 +17,294 @@
 package controllers
 
 import base.SpecBase
+import config.ErrorHandler
+import connectors.TrustsConnector
+import models.{FirstTaxYearAvailable, TrustDetails, UserAnswers}
+import org.mockito.ArgumentCaptor
+import org.mockito.Matchers.any
+import org.mockito.Mockito.{reset, verify, when}
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.TaskCompleted
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.TaxYearService
 
-class IndexControllerSpec extends SpecBase {
+import java.time.LocalDate
+import scala.concurrent.Future
+
+class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with BeforeAndAfterEach {
 
   lazy val indexRoute: String = routes.IndexController.onPageLoad(identifier).url
 
-  "IndexController" must {
+  val mockTaxYearService: TaxYearService = mock[TaxYearService]
+  val mockTrustsConnector: TrustsConnector = mock[TrustsConnector]
+  val errorHandler: ErrorHandler = injector.instanceOf[ErrorHandler]
 
-    "redirect to feature unavailable" in {
+  override def beforeEach(): Unit = {
+    reset(playbackRepository, mockTaxYearService, mockTrustsConnector)
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .build()
+    when(playbackRepository.set(any())).thenReturn(Future.successful(true))
 
-      val request = FakeRequest(GET, indexRoute)
+    when(mockTrustsConnector.getTrustDetails(any())(any(), any()))
+      .thenReturn(Future.successful(TrustDetails(LocalDate.parse("2000-01-01"))))
+  }
 
-      val result = route(application, request).value
+  "IndexController" when {
 
-      status(result) mustEqual SEE_OTHER
+    "there are no previously saved answers" when {
 
-      redirectLocation(result).value mustBe routes.FeatureNotAvailableController.onPageLoad().url
+      "CY-4 and earlier years to declare" must {
+        "set new user answers in repository and redirect to CYMinusFourEarlierYearsController" in {
 
-      application.stop()
+          when(mockTaxYearService.firstTaxYearAvailable(any()))
+            .thenReturn(FirstTaxYearAvailable(4, earlierYearsToDeclare = true))
+
+          val application = applicationBuilder(userAnswers = None)
+            .overrides(bind[TaxYearService].toInstance(mockTaxYearService))
+            .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+            .build()
+
+          val request = FakeRequest(GET, indexRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+
+          redirectLocation(result).value mustBe routes.CYMinusFourEarlierYearsController.onPageLoad().url
+
+          val uaCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
+          verify(playbackRepository).set(uaCaptor.capture)
+          uaCaptor.getValue.internalId mustBe internalId
+          uaCaptor.getValue.identifier mustBe identifier
+
+          application.stop()
+        }
+      }
+
+      "CY-4 and no earlier years to declare" must {
+        "set new user answers in repository and redirect to CYMinusFourYesNoController" in {
+
+          when(mockTaxYearService.firstTaxYearAvailable(any()))
+            .thenReturn(FirstTaxYearAvailable(4, earlierYearsToDeclare = false))
+
+          val application = applicationBuilder(userAnswers = None)
+            .overrides(bind[TaxYearService].toInstance(mockTaxYearService))
+            .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+            .build()
+
+          val request = FakeRequest(GET, indexRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+
+          redirectLocation(result).value mustBe routes.CYMinusFourYesNoController.onPageLoad().url
+
+          val uaCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
+          verify(playbackRepository).set(uaCaptor.capture)
+          uaCaptor.getValue.internalId mustBe internalId
+          uaCaptor.getValue.identifier mustBe identifier
+
+          application.stop()
+        }
+      }
+
+      "CY-3 and earlier years to declare" must {
+        "set new user answers in repository and redirect to CYMinusThreeEarlierYearsController" in {
+
+          when(mockTaxYearService.firstTaxYearAvailable(any()))
+            .thenReturn(FirstTaxYearAvailable(3, earlierYearsToDeclare = true))
+
+          val application = applicationBuilder(userAnswers = None)
+            .overrides(bind[TaxYearService].toInstance(mockTaxYearService))
+            .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+            .build()
+
+          val request = FakeRequest(GET, indexRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+
+          redirectLocation(result).value mustBe routes.CYMinusThreeEarlierYearsController.onPageLoad().url
+
+          val uaCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
+          verify(playbackRepository).set(uaCaptor.capture)
+          uaCaptor.getValue.internalId mustBe internalId
+          uaCaptor.getValue.identifier mustBe identifier
+
+          application.stop()
+        }
+      }
+
+      "CY-3 and no earlier years to declare" must {
+        "set new user answers in repository and redirect to CYMinusThreeYesNoController" in {
+
+          when(mockTaxYearService.firstTaxYearAvailable(any()))
+            .thenReturn(FirstTaxYearAvailable(3, earlierYearsToDeclare = false))
+
+          val application = applicationBuilder(userAnswers = None)
+            .overrides(bind[TaxYearService].toInstance(mockTaxYearService))
+            .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+            .build()
+
+          val request = FakeRequest(GET, indexRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+
+          redirectLocation(result).value mustBe routes.CYMinusThreeYesNoController.onPageLoad().url
+
+          val uaCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
+          verify(playbackRepository).set(uaCaptor.capture)
+          uaCaptor.getValue.internalId mustBe internalId
+          uaCaptor.getValue.identifier mustBe identifier
+
+          application.stop()
+        }
+      }
+
+      "CY-2" must {
+        "set new user answers in repository and redirect to CYMinusTwoYesNoController" in {
+
+          when(mockTaxYearService.firstTaxYearAvailable(any()))
+            .thenReturn(FirstTaxYearAvailable(2, earlierYearsToDeclare = false))
+
+          val application = applicationBuilder(userAnswers = None)
+            .overrides(bind[TaxYearService].toInstance(mockTaxYearService))
+            .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+            .build()
+
+          val request = FakeRequest(GET, indexRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+
+          redirectLocation(result).value mustBe routes.CYMinusTwoYesNoController.onPageLoad().url
+
+          val uaCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
+          verify(playbackRepository).set(uaCaptor.capture)
+          uaCaptor.getValue.internalId mustBe internalId
+          uaCaptor.getValue.identifier mustBe identifier
+
+          application.stop()
+        }
+      }
+
+      "CY-1" must {
+        "set new user answers in repository and redirect to CYMinusOneYesNoController" in {
+
+          when(mockTaxYearService.firstTaxYearAvailable(any()))
+            .thenReturn(FirstTaxYearAvailable(1, earlierYearsToDeclare = false))
+
+          val application = applicationBuilder(userAnswers = None)
+            .overrides(bind[TaxYearService].toInstance(mockTaxYearService))
+            .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+            .build()
+
+          val request = FakeRequest(GET, indexRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+
+          redirectLocation(result).value mustBe routes.CYMinusOneYesNoController.onPageLoad().url
+
+          val uaCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
+          verify(playbackRepository).set(uaCaptor.capture)
+          uaCaptor.getValue.internalId mustBe internalId
+          uaCaptor.getValue.identifier mustBe identifier
+
+          application.stop()
+        }
+      }
+
+      "unexpected result for number of years ago of first tax year available" must {
+        "return internal server error" in {
+          forAll(arbitrary[Int].suchThat(_ > 4)) { int =>
+            beforeEach()
+
+            when(mockTaxYearService.firstTaxYearAvailable(any()))
+              .thenReturn(FirstTaxYearAvailable(int, earlierYearsToDeclare = false))
+
+            val application = applicationBuilder(userAnswers = None)
+              .overrides(bind[TaxYearService].toInstance(mockTaxYearService))
+              .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+              .build()
+
+            val request = FakeRequest(GET, indexRoute)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual INTERNAL_SERVER_ERROR
+
+            contentAsString(result) mustEqual errorHandler.internalServerErrorTemplate(request).toString
+
+            val uaCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
+            verify(playbackRepository).set(uaCaptor.capture)
+            uaCaptor.getValue.internalId mustBe internalId
+            uaCaptor.getValue.identifier mustBe identifier
+
+            application.stop()
+          }
+        }
+      }
+    }
+
+    "there are previously saved answers" when {
+
+      "TaskCompleted is true" must {
+        "redirect to CheckYourAnswersController" in {
+
+          val userAnswers = emptyUserAnswers.set(TaskCompleted, true).success.value
+
+          val application = applicationBuilder(userAnswers = Some(userAnswers))
+            .build()
+
+          val request = FakeRequest(GET, indexRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+
+          redirectLocation(result).value mustBe routes.CheckYourAnswersController.onPageLoad().url
+
+          application.stop()
+        }
+      }
+
+      "TaskCompleted is false or undefined" must {
+        "not redirect to CheckYourAnswersController" in {
+
+          when(mockTaxYearService.firstTaxYearAvailable(any()))
+            .thenReturn(FirstTaxYearAvailable(1, earlierYearsToDeclare = false))
+
+          forAll(arbitrary[Option[Boolean]].suchThat(!_.contains(true))) { maybeBool =>
+
+            val userAnswers = emptyUserAnswers.set(TaskCompleted, maybeBool).success.value
+
+            val application = applicationBuilder(userAnswers = Some(userAnswers))
+              .overrides(bind[TaxYearService].toInstance(mockTaxYearService))
+              .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+              .build()
+
+            val request = FakeRequest(GET, indexRoute)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+
+            redirectLocation(result).value mustNot be(routes.CheckYourAnswersController.onPageLoad().url)
+
+            application.stop()
+          }
+        }
+      }
     }
   }
 }

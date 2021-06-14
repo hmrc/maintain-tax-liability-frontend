@@ -32,7 +32,7 @@ class SessionExpiredViewSpec extends ViewBehaviours {
     behave like normalPage(
       view = applyView,
       messageKeyPrefix = "session_expired",
-      messageKeyParam = "",
+      messageKeyParams = Nil,
       expectedGuidanceKeys = "guidance", "guidance.2"
     )
 

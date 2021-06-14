@@ -16,24 +16,62 @@
 
 package controllers
 
+import config.ErrorHandler
+import connectors.TrustsConnector
 import controllers.actions.StandardActionSets
+import controllers.routes._
+import models.UserAnswers
+import pages.TaskCompleted
 import play.api.mvc._
+import repositories.PlaybackRepository
+import services.TaxYearService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionLogging
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IndexController @Inject()(
                                  mcc: MessagesControllerComponents,
-                                 actions: StandardActionSets
+                                 actions: StandardActionSets,
+                                 repository: PlaybackRepository,
+                                 taxYearService: TaxYearService,
+                                 trustsConnector: TrustsConnector,
+                                 errorHandler: ErrorHandler
                                )(implicit ec: ExecutionContext) extends FrontendController(mcc) with SessionLogging {
 
-  def onPageLoad(identifier: String): Action[AnyContent] = actions.authorisedWithSavedSession(identifier) {
+  def onPageLoad(identifier: String): Action[AnyContent] = actions.authorisedWithSavedSession(identifier).async {
     implicit request =>
 
-      Redirect(routes.FeatureNotAvailableController.onPageLoad())
+      request.userAnswers match {
+        case Some(ua) if ua.get(TaskCompleted).contains(true) =>
+          Future.successful(Redirect(routes.CheckYourAnswersController.onPageLoad()))
+        case _ =>
+          for {
+            _ <- repository.set(UserAnswers(request.user.internalId, identifier))
+            trustDetails <- trustsConnector.getTrustDetails(identifier)
+            firstTaxYearAvailable = taxYearService.firstTaxYearAvailable(trustDetails.startDate)
+          } yield {
+            firstTaxYearAvailable.yearsAgo match {
+              case 4 if firstTaxYearAvailable.earlierYearsToDeclare =>
+                Redirect(CYMinusFourEarlierYearsController.onPageLoad())
+              case 4 =>
+                Redirect(CYMinusFourYesNoController.onPageLoad())
+              case 3 if firstTaxYearAvailable.earlierYearsToDeclare =>
+                Redirect(CYMinusThreeEarlierYearsController.onPageLoad())
+              case 3 =>
+                Redirect(CYMinusThreeYesNoController.onPageLoad())
+              case 2 =>
+                Redirect(CYMinusTwoYesNoController.onPageLoad())
+              case 1 =>
+                Redirect(CYMinusOneYesNoController.onPageLoad())
+              case x =>
+                errorLog(s"Unexpected result for number of years ago of first tax year available: $x", Some(identifier))
+                InternalServerError(errorHandler.internalServerErrorTemplate)
+            }
+          }
+      }
   }
 
 }

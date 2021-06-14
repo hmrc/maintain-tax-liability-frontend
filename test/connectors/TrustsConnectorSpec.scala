@@ -20,9 +20,10 @@ import base.SpecBase
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
-import models.TrustDetails
+import models.{TrustDetails, YearReturn, YearsReturns}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Inside}
+import play.api.http.Status.OK
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -97,6 +98,33 @@ class TrustsConnectorSpec extends SpecBase with ScalaFutures
             startDate = LocalDate.parse("1920-03-28")
           )
       }
+    }
+
+    "setYearsReturns" in {
+
+      val application = applicationBuilder()
+        .configure(
+          Seq(
+            "microservice.services.trusts.port" -> server.port(),
+            "auditing.enabled" -> false
+          ): _*
+        ).build()
+
+      val connector = application.injector.instanceOf[TrustsConnector]
+
+      server.stubFor(
+        put(urlEqualTo(s"/trusts/tax-liability/$identifier/years-returns"))
+          .willReturn(ok)
+      )
+
+      val result = connector.setYearsReturns(
+        identifier,
+        YearsReturns(List(YearReturn("20", taxConsequence = true)))
+      )
+
+      result.futureValue.status mustBe OK
+
+      application.stop()
     }
 
   }
