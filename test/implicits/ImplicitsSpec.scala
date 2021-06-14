@@ -26,11 +26,13 @@ class ImplicitsSpec extends SpecBase {
   "Implicits" when {
 
     "LocalDateImplicits" when {
+
+      val date = LocalDate.of(1996, 2, 3)
+
       "next" must {
 
         "return following year" when {
           "month/day is before date" in {
-            val date = LocalDate.of(1996, 2, 3)
             val monthDay = MonthDay.of(2, 2)
             val result = date.next(monthDay)
             result mustBe LocalDate.of(1997, 2, 2)
@@ -40,18 +42,24 @@ class ImplicitsSpec extends SpecBase {
         "return same year" when {
 
           "month/day is same as date" in {
-            val date = LocalDate.of(1996, 2, 3)
             val monthDay = MonthDay.of(2, 3)
             val result = date.next(monthDay)
             result mustBe LocalDate.of(1996, 2, 3)
           }
 
           "month/day is after date" in {
-            val date = LocalDate.of(1996, 2, 3)
+
             val monthDay = MonthDay.of(2, 4)
             val result = date.next(monthDay)
             result mustBe LocalDate.of(1996, 2, 4)
           }
+        }
+      }
+
+      "getMonthDay" must {
+        "return month/day representation of given date" in {
+          val result = date.getMonthDay
+          result mustBe MonthDay.of(2, 3)
         }
       }
     }
