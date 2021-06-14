@@ -14,11 +14,23 @@
  * limitations under the License.
  */
 
-package utils
+package implicits
 
-object Constants {
+import java.time.{LocalDate, MonthDay}
 
-  final val DEADLINE_MONTH = 12
-  final val DEADLINE_DAY = 22
+object Implicits {
+
+  implicit class LocalDateImplicits(date: LocalDate) {
+    def next(monthDay: MonthDay): LocalDate = {
+      val year = if (!monthDay.isBefore(date.getMonthDay)) {
+        date.getYear
+      } else {
+        date.getYear + 1
+      }
+      monthDay.atYear(year)
+    }
+
+    def getMonthDay: MonthDay = MonthDay.of(date.getMonthValue, date.getDayOfMonth)
+  }
 
 }
