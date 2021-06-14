@@ -36,16 +36,16 @@ class PrintHelper @Inject()(taxYearRange: TaxYearRange,
       
       val answerRows: Seq[AnswerRow] = Seq(
         bound.yesNoQuestion(
-          pageForTaxYear(taxYear),
-          s"${taxYear.messagePrefix}.liability",
-          changeUrlForTaxYear(taxYear),
-          taxYearDates
+          query = taxYear.page,
+          labelKey = s"${taxYear.messagePrefix}.liability",
+          changeUrl = taxYear.changeUrl,
+          arguments = taxYearDates
         ),
         bound.yesNoQuestion(
-          DeclaredTaxToHMRCYesNoPage(taxYear),
-          "declaredToHMRC",
-          controllers.routes.DeclaredTaxToHMRCYesNoController.onPageLoad(taxYear).url,
-          taxYearRange.taxYearDates(taxYear)
+          query = DeclaredTaxToHMRCYesNoPage(taxYear),
+          labelKey = "declaredToHMRC",
+          changeUrl = controllers.routes.DeclaredTaxToHMRCYesNoController.onPageLoad(taxYear).url,
+          arguments = taxYearDates
         )
       ).flatten
       
@@ -54,20 +54,6 @@ class PrintHelper @Inject()(taxYearRange: TaxYearRange,
         case _ => acc :+ AnswerSection(messages("checkYourAnswersSection.heading", taxYearDates: _*), answerRows)
       }
     })
-  }
-
-  private def changeUrlForTaxYear(taxYear: TaxYear): String = taxYear match {
-    case CYMinus4TaxYear => controllers.routes.CYMinusFourYesNoController.onPageLoad().url
-    case CYMinus3TaxYear => controllers.routes.CYMinusThreeYesNoController.onPageLoad().url
-    case CYMinus2TaxYear => controllers.routes.CYMinusTwoYesNoController.onPageLoad().url
-    case CYMinus1TaxYear => controllers.routes.CYMinusOneYesNoController.onPageLoad().url
-  }
-
-  private def pageForTaxYear(taxYear: TaxYear): QuestionPage[Boolean] = taxYear match {
-    case CYMinus4TaxYear => CYMinusFourYesNoPage
-    case CYMinus3TaxYear => CYMinusThreeYesNoPage
-    case CYMinus2TaxYear => CYMinusTwoYesNoPage
-    case CYMinus1TaxYear => CYMinusOneYesNoPage
   }
 
 }

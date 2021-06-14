@@ -33,7 +33,7 @@ class AnswerRowConverter @Inject()() {
                       labelKey: String,
                       changeUrl: String,
                       arguments: Seq[String]): Option[AnswerRow] = {
-      userAnswers.get(query) map {x =>
+      userAnswers.get(query) map { x =>
         AnswerRow(
           messages(s"$labelKey.checkYourAnswersLabel", arguments: _*),
           CheckAnswersFormatters.yesOrNo(x),
