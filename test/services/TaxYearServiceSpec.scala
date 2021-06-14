@@ -64,60 +64,89 @@ class TaxYearServiceSpec extends SpecBase with ScalaCheckPropertyChecks with Dat
 
       "return first tax year available for start date" when {
 
-        "start year of start date tax year earlier than start year of oldest tax year to show" when {
+        "before deadline" when {
 
-          "before December deadline" in {
+          "start date is more than 4 tax years ago" in {
 
             forAll(
               arbitrary[LocalDate](arbitraryDateInTaxYearOnOrBeforeDecember22nd),
-              Gen.choose(5, 100) // any number of years ago over 4 (100 is arbitrary)
+              Gen.choose(5, 10) // any number of years ago over 4 (10 is arbitrary)
             ) {
-              (date, yearsAgo) =>
-                beforeEach()
+              (currentDate, yearsAgo) =>
 
-                when(taxYearService.currentDate).thenReturn(date)
-                val startDate = date.minusYears(yearsAgo)
+                forAll(arbitrary[LocalDate](arbitraryDateInTaxYearNTaxYearsAgo(yearsAgo))) { startDate =>
+                  beforeEach()
 
-                val result = taxYearService.firstTaxYearAvailable(startDate)
+                  when(taxYearService.currentDate).thenReturn(currentDate)
 
-                result mustBe FirstTaxYearAvailable(yearsAgo = 4, earlierYearsToDeclare = true)
+                  val result = taxYearService.firstTaxYearAvailable(startDate)
+
+                  result mustBe FirstTaxYearAvailable(yearsAgo = 4, earlierYearsToDeclare = true)
+                }
             }
           }
 
-          "after December deadline" in {
+          "start date is 4 or less years ago" in {
 
             forAll(
-              arbitrary[LocalDate](arbitraryDateInTaxYearAfterDecember22nd),
-              Gen.choose(5, 100) // any number of years ago over 4 (100 is arbitrary)
+              arbitrary[LocalDate](arbitraryDateInTaxYearOnOrBeforeDecember22nd),
+              Gen.choose(0, 4) // 4 or less years ago
             ) {
-              (date, yearsAgo) =>
-                beforeEach()
+              (currentDate, yearsAgo) =>
 
-                when(taxYearService.currentDate).thenReturn(date)
-                val startDate = date.minusYears(yearsAgo)
+                forAll(arbitrary[LocalDate](arbitraryDateInTaxYearNTaxYearsAgo(yearsAgo))) { startDate =>
+                  beforeEach()
 
-                val result = taxYearService.firstTaxYearAvailable(startDate)
+                  when(taxYearService.currentDate).thenReturn(currentDate)
 
-                result mustBe FirstTaxYearAvailable(yearsAgo = 3, earlierYearsToDeclare = true)
+                  val result = taxYearService.firstTaxYearAvailable(startDate)
+
+                  result mustBe FirstTaxYearAvailable(yearsAgo = yearsAgo, earlierYearsToDeclare = false)
+                }
             }
           }
         }
 
-        "start year of start date tax year not earlier than start year of oldest tax year to show" in {
+        "after deadline" when {
 
-          forAll(
-            arbitrary[LocalDate](arbitraryDateInTaxYear),
-            Gen.choose(0, 4) // any number of years ago under 4
-          ) {
-            (date, yearsAgo) =>
-              beforeEach()
+          "start date is more than 3 tax years ago" in {
 
-              when(taxYearService.currentDate).thenReturn(date)
-              val startDate = date.minusYears(yearsAgo)
+            forAll(
+              arbitrary[LocalDate](arbitraryDateInTaxYearAfterDecember22nd),
+              Gen.choose(4, 10) // any number of years ago over 3 (10 is arbitrary)
+            ) {
+              (currentDate, yearsAgo) =>
 
-              val result = taxYearService.firstTaxYearAvailable(startDate)
+                forAll(arbitrary[LocalDate](arbitraryDateInTaxYearNTaxYearsAgo(yearsAgo))) { startDate =>
+                  beforeEach()
 
-              result mustBe FirstTaxYearAvailable(yearsAgo = yearsAgo, earlierYearsToDeclare = false)
+                  when(taxYearService.currentDate).thenReturn(currentDate)
+
+                  val result = taxYearService.firstTaxYearAvailable(startDate)
+
+                  result mustBe FirstTaxYearAvailable(yearsAgo = 3, earlierYearsToDeclare = true)
+                }
+            }
+          }
+
+          "start date is 3 or less years ago" in {
+
+            forAll(
+              arbitrary[LocalDate](arbitraryDateInTaxYearAfterDecember22nd),
+              Gen.choose(0, 3) // 3 or less years ago
+            ) {
+              (currentDate, yearsAgo) =>
+
+                forAll(arbitrary[LocalDate](arbitraryDateInTaxYearNTaxYearsAgo(yearsAgo))) { startDate =>
+                  beforeEach()
+
+                  when(taxYearService.currentDate).thenReturn(currentDate)
+
+                  val result = taxYearService.firstTaxYearAvailable(startDate)
+
+                  result mustBe FirstTaxYearAvailable(yearsAgo = yearsAgo, earlierYearsToDeclare = false)
+                }
+            }
           }
         }
       }

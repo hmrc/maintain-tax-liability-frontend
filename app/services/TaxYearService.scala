@@ -34,9 +34,9 @@ class TaxYearService {
     val startYearOfStartDateTaxYear = TaxYear.taxYearFor(startDate).startYear
 
     val startYearOfOldestTaxYearToShow: Int = {
-      val decemberDeadline = LocalDate.of(currentTaxYear.starts.getYear, DEADLINE_MONTH, DEADLINE_DAY)
+      val deadline = LocalDate.of(currentTaxYear.starts.getYear, DEADLINE_MONTH, DEADLINE_DAY)
 
-      if (!currentDate.isAfter(decemberDeadline)) {
+      if (!currentDate.isAfter(deadline)) {
         currentTaxYear.back(4).startYear
       } else {
         currentTaxYear.back(3).startYear

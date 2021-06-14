@@ -20,6 +20,7 @@ import org.scalacheck.{Arbitrary, Gen}
 import uk.gov.hmrc.time.TaxYear
 
 import java.time.{LocalDate, MonthDay}
+import scala.language.implicitConversions
 
 trait DateGenerators {
 
@@ -29,22 +30,7 @@ trait DateGenerators {
   val TAX_YEAR_START_DAY: Int = TaxYear(arbitraryStartYear).starts.getDayOfMonth
 
   implicit lazy val arbitraryDateInTaxYear: Arbitrary[LocalDate] = {
-    Arbitrary {
-      for {
-        month <- Gen.choose(1, 12)
-        day <- Gen.choose(
-          min = 1,
-          max = month match {
-            case 2 => 28
-            case 4 | 6 | 9 | 11 => 30
-            case _ => 31
-          }
-        )
-      } yield {
-        val year = if (MonthDay.of(month, day).isBefore(MonthDay.of(TAX_YEAR_START_MONTH, TAX_YEAR_START_DAY))) arbitraryFinishYear else arbitraryFinishYear - 1
-        LocalDate.of(year, month, day)
-      }
-    }
+    arbitraryDateInTaxYearNTaxYearsAgo(0)
   }
 
   implicit lazy val arbitraryDateInTaxYearOnOrBeforeOctober5th: Arbitrary[LocalDate] = {
@@ -85,7 +71,11 @@ trait DateGenerators {
           }
         )
       } yield {
-        val year = if (MonthDay.of(month, day).isBefore(MonthDay.of(TAX_YEAR_START_MONTH, TAX_YEAR_START_DAY))) arbitraryFinishYear else arbitraryFinishYear - 1
+        val year = if (MonthDay.of(month, day).isBefore(MonthDay.of(TAX_YEAR_START_MONTH, TAX_YEAR_START_DAY))) {
+          arbitraryFinishYear
+        } else {
+          arbitraryFinishYear - 1
+        }
         LocalDate.of(year, month, day)
       }
     }
@@ -129,7 +119,34 @@ trait DateGenerators {
           }
         )
       } yield {
-        val year = if (MonthDay.of(month, day).isBefore(MonthDay.of(TAX_YEAR_START_MONTH, TAX_YEAR_START_DAY))) arbitraryFinishYear else arbitraryFinishYear - 1
+        val year = if (MonthDay.of(month, day).isBefore(MonthDay.of(TAX_YEAR_START_MONTH, TAX_YEAR_START_DAY))) {
+          arbitraryFinishYear
+        } else {
+          arbitraryFinishYear - 1
+        }
+        LocalDate.of(year, month, day)
+      }
+    }
+  }
+
+  implicit def arbitraryDateInTaxYearNTaxYearsAgo(n: Int): Arbitrary[LocalDate] = {
+    Arbitrary {
+      for {
+        month <- Gen.choose(1, 12)
+        day <- Gen.choose(
+          min = 1,
+          max = month match {
+            case 2 => 28
+            case 4 | 6 | 9 | 11 => 30
+            case _ => 31
+          }
+        )
+      } yield {
+        val year = if (MonthDay.of(month, day).isBefore(MonthDay.of(TAX_YEAR_START_MONTH, TAX_YEAR_START_DAY))) {
+          arbitraryFinishYear - n
+        } else {
+          arbitraryFinishYear - n - 1
+        }
         LocalDate.of(year, month, day)
       }
     }
