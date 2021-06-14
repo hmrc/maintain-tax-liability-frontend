@@ -21,7 +21,7 @@ import connectors.{TrustsConnector, TrustsStoreConnector}
 import models.{UserAnswers, YearReturn, YearsReturns}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.{any, eq => eqTo}
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import pages.TaskCompleted
 import play.api.inject.bind
@@ -88,7 +88,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
       application.stop()
     }
 
-    "send mapped answers to backend and set task as complete" in {
+    "send mapped answers to backend when non-empty years returns and set task as complete" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
@@ -114,6 +114,39 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
       uaCaptor.getValue.get(TaskCompleted).get mustBe true
 
       verify(mockTrustsConnector).setYearsReturns(any(), eqTo(fakeYearsReturns))(any(), any())
+      verify(mockTrustsStoreConnector).setTaskComplete(any())(any(), any())
+
+      application.stop()
+    }
+
+    "not send mapped answers to backend when empty years returns and set task as complete" in {
+
+      when(mockMapper(any())).thenReturn(YearsReturns(returns = Nil))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          bind[Mapper].toInstance(mockMapper),
+          bind[TrustsConnector].toInstance(mockTrustsConnector),
+          bind[TrustsStoreConnector].toInstance(mockTrustsStoreConnector)
+        ).build()
+
+      val controller = application.injector.instanceOf[CheckYourAnswersController]
+
+      val request = FakeRequest(POST, checkYourAnswersRoute)
+
+      val result = controller.onSubmit().apply(request)
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual frontendAppConfig.maintainATrustOverviewUrl
+
+      verify(mockMapper)(any())
+
+      val uaCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
+      verify(playbackRepository).set(uaCaptor.capture)
+      uaCaptor.getValue.get(TaskCompleted).get mustBe true
+
+      verify(mockTrustsConnector, never()).setYearsReturns(any(), any())(any(), any())
       verify(mockTrustsStoreConnector).setTaskComplete(any())(any(), any())
 
       application.stop()

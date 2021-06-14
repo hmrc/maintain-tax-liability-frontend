@@ -53,9 +53,16 @@ class CheckYourAnswersController @Inject()(
 
       val userAnswers = request.userAnswers
       val identifier = userAnswers.identifier
+      val yearsReturns = mapper(userAnswers)
 
       for {
-        _ <- trustsConnector.setYearsReturns(identifier, mapper(userAnswers))
+        _ <- {
+          if (yearsReturns.returns.nonEmpty) {
+            trustsConnector.setYearsReturns(identifier, yearsReturns).map(_ => ())
+          } else {
+            Future.successful(())
+          }
+        }
         _ <- trustsStoreConnector.setTaskComplete(identifier)
         updatedAnswers <- Future.fromTry(userAnswers.set(TaskCompleted, true))
         _ <- repository.set(updatedAnswers)
