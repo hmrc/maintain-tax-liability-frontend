@@ -64,10 +64,10 @@ object CYMinusNTaxYears {
 
       def taxYearFromId(id: Int): Option[CYMinusNTaxYears] = {
         id match {
-          case CYMinus4TaxYears.`n` => Some(CYMinus4TaxYears)
-          case CYMinus3TaxYears.`n` => Some(CYMinus3TaxYears)
-          case CYMinus2TaxYears.`n` => Some(CYMinus2TaxYears)
-          case CYMinus1TaxYear.`n` => Some(CYMinus1TaxYear)
+          case CYMinus4TaxYears.n => Some(CYMinus4TaxYears)
+          case CYMinus3TaxYears.n => Some(CYMinus3TaxYears)
+          case CYMinus2TaxYears.n => Some(CYMinus2TaxYears)
+          case CYMinus1TaxYear.n => Some(CYMinus1TaxYear)
           case _ => None
         }
       }
