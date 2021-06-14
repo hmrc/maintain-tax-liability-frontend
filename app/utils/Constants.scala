@@ -18,9 +18,6 @@ package utils
 
 object Constants {
 
-  final val OCTOBER_5TH_MONTH = 10
-  final val OCTOBER_5TH_DAY = 5
-
   final val DEADLINE_MONTH = 12
   final val DEADLINE_DAY = 22
 

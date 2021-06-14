@@ -19,20 +19,14 @@ package utils.mapping
 import models._
 import pages.DeclaredTaxToHMRCYesNoPage
 import services.TaxYearService
-import utils.Constants.{OCTOBER_5TH_DAY, OCTOBER_5TH_MONTH}
 
-import java.time.LocalDate
 import javax.inject.Inject
 
 class Mapper @Inject()(taxYearService: TaxYearService) {
 
   def apply(userAnswers: UserAnswers): YearsReturns = {
 
-    val october5th = LocalDate.of(
-      taxYearService.currentTaxYear.starts.getYear,
-      OCTOBER_5TH_MONTH,
-      OCTOBER_5TH_DAY
-    )
+    val halfwayThroughTaxYear = taxYearService.currentTaxYear.finishes.minusMonths(6) // October 5th
 
     YearsReturns {
       CYMinusNTaxYears.taxYears.foldLeft[List[YearReturn]](Nil)((acc, taxYear) => {
@@ -41,7 +35,7 @@ class Mapper @Inject()(taxYearService: TaxYearService) {
             case CYMinus1TaxYear =>
               acc :+ YearReturn(
                 taxReturnYear = taxYearService.nTaxYearsAgoFinishYear(taxYear.n),
-                taxConsequence = taxYearService.currentDate.isAfter(october5th)
+                taxConsequence = taxYearService.currentDate.isAfter(halfwayThroughTaxYear)
               )
             case _ =>
               acc :+ YearReturn(
