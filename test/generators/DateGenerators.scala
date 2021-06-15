@@ -81,54 +81,6 @@ trait DateGenerators {
     }
   }
 
-  implicit lazy val arbitraryDateInTaxYearOnOrBeforeDecember22nd: Arbitrary[LocalDate] = {
-    Arbitrary {
-      for {
-        month <- Gen.choose(TAX_YEAR_START_MONTH, 12)
-        day <- Gen.choose(
-          min = month match {
-            case TAX_YEAR_START_MONTH => TAX_YEAR_START_DAY
-            case _ => 1
-          },
-          max = month match {
-            case 4 | 6 | 9 | 11 => 30
-            case 12 => 22
-            case _ => 31
-          }
-        )
-      } yield {
-        LocalDate.of(arbitraryStartYear, month, day)
-      }
-    }
-  }
-
-  implicit lazy val arbitraryDateInTaxYearAfterDecember22nd: Arbitrary[LocalDate] = {
-    Arbitrary {
-      for {
-        month <- Gen.oneOf((1 to TAX_YEAR_START_MONTH) :+ 12)
-        day <- Gen.choose(
-          min = month match {
-            case 12 => 23
-            case _ => 1
-          },
-          max = month match {
-            case 2 => 28
-            case TAX_YEAR_START_MONTH => TAX_YEAR_START_DAY - 1
-            case 4 | 6 | 9 | 11 => 30
-            case _ => 31
-          }
-        )
-      } yield {
-        val year = if (MonthDay.of(month, day).isBefore(MonthDay.of(TAX_YEAR_START_MONTH, TAX_YEAR_START_DAY))) {
-          arbitraryFinishYear
-        } else {
-          arbitraryFinishYear - 1
-        }
-        LocalDate.of(year, month, day)
-      }
-    }
-  }
-
   implicit def arbitraryDateInTaxYearNTaxYearsAgo(n: Int): Arbitrary[LocalDate] = {
     Arbitrary {
       for {

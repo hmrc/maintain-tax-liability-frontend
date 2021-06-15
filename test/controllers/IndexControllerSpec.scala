@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import config.ErrorHandler
 import connectors.TrustsConnector
-import models.{FirstTaxYearAvailable, TrustDetails, UserAnswers}
+import models.{FirstTaxYearAvailable, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, verify, when}
@@ -30,26 +30,20 @@ import pages.TaskCompleted
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.TaxYearService
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with BeforeAndAfterEach {
 
   lazy val indexRoute: String = routes.IndexController.onPageLoad(identifier).url
 
-  val mockTaxYearService: TaxYearService = mock[TaxYearService]
   val mockTrustsConnector: TrustsConnector = mock[TrustsConnector]
   val errorHandler: ErrorHandler = injector.instanceOf[ErrorHandler]
 
   override def beforeEach(): Unit = {
-    reset(playbackRepository, mockTaxYearService, mockTrustsConnector)
+    reset(playbackRepository, mockTrustsConnector)
 
     when(playbackRepository.set(any())).thenReturn(Future.successful(true))
-
-    when(mockTrustsConnector.getTrustDetails(any())(any(), any()))
-      .thenReturn(Future.successful(TrustDetails(LocalDate.parse("2000-01-01"))))
   }
 
   "IndexController" when {
@@ -59,11 +53,10 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
       "CY-4 and earlier years to declare" must {
         "set new user answers in repository and redirect to CYMinusFourEarlierYearsController" in {
 
-          when(mockTaxYearService.firstTaxYearAvailable(any()))
-            .thenReturn(FirstTaxYearAvailable(4, earlierYearsToDeclare = true))
+          when(mockTrustsConnector.getFirstTaxYearToAskFor(any())(any(), any()))
+            .thenReturn(Future.successful(FirstTaxYearAvailable(yearsAgo = 4, earlierYearsToDeclare = true)))
 
           val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[TaxYearService].toInstance(mockTaxYearService))
             .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
             .build()
 
@@ -87,11 +80,10 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
       "CY-4 and no earlier years to declare" must {
         "set new user answers in repository and redirect to CYMinusFourYesNoController" in {
 
-          when(mockTaxYearService.firstTaxYearAvailable(any()))
-            .thenReturn(FirstTaxYearAvailable(4, earlierYearsToDeclare = false))
+          when(mockTrustsConnector.getFirstTaxYearToAskFor(any())(any(), any()))
+            .thenReturn(Future.successful(FirstTaxYearAvailable(yearsAgo = 4, earlierYearsToDeclare = false)))
 
           val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[TaxYearService].toInstance(mockTaxYearService))
             .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
             .build()
 
@@ -115,11 +107,10 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
       "CY-3 and earlier years to declare" must {
         "set new user answers in repository and redirect to CYMinusThreeEarlierYearsController" in {
 
-          when(mockTaxYearService.firstTaxYearAvailable(any()))
-            .thenReturn(FirstTaxYearAvailable(3, earlierYearsToDeclare = true))
+          when(mockTrustsConnector.getFirstTaxYearToAskFor(any())(any(), any()))
+            .thenReturn(Future.successful(FirstTaxYearAvailable(yearsAgo = 3, earlierYearsToDeclare = true)))
 
           val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[TaxYearService].toInstance(mockTaxYearService))
             .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
             .build()
 
@@ -143,11 +134,10 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
       "CY-3 and no earlier years to declare" must {
         "set new user answers in repository and redirect to CYMinusThreeYesNoController" in {
 
-          when(mockTaxYearService.firstTaxYearAvailable(any()))
-            .thenReturn(FirstTaxYearAvailable(3, earlierYearsToDeclare = false))
+          when(mockTrustsConnector.getFirstTaxYearToAskFor(any())(any(), any()))
+            .thenReturn(Future.successful(FirstTaxYearAvailable(yearsAgo = 3, earlierYearsToDeclare = false)))
 
           val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[TaxYearService].toInstance(mockTaxYearService))
             .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
             .build()
 
@@ -171,11 +161,10 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
       "CY-2" must {
         "set new user answers in repository and redirect to CYMinusTwoYesNoController" in {
 
-          when(mockTaxYearService.firstTaxYearAvailable(any()))
-            .thenReturn(FirstTaxYearAvailable(2, earlierYearsToDeclare = false))
+          when(mockTrustsConnector.getFirstTaxYearToAskFor(any())(any(), any()))
+            .thenReturn(Future.successful(FirstTaxYearAvailable(yearsAgo = 2, earlierYearsToDeclare = false)))
 
           val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[TaxYearService].toInstance(mockTaxYearService))
             .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
             .build()
 
@@ -199,11 +188,10 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
       "CY-1" must {
         "set new user answers in repository and redirect to CYMinusOneYesNoController" in {
 
-          when(mockTaxYearService.firstTaxYearAvailable(any()))
-            .thenReturn(FirstTaxYearAvailable(1, earlierYearsToDeclare = false))
+          when(mockTrustsConnector.getFirstTaxYearToAskFor(any())(any(), any()))
+            .thenReturn(Future.successful(FirstTaxYearAvailable(yearsAgo = 1, earlierYearsToDeclare = false)))
 
           val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[TaxYearService].toInstance(mockTaxYearService))
             .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
             .build()
 
@@ -226,14 +214,13 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
 
       "unexpected result for number of years ago of first tax year available" must {
         "return internal server error" in {
-          forAll(arbitrary[Int].suchThat(_ > 4)) { int =>
+          forAll(arbitrary[Int].suchThat(x => x == 0 || x > 4)) { int =>
             beforeEach()
 
-            when(mockTaxYearService.firstTaxYearAvailable(any()))
-              .thenReturn(FirstTaxYearAvailable(int, earlierYearsToDeclare = false))
+            when(mockTrustsConnector.getFirstTaxYearToAskFor(any())(any(), any()))
+              .thenReturn(Future.successful(FirstTaxYearAvailable(yearsAgo = int, earlierYearsToDeclare = false)))
 
             val application = applicationBuilder(userAnswers = None)
-              .overrides(bind[TaxYearService].toInstance(mockTaxYearService))
               .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
               .build()
 
@@ -281,15 +268,14 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
       "TaskCompleted is false or undefined" must {
         "not redirect to CheckYourAnswersController" in {
 
-          when(mockTaxYearService.firstTaxYearAvailable(any()))
-            .thenReturn(FirstTaxYearAvailable(1, earlierYearsToDeclare = false))
+          when(mockTrustsConnector.getFirstTaxYearToAskFor(any())(any(), any()))
+            .thenReturn(Future.successful(FirstTaxYearAvailable(yearsAgo = 1, earlierYearsToDeclare = false)))
 
           forAll(arbitrary[Option[Boolean]].suchThat(!_.contains(true))) { maybeBool =>
 
             val userAnswers = emptyUserAnswers.set(TaskCompleted, maybeBool).success.value
 
             val application = applicationBuilder(userAnswers = Some(userAnswers))
-              .overrides(bind[TaxYearService].toInstance(mockTaxYearService))
               .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
               .build()
 
