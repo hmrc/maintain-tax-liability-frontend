@@ -50,8 +50,7 @@ class IndexController @Inject()(
         case _ =>
           for {
             _ <- repository.set(UserAnswers(request.user.internalId, identifier))
-            trustDetails <- trustsConnector.getTrustDetails(identifier)
-            firstTaxYearAvailable = taxYearService.firstTaxYearAvailable(trustDetails.startDate)
+            firstTaxYearAvailable <- trustsConnector.getFirstTaxYearToAskFor(identifier)
           } yield {
             firstTaxYearAvailable.yearsAgo match {
               case 4 if firstTaxYearAvailable.earlierYearsToDeclare =>

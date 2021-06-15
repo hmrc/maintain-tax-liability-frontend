@@ -20,14 +20,12 @@ import base.SpecBase
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
-import models.{TrustDetails, YearReturn, YearsReturns}
+import models.{FirstTaxYearAvailable, YearReturn, YearsReturns}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Inside}
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
-
-import java.time.LocalDate
 
 class TrustsConnectorSpec extends SpecBase with ScalaFutures
   with Inside with BeforeAndAfterAll with BeforeAndAfterEach with IntegrationPatience {
@@ -55,23 +53,13 @@ class TrustsConnectorSpec extends SpecBase with ScalaFutures
 
   "trust connector" must {
 
-    "getTrustDetails" in {
+    "getFirstTaxYearToAskFor" in {
 
       val json = Json.parse(
         """
           |{
-          | "startDate": "1920-03-28",
-          | "lawCountry": "AD",
-          | "administrationCountry": "GB",
-          | "residentialStatus": {
-          |   "uk": {
-          |     "scottishLaw": false,
-          |     "preOffShore": "AD"
-          |   }
-          | },
-          | "typeOfTrust": "Will Trust or Intestacy Trust",
-          | "deedOfVariation": "Previously there was only an absolute interest under the will",
-          | "interVivos": false
+          | "yearsAgo": 1,
+          | "earlierYearsToDeclare": false
           |}
           |""".stripMargin)
 
@@ -86,16 +74,17 @@ class TrustsConnectorSpec extends SpecBase with ScalaFutures
       val connector = application.injector.instanceOf[TrustsConnector]
 
       server.stubFor(
-        get(urlEqualTo(s"/trusts/trust-details/$identifier/untransformed"))
+        get(urlEqualTo(s"/trusts/tax-liability/$identifier/first-year-to-ask-for"))
           .willReturn(okJson(json.toString))
       )
 
-      val processed = connector.getTrustDetails(identifier)
+      val processed = connector.getFirstTaxYearToAskFor(identifier)
 
       whenReady(processed) {
         r =>
-          r mustBe TrustDetails(
-            startDate = LocalDate.parse("1920-03-28")
+          r mustBe FirstTaxYearAvailable(
+            yearsAgo = 1,
+            earlierYearsToDeclare = false
           )
       }
     }

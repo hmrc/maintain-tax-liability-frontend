@@ -18,16 +18,11 @@ package services
 
 import base.SpecBase
 import generators.DateGenerators
-import models.FirstTaxYearAvailable
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, when}
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import uk.gov.hmrc.time.TaxYear
-
-import java.time.LocalDate
 
 class TaxYearServiceSpec extends SpecBase with ScalaCheckPropertyChecks with DateGenerators with BeforeAndAfterEach {
 
@@ -37,7 +32,6 @@ class TaxYearServiceSpec extends SpecBase with ScalaCheckPropertyChecks with Dat
     reset(taxYearService)
     when(taxYearService.currentTaxYear).thenReturn(TaxYear(arbitraryStartYear))
     when(taxYearService.nTaxYearsAgoFinishYear(any())).thenCallRealMethod()
-    when(taxYearService.firstTaxYearAvailable(any())).thenCallRealMethod()
   }
 
   "TaxYearService" when {
@@ -56,98 +50,6 @@ class TaxYearServiceSpec extends SpecBase with ScalaCheckPropertyChecks with Dat
         tests.foreach { test =>
           val result = taxYearService.nTaxYearsAgoFinishYear(test.input)
           result mustBe test.expectedOutput
-        }
-      }
-    }
-
-    "firstTaxYearAvailable" must {
-
-      "return first tax year available for start date" when {
-
-        "before deadline" when {
-
-          "start date is more than 4 tax years ago" in {
-
-            forAll(
-              arbitrary[LocalDate](arbitraryDateInTaxYearOnOrBeforeDecember22nd),
-              Gen.choose(5, 10) // any number of years ago over 4 (10 is arbitrary)
-            ) {
-              (currentDate, yearsAgo) =>
-
-                forAll(arbitrary[LocalDate](arbitraryDateInTaxYearNTaxYearsAgo(yearsAgo))) { startDate =>
-                  beforeEach()
-
-                  when(taxYearService.currentDate).thenReturn(currentDate)
-
-                  val result = taxYearService.firstTaxYearAvailable(startDate)
-
-                  result mustBe FirstTaxYearAvailable(yearsAgo = 4, earlierYearsToDeclare = true)
-                }
-            }
-          }
-
-          "start date is 4 or less years ago" in {
-
-            forAll(
-              arbitrary[LocalDate](arbitraryDateInTaxYearOnOrBeforeDecember22nd),
-              Gen.choose(0, 4) // 4 or less years ago
-            ) {
-              (currentDate, yearsAgo) =>
-
-                forAll(arbitrary[LocalDate](arbitraryDateInTaxYearNTaxYearsAgo(yearsAgo))) { startDate =>
-                  beforeEach()
-
-                  when(taxYearService.currentDate).thenReturn(currentDate)
-
-                  val result = taxYearService.firstTaxYearAvailable(startDate)
-
-                  result mustBe FirstTaxYearAvailable(yearsAgo = yearsAgo, earlierYearsToDeclare = false)
-                }
-            }
-          }
-        }
-
-        "after deadline" when {
-
-          "start date is more than 3 tax years ago" in {
-
-            forAll(
-              arbitrary[LocalDate](arbitraryDateInTaxYearAfterDecember22nd),
-              Gen.choose(4, 10) // any number of years ago over 3 (10 is arbitrary)
-            ) {
-              (currentDate, yearsAgo) =>
-
-                forAll(arbitrary[LocalDate](arbitraryDateInTaxYearNTaxYearsAgo(yearsAgo))) { startDate =>
-                  beforeEach()
-
-                  when(taxYearService.currentDate).thenReturn(currentDate)
-
-                  val result = taxYearService.firstTaxYearAvailable(startDate)
-
-                  result mustBe FirstTaxYearAvailable(yearsAgo = 3, earlierYearsToDeclare = true)
-                }
-            }
-          }
-
-          "start date is 3 or less years ago" in {
-
-            forAll(
-              arbitrary[LocalDate](arbitraryDateInTaxYearAfterDecember22nd),
-              Gen.choose(0, 3) // 3 or less years ago
-            ) {
-              (currentDate, yearsAgo) =>
-
-                forAll(arbitrary[LocalDate](arbitraryDateInTaxYearNTaxYearsAgo(yearsAgo))) { startDate =>
-                  beforeEach()
-
-                  when(taxYearService.currentDate).thenReturn(currentDate)
-
-                  val result = taxYearService.firstTaxYearAvailable(startDate)
-
-                  result mustBe FirstTaxYearAvailable(yearsAgo = yearsAgo, earlierYearsToDeclare = false)
-                }
-            }
-          }
         }
       }
     }

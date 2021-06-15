@@ -16,11 +16,9 @@
 
 package services
 
-import implicits.Implicits._
-import models.FirstTaxYearAvailable
 import uk.gov.hmrc.time.TaxYear
 
-import java.time.{LocalDate, MonthDay}
+import java.time.LocalDate
 
 class TaxYearService {
 
@@ -29,30 +27,4 @@ class TaxYearService {
   def currentTaxYear: TaxYear = TaxYear.taxYearFor(currentDate)
 
   def nTaxYearsAgoFinishYear(n: Int): String = currentTaxYear.back(n).finishYear.toString.takeRight(2)
-
-  def firstTaxYearAvailable(startDate: LocalDate): FirstTaxYearAvailable = {
-    val startYearOfStartDateTaxYear = TaxYear.taxYearFor(startDate).startYear
-
-    val startYearOfOldestTaxYearToShow: Int = {
-      val deadline = currentTaxYear.starts.next(MonthDay.of(12, 22)) // December 22nd
-
-      if (!currentDate.isAfter(deadline)) {
-        currentTaxYear.back(4).startYear
-      } else {
-        currentTaxYear.back(3).startYear
-      }
-    }
-
-    if (startYearOfStartDateTaxYear < startYearOfOldestTaxYearToShow) {
-      FirstTaxYearAvailable(
-        yearsAgo = currentTaxYear.startYear - startYearOfOldestTaxYearToShow,
-        earlierYearsToDeclare = true
-      )
-    } else {
-      FirstTaxYearAvailable(
-        yearsAgo = currentTaxYear.startYear - startYearOfStartDateTaxYear,
-        earlierYearsToDeclare = false
-      )
-    }
-  }
 }
