@@ -18,11 +18,9 @@ package config
 
 import play.api.Configuration
 import play.api.i18n.{Lang, Messages}
-import play.api.mvc.Request
 import uk.gov.hmrc.hmrcfrontend.config.ContactFrontendConfig
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import java.net.{URI, URLEncoder}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
@@ -50,12 +48,6 @@ class AppConfig @Inject()(val config: Configuration, servicesConfig: ServicesCon
   lazy val logoutAudit: Boolean = config.get[Boolean]("features.auditing.logout")
 
   val betaFeedbackUrl = s"${contactFrontendConfig.baseUrl.get}/contact/beta-feedback?service=${contactFrontendConfig.serviceId.get}"
-
-  def accessibilityLinkUrl(implicit request: Request[_]): String = {
-    lazy val accessibilityBaseLinkUrl: String = config.get[String]("urls.accessibility")
-    val userAction = URLEncoder.encode(new URI(request.uri).getPath, "UTF-8")
-    s"$accessibilityBaseLinkUrl?userAction=$userAction"
-  }
 
   lazy val countdownLength: Int = config.get[Int]("timeout.countdown")
   lazy val timeoutLength: Int = config.get[Int]("timeout.length")
