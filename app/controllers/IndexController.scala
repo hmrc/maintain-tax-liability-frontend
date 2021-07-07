@@ -24,7 +24,6 @@ import models.UserAnswers
 import pages.TaskCompleted
 import play.api.mvc._
 import repositories.PlaybackRepository
-import services.TaxYearService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionLogging
 
@@ -36,7 +35,6 @@ class IndexController @Inject()(
                                  mcc: MessagesControllerComponents,
                                  actions: StandardActionSets,
                                  repository: PlaybackRepository,
-                                 taxYearService: TaxYearService,
                                  trustsConnector: TrustsConnector,
                                  errorHandler: ErrorHandler
                                )(implicit ec: ExecutionContext) extends FrontendController(mcc) with SessionLogging {

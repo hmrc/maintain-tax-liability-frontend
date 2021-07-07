@@ -44,7 +44,7 @@ class DeclaredTaxToHMRCYesNoControllerSpec extends SpecBase with BeforeAndAfterE
     when(mockTaxYearRange.taxYearDates(any())(any())).thenReturn(taxYearDates)
   }
 
-  "CYMinusOneLiabilityController" when {
+  "DeclaredTaxToHMRCYesNoController" when {
 
     taxYears.foreach { taxYear =>
 
