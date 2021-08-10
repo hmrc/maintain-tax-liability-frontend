@@ -45,9 +45,9 @@ class IndexController @Inject()(
       request.userAnswers match {
         case Some(ua) if ua.get(TaskCompleted).contains(true) =>
           Future.successful(Redirect(routes.CheckYourAnswersController.onPageLoad()))
-        case _ =>
+        case ua =>
           for {
-            _ <- repository.set(UserAnswers(request.user.internalId, identifier))
+            _ <- repository.set(ua.getOrElse(UserAnswers(request.user.internalId, identifier)))
             firstTaxYearAvailable <- trustsConnector.getFirstTaxYearToAskFor(identifier)
           } yield {
             firstTaxYearAvailable.yearsAgo match {

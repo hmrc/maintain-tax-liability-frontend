@@ -21,7 +21,7 @@ import config.ErrorHandler
 import connectors.TrustsConnector
 import models.{FirstTaxYearAvailable, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
+import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.BeforeAndAfterEach
@@ -286,6 +286,8 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
             status(result) mustEqual SEE_OTHER
 
             redirectLocation(result).value mustNot be(routes.CheckYourAnswersController.onPageLoad().url)
+
+            verify(playbackRepository).set(eqTo(userAnswers))
 
             application.stop()
           }
