@@ -17,6 +17,8 @@
 package connectors
 
 import config.AppConfig
+import models.Task
+import models.TaskStatus.TaskStatus
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
@@ -25,9 +27,16 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class TrustsStoreConnector @Inject()(http: HttpClient, config: AppConfig) {
 
-  def setTaskComplete(identifier: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-    val url: String = s"${config.trustsStoreUrl}/trusts-store/maintain/tasks/tax-liability/$identifier"
-    http.POSTEmpty[HttpResponse](url)
+  def updateTaskStatus(identifier: String, taskStatus: TaskStatus)
+                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
+    val url: String = s"${config.trustsStoreUrl}/trusts-store/maintain/tasks/update-tax-liability/$identifier"
+    http.POST[TaskStatus, HttpResponse](url, taskStatus)
+  }
+
+  def getTaskStatus(identifier: String)
+                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[TaskStatus] = {
+    val url: String = s"${config.trustsStoreUrl}/trusts-store/maintain/tasks/$identifier"
+    http.GET[Task](url).map(_.taxLiability)
   }
 
 }

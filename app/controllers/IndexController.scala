@@ -17,11 +17,11 @@
 package controllers
 
 import config.ErrorHandler
-import connectors.TrustsConnector
+import connectors.{TrustsConnector, TrustsStoreConnector}
 import controllers.actions.StandardActionSets
 import controllers.routes._
+import models.TaskStatus.{Completed, InProgress, TaskStatus}
 import models.UserAnswers
-import pages.TaskCompleted
 import play.api.mvc._
 import repositories.PlaybackRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -36,14 +36,15 @@ class IndexController @Inject()(
                                  actions: StandardActionSets,
                                  repository: PlaybackRepository,
                                  trustsConnector: TrustsConnector,
-                                 errorHandler: ErrorHandler
+                                 errorHandler: ErrorHandler,
+                                 trustsStoreConnector: TrustsStoreConnector
                                )(implicit ec: ExecutionContext) extends FrontendController(mcc) with SessionLogging {
 
   def onPageLoad(identifier: String): Action[AnyContent] = actions.authorisedWithSavedSession(identifier).async {
     implicit request =>
 
-      request.userAnswers match {
-        case Some(ua) if ua.get(TaskCompleted).contains(true) =>
+      def redirect(taskStatus: TaskStatus): Future[Result] = request.userAnswers match {
+        case Some(_) if taskStatus == Completed =>
           Future.successful(Redirect(routes.CheckYourAnswersController.onPageLoad()))
         case ua =>
           for {
@@ -69,6 +70,12 @@ class IndexController @Inject()(
             }
           }
       }
+
+      for {
+        taskStatus <- trustsStoreConnector.getTaskStatus(identifier)
+        _ <- trustsStoreConnector.updateTaskStatus(identifier, InProgress)
+        result <- redirect(taskStatus)
+      } yield result
   }
 
 }

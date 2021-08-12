@@ -17,7 +17,8 @@
 package connectors
 
 import base.{SpecBase, WireMockHelper}
-import com.github.tomakehurst.wiremock.client.WireMock.{okJson, urlEqualTo, _}
+import com.github.tomakehurst.wiremock.client.WireMock.{urlEqualTo, _}
+import models.TaskStatus.Completed
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
@@ -31,11 +32,11 @@ class TrustsStoreConnectorSpec extends SpecBase
 
   "trusts store connector" when {
 
-    ".setTasksComplete" must {
+    ".updateTaskStatus" must {
 
-      val url = s"/trusts-store/maintain/tasks/tax-liability/$identifier"
+      val url = s"/trusts-store/maintain/tasks/update-tax-liability/$identifier"
 
-      "return OK with the current task status" in {
+      "return OK" in {
         val application = applicationBuilder()
           .configure(
             Seq(
@@ -46,26 +47,12 @@ class TrustsStoreConnectorSpec extends SpecBase
 
         val connector = application.injector.instanceOf[TrustsStoreConnector]
 
-        val json = Json.parse(
-          """
-            |{
-            |  "trustDetails": false,
-            |  "trustees": false,
-            |  "beneficiaries": false,
-            |  "settlors": false,
-            |  "protectors": false,
-            |  "other": false,
-            |  "nonEeaCompany": false,
-            |  "taxLiability": true
-            |}
-            |""".stripMargin)
-
         server.stubFor(
           post(urlEqualTo(url))
-            .willReturn(okJson(json.toString))
+            .willReturn(ok())
         )
 
-        val futureResult = connector.setTaskComplete(identifier)
+        val futureResult = connector.updateTaskStatus(identifier, Completed)
 
         whenReady(futureResult) {
           r =>
@@ -91,8 +78,46 @@ class TrustsStoreConnectorSpec extends SpecBase
             .willReturn(serverError())
         )
 
-        connector.setTaskComplete(identifier) map { response =>
+        connector.updateTaskStatus(identifier, Completed) map { response =>
           response.status mustBe 500
+        }
+
+        application.stop()
+      }
+    }
+
+    ".getTaskStatus" must {
+
+      val url = s"/trusts-store/maintain/tasks/$identifier"
+
+      "return OK with the current task status" in {
+        val application = applicationBuilder()
+          .configure(
+            Seq(
+              "microservice.services.trusts-store.port" -> server.port(),
+              "auditing.enabled" -> false
+            ): _*
+          ).build()
+
+        val connector = application.injector.instanceOf[TrustsStoreConnector]
+
+        val json = Json.parse(
+          """
+            |{
+            |  "taxLiability": "completed"
+            |}
+            |""".stripMargin)
+
+        server.stubFor(
+          get(urlEqualTo(url))
+            .willReturn(okJson(json.toString()))
+        )
+
+        val futureResult = connector.getTaskStatus(identifier)
+
+        whenReady(futureResult) {
+          r =>
+            r mustBe Completed
         }
 
         application.stop()
