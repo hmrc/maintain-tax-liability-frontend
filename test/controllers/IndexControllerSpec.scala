@@ -18,7 +18,9 @@ package controllers
 
 import base.SpecBase
 import config.ErrorHandler
-import connectors.TrustsConnector
+import connectors.{TrustsConnector, TrustsStoreConnector}
+import generators.ModelGenerators
+import models.TaskStatus.{Completed, InProgress, TaskStatus}
 import models.{FirstTaxYearAvailable, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.{any, eq => eqTo}
@@ -26,24 +28,31 @@ import org.mockito.Mockito.{reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.TaskCompleted
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
-class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with BeforeAndAfterEach {
+class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with BeforeAndAfterEach with ModelGenerators {
 
   lazy val indexRoute: String = routes.IndexController.onPageLoad(identifier).url
 
   val mockTrustsConnector: TrustsConnector = mock[TrustsConnector]
+  val mockTrustsStoreConnector: TrustsStoreConnector = mock[TrustsStoreConnector]
   val errorHandler: ErrorHandler = injector.instanceOf[ErrorHandler]
 
   override def beforeEach(): Unit = {
-    reset(playbackRepository, mockTrustsConnector)
+    reset(playbackRepository, mockTrustsConnector, mockTrustsStoreConnector)
 
     when(playbackRepository.set(any())).thenReturn(Future.successful(true))
+
+    when(mockTrustsStoreConnector.updateTaskStatus(any(), any())(any(), any()))
+      .thenReturn(Future.successful(HttpResponse(OK, "")))
+
+    when(mockTrustsStoreConnector.getTaskStatus(any())(any(), any()))
+      .thenReturn(Future.successful(InProgress))
   }
 
   "IndexController" when {
@@ -58,6 +67,7 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
 
           val application = applicationBuilder(userAnswers = None)
             .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+            .overrides(bind[TrustsStoreConnector].toInstance(mockTrustsStoreConnector))
             .build()
 
           val request = FakeRequest(GET, indexRoute)
@@ -73,6 +83,8 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
           uaCaptor.getValue.internalId mustBe internalId
           uaCaptor.getValue.identifier mustBe identifier
 
+          verify(mockTrustsStoreConnector).updateTaskStatus(any(), eqTo(InProgress))(any(), any())
+
           application.stop()
         }
       }
@@ -85,6 +97,7 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
 
           val application = applicationBuilder(userAnswers = None)
             .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+            .overrides(bind[TrustsStoreConnector].toInstance(mockTrustsStoreConnector))
             .build()
 
           val request = FakeRequest(GET, indexRoute)
@@ -100,6 +113,8 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
           uaCaptor.getValue.internalId mustBe internalId
           uaCaptor.getValue.identifier mustBe identifier
 
+          verify(mockTrustsStoreConnector).updateTaskStatus(any(), eqTo(InProgress))(any(), any())
+
           application.stop()
         }
       }
@@ -112,6 +127,7 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
 
           val application = applicationBuilder(userAnswers = None)
             .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+            .overrides(bind[TrustsStoreConnector].toInstance(mockTrustsStoreConnector))
             .build()
 
           val request = FakeRequest(GET, indexRoute)
@@ -127,6 +143,8 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
           uaCaptor.getValue.internalId mustBe internalId
           uaCaptor.getValue.identifier mustBe identifier
 
+          verify(mockTrustsStoreConnector).updateTaskStatus(any(), eqTo(InProgress))(any(), any())
+
           application.stop()
         }
       }
@@ -139,6 +157,7 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
 
           val application = applicationBuilder(userAnswers = None)
             .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+            .overrides(bind[TrustsStoreConnector].toInstance(mockTrustsStoreConnector))
             .build()
 
           val request = FakeRequest(GET, indexRoute)
@@ -154,6 +173,8 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
           uaCaptor.getValue.internalId mustBe internalId
           uaCaptor.getValue.identifier mustBe identifier
 
+          verify(mockTrustsStoreConnector).updateTaskStatus(any(), eqTo(InProgress))(any(), any())
+
           application.stop()
         }
       }
@@ -166,6 +187,7 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
 
           val application = applicationBuilder(userAnswers = None)
             .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+            .overrides(bind[TrustsStoreConnector].toInstance(mockTrustsStoreConnector))
             .build()
 
           val request = FakeRequest(GET, indexRoute)
@@ -181,6 +203,8 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
           uaCaptor.getValue.internalId mustBe internalId
           uaCaptor.getValue.identifier mustBe identifier
 
+          verify(mockTrustsStoreConnector).updateTaskStatus(any(), eqTo(InProgress))(any(), any())
+
           application.stop()
         }
       }
@@ -193,6 +217,7 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
 
           val application = applicationBuilder(userAnswers = None)
             .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+            .overrides(bind[TrustsStoreConnector].toInstance(mockTrustsStoreConnector))
             .build()
 
           val request = FakeRequest(GET, indexRoute)
@@ -208,12 +233,15 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
           uaCaptor.getValue.internalId mustBe internalId
           uaCaptor.getValue.identifier mustBe identifier
 
+          verify(mockTrustsStoreConnector).updateTaskStatus(any(), eqTo(InProgress))(any(), any())
+
           application.stop()
         }
       }
 
       "unexpected result for number of years ago of first tax year available" must {
         "return internal server error" in {
+          
           forAll(arbitrary[Int].suchThat(x => x == 0 || x > 4)) { int =>
             beforeEach()
 
@@ -222,6 +250,7 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
 
             val application = applicationBuilder(userAnswers = None)
               .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+              .overrides(bind[TrustsStoreConnector].toInstance(mockTrustsStoreConnector))
               .build()
 
             val request = FakeRequest(GET, indexRoute)
@@ -237,6 +266,8 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
             uaCaptor.getValue.internalId mustBe internalId
             uaCaptor.getValue.identifier mustBe identifier
 
+            verify(mockTrustsStoreConnector).updateTaskStatus(any(), eqTo(InProgress))(any(), any())
+
             application.stop()
           }
         }
@@ -245,12 +276,14 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
 
     "there are previously saved answers" when {
 
-      "TaskCompleted is true" must {
+      "task is Completed" must {
         "redirect to CheckYourAnswersController" in {
 
-          val userAnswers = emptyUserAnswers.set(TaskCompleted, true).success.value
+          when(mockTrustsStoreConnector.getTaskStatus(any())(any(), any()))
+            .thenReturn(Future.successful(Completed))
 
-          val application = applicationBuilder(userAnswers = Some(userAnswers))
+          val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+            .overrides(bind[TrustsStoreConnector].toInstance(mockTrustsStoreConnector))
             .build()
 
           val request = FakeRequest(GET, indexRoute)
@@ -261,22 +294,29 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
 
           redirectLocation(result).value mustBe routes.CheckYourAnswersController.onPageLoad().url
 
+          verify(mockTrustsStoreConnector).updateTaskStatus(any(), eqTo(InProgress))(any(), any())
+
           application.stop()
         }
       }
 
-      "TaskCompleted is false or undefined" must {
+      "task is not completed" must {
         "not redirect to CheckYourAnswersController" in {
 
-          when(mockTrustsConnector.getFirstTaxYearToAskFor(any())(any(), any()))
-            .thenReturn(Future.successful(FirstTaxYearAvailable(yearsAgo = 1, earlierYearsToDeclare = false)))
+          forAll(arbitrary[TaskStatus].suchThat(_ != Completed)) { taskStatus =>
+            beforeEach()
 
-          forAll(arbitrary[Option[Boolean]].suchThat(!_.contains(true))) { maybeBool =>
+            when(mockTrustsConnector.getFirstTaxYearToAskFor(any())(any(), any()))
+              .thenReturn(Future.successful(FirstTaxYearAvailable(yearsAgo = 1, earlierYearsToDeclare = false)))
 
-            val userAnswers = emptyUserAnswers.set(TaskCompleted, maybeBool).success.value
+            when(mockTrustsStoreConnector.getTaskStatus(any())(any(), any()))
+              .thenReturn(Future.successful(taskStatus))
+
+            val userAnswers = emptyUserAnswers
 
             val application = applicationBuilder(userAnswers = Some(userAnswers))
               .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+              .overrides(bind[TrustsStoreConnector].toInstance(mockTrustsStoreConnector))
               .build()
 
             val request = FakeRequest(GET, indexRoute)
@@ -288,6 +328,7 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
             redirectLocation(result).value mustNot be(routes.CheckYourAnswersController.onPageLoad().url)
 
             verify(playbackRepository).set(eqTo(userAnswers))
+            verify(mockTrustsStoreConnector).updateTaskStatus(any(), eqTo(InProgress))(any(), any())
 
             application.stop()
           }

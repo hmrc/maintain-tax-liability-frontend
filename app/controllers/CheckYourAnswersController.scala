@@ -19,10 +19,9 @@ package controllers
 import config.AppConfig
 import connectors.{TrustsConnector, TrustsStoreConnector}
 import controllers.actions.StandardActionSets
-import pages.TaskCompleted
+import models.TaskStatus.Completed
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.PlaybackRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.mapping.Mapper
 import utils.print.PrintHelper
@@ -36,7 +35,6 @@ class CheckYourAnswersController @Inject()(
                                             actions: StandardActionSets,
                                             printHelper: PrintHelper,
                                             mapper: Mapper,
-                                            repository: PlaybackRepository,
                                             appConfig: AppConfig,
                                             trustsConnector: TrustsConnector,
                                             trustsStoreConnector: TrustsStoreConnector,
@@ -63,9 +61,7 @@ class CheckYourAnswersController @Inject()(
             Future.successful(())
           }
         }
-        _ <- trustsStoreConnector.setTaskComplete(identifier)
-        updatedAnswers <- Future.fromTry(userAnswers.set(TaskCompleted, true))
-        _ <- repository.set(updatedAnswers)
+        _ <- trustsStoreConnector.updateTaskStatus(identifier, Completed)
       } yield Redirect(appConfig.maintainATrustOverviewUrl)
   }
 

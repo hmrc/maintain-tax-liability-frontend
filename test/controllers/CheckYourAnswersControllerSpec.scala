@@ -18,12 +18,11 @@ package controllers
 
 import base.SpecBase
 import connectors.{TrustsConnector, TrustsStoreConnector}
-import models.{UserAnswers, YearReturn, YearsReturns}
-import org.mockito.ArgumentCaptor
+import models.TaskStatus.Completed
+import models.{YearReturn, YearsReturns}
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import pages.TaskCompleted
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -32,8 +31,6 @@ import utils.mapping.Mapper
 import utils.print.PrintHelper
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.CheckYourAnswersView
-
-import scala.concurrent.Future
 
 class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
@@ -53,17 +50,15 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
   ))
 
   override def beforeEach(): Unit = {
-    reset(mockPrintHelper, mockMapper, playbackRepository, mockTrustsConnector, mockTrustsStoreConnector)
+    reset(mockPrintHelper, mockMapper, mockTrustsConnector, mockTrustsStoreConnector)
 
     when(mockPrintHelper(any())(any())).thenReturn(fakeAnswerSections)
 
     when(mockMapper(any())).thenReturn(fakeYearsReturns)
 
-    when(playbackRepository.set(any())).thenReturn(Future.successful(true))
-
     when(mockTrustsConnector.setYearsReturns(any(), any())(any(), any())).thenReturn(okResponse)
 
-    when(mockTrustsStoreConnector.setTaskComplete(any())(any(), any())).thenReturn(okResponse)
+    when(mockTrustsStoreConnector.updateTaskStatus(any(), any())(any(), any())).thenReturn(okResponse)
   }
 
   "CheckYourAnswersController" must {
@@ -109,12 +104,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
       verify(mockMapper)(any())
 
-      val uaCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
-      verify(playbackRepository).set(uaCaptor.capture)
-      uaCaptor.getValue.get(TaskCompleted).get mustBe true
-
       verify(mockTrustsConnector).setYearsReturns(any(), eqTo(fakeYearsReturns))(any(), any())
-      verify(mockTrustsStoreConnector).setTaskComplete(any())(any(), any())
+      verify(mockTrustsStoreConnector).updateTaskStatus(any(), eqTo(Completed))(any(), any())
 
       application.stop()
     }
@@ -142,12 +133,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
       verify(mockMapper)(any())
 
-      val uaCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
-      verify(playbackRepository).set(uaCaptor.capture)
-      uaCaptor.getValue.get(TaskCompleted).get mustBe true
-
       verify(mockTrustsConnector, never()).setYearsReturns(any(), any())(any(), any())
-      verify(mockTrustsStoreConnector).setTaskComplete(any())(any(), any())
+      verify(mockTrustsStoreConnector).updateTaskStatus(any(), eqTo(Completed))(any(), any())
 
       application.stop()
     }

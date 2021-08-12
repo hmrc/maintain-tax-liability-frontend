@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package pages
+package generators
 
-import play.api.libs.json.JsPath
+import models.TaskStatus
+import models.TaskStatus.TaskStatus
+import org.scalacheck.{Arbitrary, Gen}
 
-case object TaskCompleted extends QuestionPage[Boolean] {
+trait ModelGenerators {
 
-  override def path: JsPath = JsPath \ toString
+  implicit lazy val arbitraryTaskStatus: Arbitrary[TaskStatus] = Arbitrary {
+    Gen.oneOf(TaskStatus.values)
+  }
 
-  override def toString: String = "taskCompleted"
 }
