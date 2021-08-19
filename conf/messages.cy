@@ -1,2 +1,1 @@
-service.name = maintain-tax-liability-frontend
-service.text = Dyma'ch gwasanaeth newydd
+service.name = Cofrestru Ymddiriedolaeth a’i Chynnal
