@@ -26,7 +26,7 @@ import views.html.{ErrorTemplate, PageNotFoundView}
 @Singleton
 class ErrorHandler @Inject()(errorTemplate: ErrorTemplate,
                              notFoundView: PageNotFoundView,
-                             val messagesApi: MessagesApi,
+                             val messagesApi: MessagesApi
                             )
     extends FrontendErrorHandler {
 
