@@ -24,6 +24,7 @@ class PlaybackRepositorySpec extends AsyncFreeSpec with MustMatchers
   with ScalaFutures with OptionValues with MongoSuite {
 
   val identifier: String = "1234567890"
+  val sessionId: String = "sessionId"
 
   "a playback repository" - {
 
@@ -33,7 +34,7 @@ class PlaybackRepositorySpec extends AsyncFreeSpec with MustMatchers
         val internalId = "Int-328969d0-557e-4559-sdba-074d0597107e"
 
         val repository = app.injector.instanceOf[PlaybackRepository]
-        repository.get(internalId, identifier).futureValue mustBe None
+        repository.get(internalId, identifier, sessionId).futureValue mustBe None
     }
 
     "must return user answers when cache exists" in assertMongoTest(application) {
@@ -43,15 +44,16 @@ class PlaybackRepositorySpec extends AsyncFreeSpec with MustMatchers
 
         val repository = app.injector.instanceOf[PlaybackRepository]
 
-        val userAnswers = UserAnswers(internalId, identifier)
+        val userAnswers = UserAnswers(internalId, identifier, sessionId)
 
         val initial = repository.set(userAnswers).futureValue
 
         initial mustBe true
 
-        val cachedAnswers = repository.get(internalId, identifier).futureValue.value
+        val cachedAnswers = repository.get(internalId, identifier, sessionId).futureValue.value
         cachedAnswers.internalId mustBe internalId
         cachedAnswers.identifier mustBe identifier
+        cachedAnswers.sessionId mustBe sessionId
     }
 
     "must reset cache for an internalId" in assertMongoTest(application) {
@@ -61,15 +63,15 @@ class PlaybackRepositorySpec extends AsyncFreeSpec with MustMatchers
 
         val repository = app.injector.instanceOf[PlaybackRepository]
 
-        val userAnswers = UserAnswers(internalId, identifier)
+        val userAnswers = UserAnswers(internalId, identifier, sessionId)
 
         repository.set(userAnswers).futureValue
 
-        repository.get(internalId, identifier).futureValue.isDefined mustBe true
+        repository.get(internalId, identifier, sessionId).futureValue.isDefined mustBe true
 
-        repository.resetCache(internalId, identifier).futureValue
+        repository.resetCache(internalId, identifier, sessionId).futureValue
 
-        repository.get(internalId, identifier).futureValue.isDefined mustBe false
+        repository.get(internalId, identifier, sessionId).futureValue.isDefined mustBe false
     }
   }
 }

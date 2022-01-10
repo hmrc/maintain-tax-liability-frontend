@@ -37,6 +37,8 @@ trait SpecBaseHelpers extends GuiceOneAppPerSuite with TryValues with Mocked wit
 
   val internalId: String = SpecBase.internalId
   val identifier: String = SpecBase.identifier
+  val sessionId: String = SpecBase.sessionId
+
 
   lazy val okResponse: Future[HttpResponse] = Future.successful(HttpResponse(OK, ""))
 
@@ -44,7 +46,8 @@ trait SpecBaseHelpers extends GuiceOneAppPerSuite with TryValues with Mocked wit
 
   def emptyUserAnswers: UserAnswers = UserAnswers(
     internalId = internalId,
-    identifier = identifier
+    identifier = identifier,
+    sessionId = sessionId
   )
 
   val taxYears: Seq[CYMinusNTaxYears] = CYMinusNTaxYears.taxYears
@@ -73,4 +76,5 @@ object SpecBase {
 
   val internalId: String = "internalId"
   val identifier: String = "identifier"
+  val sessionId: String = "sessionId"
 }

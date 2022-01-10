@@ -34,6 +34,7 @@ trait UserAnswersGenerator extends TryValues {
       for {
         id <- nonEmptyString
         identifier <- nonEmptyString
+        sessionId <- nonEmptyString
         data <- generators match {
           case Nil => Gen.const(Map[QuestionPage[_], JsValue]())
           case _   => Gen.mapOf(oneOf(generators))
@@ -41,6 +42,7 @@ trait UserAnswersGenerator extends TryValues {
       } yield UserAnswers (
         internalId = id,
         identifier = identifier,
+        sessionId = sessionId,
         data = data.foldLeft(Json.obj()) {
           case (obj, (path, value)) =>
             obj.setObject(path.path, value).get
