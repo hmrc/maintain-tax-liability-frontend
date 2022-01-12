@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,9 @@ import models.UserAnswers
 import play.api.mvc._
 import repositories.PlaybackRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.SessionLogging
-
+import utils.{Session, SessionLogging}
 import javax.inject.{Inject, Singleton}
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -48,7 +48,7 @@ class IndexController @Inject()(
           Future.successful(Redirect(routes.CheckYourAnswersController.onPageLoad()))
         case ua =>
           for {
-            _ <- repository.set(ua.getOrElse(UserAnswers(request.user.internalId, identifier)))
+            _ <- repository.set(ua.getOrElse(UserAnswers(request.user.internalId, identifier, Session.id(hc))))
             firstTaxYearAvailable <- trustsConnector.getFirstTaxYearToAskFor(identifier)
           } yield {
             firstTaxYearAvailable.yearsAgo match {
