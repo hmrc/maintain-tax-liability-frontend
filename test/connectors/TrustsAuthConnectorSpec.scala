@@ -21,7 +21,8 @@ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import models.responses._
-import org.scalatest.{AsyncFreeSpec, MustMatchers}
+import org.scalatest.freespec.AsyncFreeSpec
+import org.scalatest.matchers.must.Matchers
 import play.api.Application
 import play.api.http.Status
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -29,7 +30,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.test.DefaultAwaitTimeout
 import uk.gov.hmrc.http.HeaderCarrier
 
-class TrustsAuthConnectorSpec extends AsyncFreeSpec with MustMatchers with WireMockHelper with DefaultAwaitTimeout{
+class TrustsAuthConnectorSpec extends AsyncFreeSpec with Matchers with WireMockHelper with DefaultAwaitTimeout{
 
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 

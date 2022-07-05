@@ -23,7 +23,7 @@ import views.html.UnauthorisedView
 
 class UnauthorisedControllerSpec extends SpecBase {
 
-  lazy val unauthorisedRoute: String = routes.UnauthorisedController.onPageLoad().url
+  lazy val unauthorisedRoute: String = routes.UnauthorisedController.onPageLoad.url
 
   "FeatureNotAvailable Controller" must {
 
