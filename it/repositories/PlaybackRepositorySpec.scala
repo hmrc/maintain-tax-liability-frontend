@@ -19,8 +19,10 @@ package repositories
 import models.UserAnswers
 import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.freespec.AsyncFreeSpec
+import org.scalatest.matchers.must.Matchers
 
-class PlaybackRepositorySpec extends AsyncFreeSpec with MustMatchers
+class PlaybackRepositorySpec extends AsyncFreeSpec with Matchers
   with ScalaFutures with OptionValues with MongoSuite {
 
   val identifier: String = "1234567890"

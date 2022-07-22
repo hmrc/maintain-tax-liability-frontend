@@ -23,7 +23,7 @@ import views.html.FeatureNotAvailableView
 
 class FeatureNotAvailableControllerSpec extends SpecBase {
 
-  lazy val featureNotAvailableRoute: String = routes.FeatureNotAvailableController.onPageLoad().url
+  lazy val featureNotAvailableRoute: String = routes.FeatureNotAvailableController.onPageLoad.url
 
   "FeatureNotAvailable Controller" must {
 

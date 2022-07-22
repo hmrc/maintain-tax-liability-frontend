@@ -29,11 +29,11 @@ class PrintHelper @Inject()(taxYearRange: TaxYearRange,
   def apply(userAnswers: UserAnswers)(implicit messages: Messages): Seq[AnswerSection] = {
 
     val bound = answerRowConverter.bind(userAnswers)
-    
+
     CYMinusNTaxYears.taxYears.foldLeft[Seq[AnswerSection]](Nil)((acc, taxYear) => {
-      
+
       val taxYearDates = taxYearRange.taxYearDates(taxYear)
-      
+
       val answerRows: Seq[AnswerRow] = Seq(
         bound.yesNoQuestion(
           query = taxYear.page,
@@ -48,7 +48,7 @@ class PrintHelper @Inject()(taxYearRange: TaxYearRange,
           arguments = taxYearDates
         )
       ).flatten
-      
+
       answerRows match {
         case Nil => acc
         case _ => acc :+ AnswerSection(messages("checkYourAnswersSection.heading", taxYearDates: _*), answerRows)

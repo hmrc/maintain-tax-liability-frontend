@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
 class LogoutControllerSpec extends SpecBase {
 
-  lazy val logoutRoute: String = routes.LogoutController.logout().url
+  lazy val logoutRoute: String = routes.LogoutController.logout.url
 
   "LogoutController" must {
 

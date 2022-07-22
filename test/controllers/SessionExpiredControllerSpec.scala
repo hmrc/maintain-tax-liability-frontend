@@ -23,7 +23,7 @@ import views.html.SessionExpiredView
 
 class SessionExpiredControllerSpec extends SpecBase {
 
-  lazy val sessionExpiredRoute: String = routes.SessionExpiredController.onPageLoad().url
+  lazy val sessionExpiredRoute: String = routes.SessionExpiredController.onPageLoad.url
 
   "SessionExpiredController" must {
 
