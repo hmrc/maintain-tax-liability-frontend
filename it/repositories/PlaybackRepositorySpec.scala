@@ -17,36 +17,46 @@
 package repositories
 
 import models.UserAnswers
+import org.mongodb.scala.bson.BsonDocument
 import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.freespec.AsyncFreeSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
+import uk.gov.hmrc.mongo.test.MongoSupport
 
-class PlaybackRepositorySpec extends AsyncFreeSpec with Matchers
-  with ScalaFutures with OptionValues with MongoSuite {
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+
+class PlaybackRepositorySpec extends AnyWordSpec with Matchers
+  with ScalaFutures with OptionValues with MongoSupport with MongoSuite with BeforeAndAfterEach {
+
+
+  override def beforeEach() = Await.result(repository.collection.deleteMany(BsonDocument()).toFuture(),Duration.Inf)
+
+  lazy val repository: PlaybackRepositoryImpl = new PlaybackRepositoryImpl(mongoComponent, config)
 
   val identifier: String = "1234567890"
   val sessionId: String = "sessionId"
+  val newId: String = s"$identifier-$sessionId"
 
-  "a playback repository" - {
+  "a playback repository" should {
 
-    "must return None when no cache exists" in assertMongoTest(application) {
-      (app, _) =>
+    "must return None when no cache exists" in {
 
         val internalId = "Int-328969d0-557e-4559-sdba-074d0597107e"
 
-        val repository = app.injector.instanceOf[PlaybackRepository]
         repository.get(internalId, identifier, sessionId).futureValue mustBe None
     }
 
-    "must return user answers when cache exists" in assertMongoTest(application) {
-      (app, _) =>
+    "must return user answers when cache exists" in {
 
         val internalId = "Int-328969d0-557e-2559-96ba-074d0597107e"
+        val identifier = "Testing"
+        val sessionId = "Test"
+        val newId = s"$internalId-$identifier-$sessionId"
 
-        val repository = app.injector.instanceOf[PlaybackRepository]
-
-        val userAnswers = UserAnswers(internalId, identifier, sessionId)
+        val userAnswers: UserAnswers = UserAnswers(internalId,identifier,sessionId,newId)
 
         val initial = repository.set(userAnswers).futureValue
 
@@ -56,24 +66,8 @@ class PlaybackRepositorySpec extends AsyncFreeSpec with Matchers
         cachedAnswers.internalId mustBe internalId
         cachedAnswers.identifier mustBe identifier
         cachedAnswers.sessionId mustBe sessionId
+
     }
 
-    "must reset cache for an internalId" in assertMongoTest(application) {
-      (app, _) =>
-
-        val internalId = "Int-328969d0-557e-4559-96ba-0d4d0597107e"
-
-        val repository = app.injector.instanceOf[PlaybackRepository]
-
-        val userAnswers = UserAnswers(internalId, identifier, sessionId)
-
-        repository.set(userAnswers).futureValue
-
-        repository.get(internalId, identifier, sessionId).futureValue.isDefined mustBe true
-
-        repository.resetCache(internalId, identifier, sessionId).futureValue
-
-        repository.get(internalId, identifier, sessionId).futureValue.isDefined mustBe false
-    }
   }
 }

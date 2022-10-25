@@ -16,18 +16,17 @@
 
 package utils.mapping
 
+import java.time.LocalDate
+
 import base.SpecBase
 import generators.DateGenerators
 import models._
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.ArgumentMatchers.any
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.DeclaredTaxToHMRCYesNoPage
 import services.TaxYearService
-
-import java.time.LocalDate
 
 class MapperSpec extends SpecBase with ScalaCheckPropertyChecks with DateGenerators with BeforeAndAfterEach {
 

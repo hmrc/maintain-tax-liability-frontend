@@ -17,31 +17,37 @@
 package repositories
 
 import models.ActiveSession
+import org.mongodb.scala.bson.BsonDocument
 import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.freespec.AsyncFreeSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
+import uk.gov.hmrc.mongo.test.MongoSupport
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 
-class ActiveSessionRepositorySpec extends AsyncFreeSpec with Matchers
-  with ScalaFutures with OptionValues with MongoSuite {
+class ActiveSessionRepositorySpec extends AnyWordSpec with Matchers
+  with ScalaFutures with OptionValues with MongoSupport with MongoSuite with BeforeAndAfterEach {
 
-  "an active session repository" - {
+  override def beforeEach(): Unit =
+    Await.result(repository.collection.deleteMany(BsonDocument()).toFuture(), Duration.Inf)
 
-    "must return None when no session exists" in assertMongoTest(application) {
-      (app, _) =>
+  lazy val repository: ActiveSessionRepositoryImpl = new ActiveSessionRepositoryImpl(mongoComponent, config)
+
+  "an active session repository" should {
+
+    "must return None when no session exists" in {
 
         val internalId = "Int-328969d0-557e-4559-sdba-074d0597107e"
 
-        val repository = app.injector.instanceOf[ActiveSessionRepository]
         repository.get(internalId).futureValue mustBe None
+
     }
 
-    "must return an ActiveSession when one exists" in assertMongoTest(application) {
-      (app, _) =>
+    "must return an ActiveSession when one exists" in {
 
         val internalId = "Int-328969d0-557e-2559-96ba-074d0597107e"
-
-        val repository = app.injector.instanceOf[ActiveSessionRepository]
 
         val session = ActiveSession(internalId, "identifier")
 
@@ -52,12 +58,9 @@ class ActiveSessionRepositorySpec extends AsyncFreeSpec with Matchers
         repository.get(internalId).futureValue.value.identifier mustBe "identifier"
     }
 
-    "must override an existing session for an internalId" in assertMongoTest(application) {
-      (app, _) =>
+    "must override an existing session for an internalId" in {
 
         val internalId = "Int-328969d0-557e-4559-96ba-0d4d0597107e"
-
-        val repository = app.injector.instanceOf[ActiveSessionRepository]
 
         val session = ActiveSession(internalId, "identifier")
 

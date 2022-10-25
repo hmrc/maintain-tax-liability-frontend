@@ -19,9 +19,8 @@ package controllers.actions
 import base.SpecBase
 import models.requests.{IdentifierRequest, OptionalDataRequest}
 import models.{ActiveSession, OrganisationUser}
-import org.mockito.Mockito._
+import org.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
 import repositories.PlaybackRepository
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier

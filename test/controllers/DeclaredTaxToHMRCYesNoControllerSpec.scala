@@ -20,8 +20,7 @@ import base.SpecBase
 import forms.YesNoFormProvider
 import models.TaxYearRange
 import navigation.Navigator
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import pages.DeclaredTaxToHMRCYesNoPage
 import play.api.data.Form

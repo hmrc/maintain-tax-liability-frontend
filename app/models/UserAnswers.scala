@@ -28,6 +28,7 @@ import scala.util.{Failure, Success, Try}
 case class UserAnswers(internalId: String,
                        identifier: String,
                        sessionId: String,
+                       newId: String,
                        data: JsObject = Json.obj(),
                        updatedAt: LocalDateTime = LocalDateTime.now) extends Logging {
 
@@ -95,6 +96,7 @@ object UserAnswers {
     (__ \ "internalId").read[String] and
       (__ \ "identifier").read[String] and
       (__ \ "sessionId").read[String] and
+      (__ \ "newId").read[String] and
       (__ \ "data").read[JsObject] and
       (__ \ "updatedAt").read(MongoDateTimeFormats.localDateTimeRead)
     )(UserAnswers.apply _)
@@ -103,6 +105,7 @@ object UserAnswers {
     (__ \ "internalId").write[String] and
       (__ \ "identifier").write[String] and
       (__ \ "sessionId").write[String] and
+      (__ \ "newId").write[String] and
       (__ \ "data").write[JsObject] and
       (__ \ "updatedAt").write(MongoDateTimeFormats.localDateTimeWrite)
     )(unlift(UserAnswers.unapply))

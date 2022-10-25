@@ -20,8 +20,7 @@ import base.SpecBase
 import forms.YesNoFormProvider
 import models.{CYMinus3TaxYears, TaxYearRange}
 import navigation.Navigator
-import org.mockito.Matchers.{any, eq => eqTo}
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.scalatest.BeforeAndAfterEach
 import pages.CYMinusThreeYesNoPage
 import play.api.data.Form
