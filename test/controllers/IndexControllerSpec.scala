@@ -23,8 +23,7 @@ import generators.ModelGenerators
 import models.TaskStatus.{Completed, InProgress, TaskStatus}
 import models.{FirstTaxYearAvailable, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.{any, eq => eqTo}
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

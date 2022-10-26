@@ -47,7 +47,8 @@ trait SpecBaseHelpers extends GuiceOneAppPerSuite with TryValues with Mocked wit
   def emptyUserAnswers: UserAnswers = UserAnswers(
     internalId = internalId,
     identifier = identifier,
-    sessionId = sessionId
+    sessionId = sessionId,
+    newId = s"$internalId-$identifier-$sessionId"
   )
 
   val taxYears: Seq[CYMinusNTaxYears] = CYMinusNTaxYears.taxYears

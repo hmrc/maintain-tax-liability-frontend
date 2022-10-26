@@ -17,7 +17,6 @@
 package models
 
 import base.SpecBase
-import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.{Lang, MessagesImpl}
 import services.TaxYearService

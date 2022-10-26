@@ -16,77 +16,66 @@
 
 package repositories
 
-import com.google.inject.ImplementedBy
-import models.ActiveSession
-import play.api.Configuration
-import play.api.libs.json._
-import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.api.bson.BSONDocument
-import reactivemongo.api.bson.collection.BSONSerializationPack
-import reactivemongo.api.indexes.Index.Aux
-import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.play.json.collection.Helpers.idWrites
-
 import java.time.LocalDateTime
+import java.util.concurrent.TimeUnit
+
+import com.google.inject.ImplementedBy
+import config.AppConfig
 import javax.inject.{Inject, Singleton}
+import models.ActiveSession
+import org.bson.conversions.Bson
+import org.mongodb.scala.model.Indexes.ascending
+import org.mongodb.scala.model._
+import play.api.libs.json._
+import uk.gov.hmrc.mongo.MongoComponent
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ActiveSessionRepositoryImpl @Inject()(
-                                             override val mongo: ReactiveMongoApi,
-                                             override val config: Configuration
-                                           )(override implicit val ec: ExecutionContext)
-  extends IndexesManager with ActiveSessionRepository {
+                                             val mongoComponent: MongoComponent,
+                                             val config: AppConfig
+                                           )(implicit val ec: ExecutionContext)
+  extends PlayMongoRepository[ActiveSession](
+    collectionName = "session",
+    mongoComponent = mongoComponent,
+    domainFormat = Format(ActiveSession.reads,ActiveSession.writes),
+    indexes = Seq(
+      IndexModel(
+        ascending("updatedAt"),
+        IndexOptions()
+          .unique(false)
+          .name("session-updated-at-index")
+          .expireAfter(config.cachettlSessionInSeconds, TimeUnit.SECONDS)),
+      IndexModel(
+        ascending("identifier"),
+        IndexOptions()
+          .unique(false)
+          .name("identifier-index"))
+    ), replaceIndexes = config.dropIndexes
 
-  override val collectionName: String = "session"
+  ) with ActiveSessionRepository {
 
-  override val cacheTtl: Int = config.get[Int]("mongodb.session.ttlSeconds")
-
-  override val lastUpdatedIndexName: String = "session-updated-at-index"
-
-  override def idIndex: Aux[BSONSerializationPack.type] = Index.apply(BSONSerializationPack)(
-    key = Seq("identifier" -> IndexType.Ascending),
-    name = Some("identifier-index"),
-    expireAfterSeconds = None,
-    options = BSONDocument.empty,
-    unique = false,
-    background = false,
-    dropDups = false,
-    sparse = false,
-    version = None,
-    partialFilter = None,
-    storageEngine = None,
-    weights = None,
-    defaultLanguage = None,
-    languageOverride = None,
-    textIndexVersion = None,
-    sphereIndexVersion = None,
-    bits = None,
-    min = None,
-    max = None,
-    bucketSize = None,
-    collation = None,
-    wildcardProjection = None
-  )
-
-  private def selector(internalId: String): JsObject = Json.obj(
-    "internalId" -> internalId
-  )
+  private def selector(internalId: String): Bson =
+    Filters.eq("internalId", internalId)
 
   override def get(internalId: String): Future[Option[ActiveSession]] = {
-    findCollectionAndUpdate[ActiveSession](selector(internalId))
+    val modifier = Updates.set("updatedAt", LocalDateTime.now())
+
+    val updateOption = new FindOneAndUpdateOptions()
+      .upsert(false)
+
+    collection.findOneAndUpdate(selector(internalId), modifier, updateOption).toFutureOption()
   }
 
   override def set(session: ActiveSession): Future[Boolean] = {
 
-    val modifier = Json.obj(
-      "$set" -> session.copy(updatedAt = LocalDateTime.now)
-    )
+    val find = selector(session.internalId)
+    val updatedObject = session.copy(updatedAt = LocalDateTime.now)
+    val options = ReplaceOptions().upsert(true)
 
-    for {
-      col <- collection
-      r <- col.update(ordered = false).one(selector(session.internalId), modifier, upsert = true, multi = false)
-    } yield r.ok
+    collection.replaceOne(find, updatedObject, options).headOption().map(_.exists(_.wasAcknowledged()))
   }
 }
 

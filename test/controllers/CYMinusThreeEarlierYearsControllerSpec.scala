@@ -19,8 +19,7 @@ package controllers
 import base.SpecBase
 import models.{CYMinus3TaxYears, TaxYearRange}
 import navigation.Navigator
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
 import play.api.mvc.Call

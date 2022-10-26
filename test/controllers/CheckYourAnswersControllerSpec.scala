@@ -20,8 +20,7 @@ import base.SpecBase
 import connectors.{TrustsConnector, TrustsStoreConnector}
 import models.TaskStatus.Completed
 import models.{YearReturn, YearsReturns}
-import org.mockito.Matchers.{any, eq => eqTo}
-import org.mockito.Mockito.{never, reset, verify, when}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -133,7 +132,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
       verify(mockMapper)(any())
 
-      verify(mockTrustsConnector, never()).setYearsReturns(any(), any())(any(), any())
+      verify(mockTrustsConnector, never).setYearsReturns(any(), any())(any(), any())
       verify(mockTrustsStoreConnector).updateTaskStatus(any(), eqTo(Completed))(any(), any())
 
       application.stop()

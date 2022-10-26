@@ -5,7 +5,7 @@ import scoverage.ScoverageKeys
 
 val appName = "maintain-tax-liability-frontend"
 
-val silencerVersion = "1.7.9"
+val silencerVersion = "1.7.11"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
@@ -70,3 +70,5 @@ lazy val testSettings: Seq[Def.Setting[_]] = Seq(
     "-Dconfig.resource=test.application.conf"
   )
 )
+
+addCommandAlias("scalastyleAll", "all scalastyle test:scalastyle it:scalastyle")

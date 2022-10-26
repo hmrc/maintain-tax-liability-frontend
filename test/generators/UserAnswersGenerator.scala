@@ -43,6 +43,7 @@ trait UserAnswersGenerator extends TryValues {
         internalId = id,
         identifier = identifier,
         sessionId = sessionId,
+        newId = s"$id-$identifier-$sessionId",
         data = data.foldLeft(Json.obj()) {
           case (obj, (path, value)) =>
             obj.setObject(path.path, value).get
