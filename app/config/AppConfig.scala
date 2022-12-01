@@ -36,6 +36,8 @@ class AppConfig @Inject()(val config: Configuration, servicesConfig: ServicesCon
 
   val welshLanguageSupportEnabled: Boolean = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
 
+  val appName: String = config.get[String]("appName")
+
   lazy val loginUrl: String = config.get[String]("urls.login")
   lazy val loginContinueUrl: String = config.get[String]("urls.loginContinue")
   lazy val logoutUrl: String = config.get[String]("urls.logout")
