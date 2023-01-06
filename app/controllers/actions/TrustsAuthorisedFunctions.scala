@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,11 @@ class TrustsAuthorisedFunctions @Inject()(override val authConnector: AuthConnec
 
   def recoverFromAuthorisation: PartialFunction[Throwable, Result] = {
     case _: NoActiveSession =>
-      Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
+      Redirect(config.loginUrl,
+        Map("continue" -> Seq(config.loginContinueUrl),
+          "origin" -> Seq(config.appName)
+        )
+      )
     case _: AuthorisationException =>
       Redirect(routes.UnauthorisedController.onPageLoad)
   }

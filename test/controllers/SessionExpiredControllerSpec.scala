@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,5 +44,21 @@ class SessionExpiredControllerSpec extends SpecBase {
 
       application.stop()
     }
+
+    "redirect to the login url and contain the continue and origin parameters for  POST" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      val request = FakeRequest(POST, routes.SessionExpiredController.onSubmit.url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).getOrElse("") mustEqual "http://localhost:9949/auth-login-stub/gg-sign-in?continue=http%3A%2F%2Flocalhost%3A9781%2Ftrusts-registration&origin=maintain-tax-liability-frontend"
+
+      application.stop()
+    }
+
   }
 }
