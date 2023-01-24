@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,13 +26,11 @@ import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.SessionLogging
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class AuthenticationServiceImpl @Inject()(
-                                           trustAuthConnector: TrustsAuthConnector,
-                                           errorHandler: ErrorHandler
-                                         ) extends AuthenticationService with SessionLogging {
+class AuthenticationServiceImpl @Inject()(trustAuthConnector: TrustsAuthConnector,
+                                           errorHandler: ErrorHandler)
+                                         (implicit val ec: ExecutionContext) extends AuthenticationService with SessionLogging {
 
   override def authenticateAgent[A]()
                                    (implicit request: Request[A], hc: HeaderCarrier): Future[Either[Result, String]] = {
