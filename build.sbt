@@ -5,7 +5,7 @@ import scoverage.ScoverageKeys
 
 val appName = "maintain-tax-liability-frontend"
 
-val silencerVersion = "1.7.11"
+val silencerVersion = "1.7.12"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
@@ -14,7 +14,6 @@ lazy val microservice = Project(appName, file("."))
     majorVersion                     := 0,
     scalaVersion                     := "2.12.15",
     libraryDependencies              ++= AppDependencies.compile ++ AppDependencies.test,
-    dependencyOverrides ++= AppDependencies.overrides,
     RoutesKeys.routesImport += "models._",
     RoutesKeys.routesImport += "models.CYMinusNTaxYears._",
     TwirlKeys.templateImports ++= Seq(
@@ -62,7 +61,6 @@ lazy val microservice = Project(appName, file("."))
   .settings(publishingSettings: _*)
   .configs(IntegrationTest)
   .settings(integrationTestSettings(): _*)
-  .settings(resolvers += Resolver.jcenterRepo)
 
 lazy val testSettings: Seq[Def.Setting[_]] = Seq(
   fork := true,
