@@ -7,7 +7,7 @@ This service is not used in the standard maintenance journey.
 
 To run locally using the micro-service provided by the service manager:
 
-***sm2 --start TRUSTS_ALL -r***
+***sm2 --start TRUSTS_ALL***
 
 If you want to run your local copy, then stop the frontend ran by the service manager and run your local code by using the following (port number is 9844 but is defaulted to that in build.sbt).
 
@@ -19,7 +19,7 @@ If you want to run your local copy, then stop the frontend ran by the service ma
 
 To test the service locally run use the following command, this will run both the unit and integration tests and check the covergae of the tests.
 
-`sbt clean scalastyle coverage test it:test coverageReport`
+`./run_all_tests.sh`
 
 Scalastyle will examine your Scala code and provide warnings for any potential problems. To run this use the following command:
 
