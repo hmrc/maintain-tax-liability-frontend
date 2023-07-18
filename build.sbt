@@ -4,14 +4,14 @@ import scoverage.ScoverageKeys
 
 val appName = "maintain-tax-liability-frontend"
 
-val silencerVersion = "1.7.12"
-
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(
     majorVersion                     := 0,
-    scalaVersion                     := "2.12.15",
+    scalaVersion                     := "2.13.11",
+    // To resolve a bug with version 2.x.x of the scoverage plugin - https://github.com/sbt/sbt/issues/6997
+    libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
     libraryDependencies              ++= AppDependencies.compile ++ AppDependencies.test,
     RoutesKeys.routesImport += "models._",
     RoutesKeys.routesImport += "models.CYMinusNTaxYears._",
@@ -32,14 +32,6 @@ lazy val microservice = Project(appName, file("."))
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
     Assets / pipelineStages := Seq(gzip),
-    // ***************
-    // Use the silencer plugin to suppress warnings
-    scalacOptions += "-P:silencer:pathFilters=routes;views",
-    libraryDependencies ++= Seq(
-      compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full),
-      "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
-    ),
-    // ***************
     inConfig(Test)(testSettings),
     // concatenate js
     Concat.groups := Seq(

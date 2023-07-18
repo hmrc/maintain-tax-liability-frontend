@@ -82,8 +82,7 @@
 @govukLayout(
     pageTitle = Some(breadcrumbTitle(title)),
     headBlock = Some(hmrcHead(
-        headBlock = Some(headScripts),
-        nonce = CSPNonce.get
+        headBlock = Some(headScripts)
     )),
     headerBlock = Some(hmrcStandardHeader(
         serviceUrl = Some(appConfig.loginContinueUrl),
@@ -91,6 +90,6 @@
         phaseBanner = None
     )),
     beforeContentBlock = Some(beforeContentBlock),
-    scriptsBlock = Some(hmrcScripts(nonce = CSPNonce.get)),
+    scriptsBlock = Some(hmrcScripts()),
     footerBlock = Some(hmrcStandardFooter())
 )(mainContentWithGetHelp)
