@@ -12,7 +12,9 @@ lazy val microservice = Project(appName, file("."))
     scalaVersion                     := "2.13.11",
     // To resolve a bug with version 2.x.x of the scoverage plugin - https://github.com/sbt/sbt/issues/6997
     libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
-    libraryDependencies              ++= AppDependencies.compile ++ AppDependencies.test,
+    libraryDependencies ++= AppDependencies(),
+    scalacOptions += "-Wconf:src=routes/.*:s",
+    scalacOptions += "-Wconf:cat=unused-imports&src=views/.*:s",
     RoutesKeys.routesImport += "models._",
     RoutesKeys.routesImport += "models.CYMinusNTaxYears._",
     TwirlKeys.templateImports ++= Seq(
@@ -25,10 +27,9 @@ lazy val microservice = Project(appName, file("."))
       "views.ViewUtils._"
     ),
     PlayKeys.playDefaultPort := 9844,
-    ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*filters.*;.*handlers.*;.*components.*;.*repositories.*;" +
-      ".*BuildInfo.*;.*javascript.*;.*FrontendAuditConnector.*;.*Routes.*;.*GuiceInjector;" +
-      ".*ControllerConfiguration;.*LanguageSwitchController",
-    ScoverageKeys.coverageMinimumStmtTotal := 70,
+    ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*components.*;.*Mode.*;" +
+      ".*BuildInfo.*;.*Routes.*;.*package.*;",
+    ScoverageKeys.coverageMinimumStmtTotal := 80,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
     Assets / pipelineStages := Seq(gzip),
@@ -50,13 +51,13 @@ lazy val microservice = Project(appName, file("."))
     uglify / includeFilter := GlobFilter("maintaintaxliabilityfrontend-*.js")
   )
   .configs(IntegrationTest)
-  .settings(integrationTestSettings(): _*)
+  .settings(integrationTestSettings())
 
-lazy val testSettings: Seq[Def.Setting[_]] = Seq(
+lazy val testSettings: Seq[Def.Setting[?]] = Seq(
   fork := true,
   javaOptions ++= Seq(
     "-Dconfig.resource=test.application.conf"
   )
 )
 
-addCommandAlias("scalastyleAll", "all scalastyle test:scalastyle it:scalastyle")
+addCommandAlias("scalastyleAll", "all scalastyle Test/scalastyle IntegrationTest/scalastyle")

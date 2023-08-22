@@ -34,7 +34,7 @@
 
     <p>@messages("earlierYearsLiability.p1")</p>
 
-    @formHelper(action = route, 'autoComplete -> "off") {
+    @formHelper(action = route, Symbol("autoComplete") -> "off") {
 
         @submitButton()
 

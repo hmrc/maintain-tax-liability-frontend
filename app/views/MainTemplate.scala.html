@@ -18,7 +18,6 @@
 @import resources._
 @import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import views.ViewUtils._
-@import views.html.helper.CSPNonce
 
 @this(
     appConfig: AppConfig,
@@ -45,7 +44,7 @@
     timeoutEnabled: Boolean = true,
     canSignOut: Boolean = true,
     showBackLink: Boolean = false
-)(mainContent: Html)(implicit request: Request[_], rh: RequestHeader, messages: Messages)
+)(mainContent: Html)(implicit request: Request[_], messages: Messages)
 
 @headScripts = {
     @if(timeoutEnabled) {

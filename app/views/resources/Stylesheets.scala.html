@@ -20,6 +20,6 @@
 
 @()(implicit requestHeader: RequestHeader)
 
-<link rel="stylesheet" media="all" type="text/css" @{CSPNonce.attr} href='@controllers.routes.Assets.versioned("stylesheets/application.css")'/>
+<link @{CSPNonce.attr} rel="stylesheet" media="all" type="text/css" href='@controllers.routes.Assets.versioned("stylesheets/application.css")'/>
 <script @{CSPNonce.attr} src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script @{CSPNonce.attr} src='@routes.Assets.versioned("javascripts/maintaintaxliabilityfrontend-app.min.js")'></script>
