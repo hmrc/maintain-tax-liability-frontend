@@ -41,7 +41,7 @@
         @govukSummaryList(SummaryList(rows = formatSection(answerSection)))
     }
 
-    @formHelper(action = CheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
+    @formHelper(action = CheckYourAnswersController.onSubmit(), Symbol("autoComplete") -> "off") {
         @submitButton()
     }
 }
