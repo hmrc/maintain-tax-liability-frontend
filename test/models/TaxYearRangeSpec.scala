@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package models
 
 import base.SpecBase
+import org.mockito.Mockito
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.{Lang, MessagesImpl}
 import services.TaxYearService
@@ -25,7 +27,7 @@ import uk.gov.hmrc.play.language.LanguageUtils
 class TaxYearRangeSpec extends SpecBase with BeforeAndAfterEach {
 
   val languageUtils: LanguageUtils = injector.instanceOf[LanguageUtils]
-  val mockTaxYearService: TaxYearService = mock[TaxYearService]
+  val mockTaxYearService: TaxYearService = Mockito.mock(classOf[TaxYearService])
 
   override def beforeEach(): Unit = {
     reset(mockTaxYearService)

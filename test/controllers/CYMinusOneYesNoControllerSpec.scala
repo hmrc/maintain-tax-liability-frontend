@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import forms.YesNoFormProvider
 import models.{CYMinus1TaxYear, TaxYearRange}
 import navigation.Navigator
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito
+import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import pages.CYMinusOneYesNoPage
 import play.api.data.Form
@@ -32,7 +34,7 @@ import views.html.CYMinusOneYesNoView
 class CYMinusOneYesNoControllerSpec extends SpecBase with BeforeAndAfterEach {
 
   val taxYearDates: Seq[String] = Seq("6 April 2019", "5 April 2020")
-  val mockTaxYearRange: TaxYearRange = mock[TaxYearRange]
+  val mockTaxYearRange: TaxYearRange = Mockito.mock(classOf[TaxYearRange])
 
   val form: Form[Boolean] = new YesNoFormProvider().withPrefix("cyMinusOne.liability", taxYearDates)
 

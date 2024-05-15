@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,13 @@ import base.SpecBase
 import models.OrganisationUser
 import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
-import org.scalatest.concurrent.ScalaFutures
+import org.mockito.Mockito.when
 import play.api.mvc.Result
 import uk.gov.hmrc.auth.core.Enrolments
 
 import scala.concurrent.Future
 
-class SaveSessionActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
+class SaveSessionActionSpec extends SpecBase {
 
   class Harness(identifier: String) extends SaveActiveSessionImpl(identifier, mockSessionRepository) {
     def callFilter[A](request: IdentifierRequest[A]): Future[Option[Result]] = filter(request)

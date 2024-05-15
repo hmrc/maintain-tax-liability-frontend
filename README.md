@@ -7,13 +7,11 @@ This service is not used in the standard maintenance journey.
 
 To run locally using the micro-service provided by the service manager:
 
-***sm2 --start TRUSTS_ALL***
+`sm2 --start TRUSTS_ALL`
 
 If you want to run your local copy, then stop the frontend ran by the service manager and run your local code by using the following (port number is 9844 but is defaulted to that in build.sbt).
 
 `sbt run`
-
-`sbt clean run`
 
 ### testing the service ###
 

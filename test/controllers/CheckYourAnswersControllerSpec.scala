@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import connectors.{TrustsConnector, TrustsStoreConnector}
 import models.TaskStatus.Completed
 import models.{YearReturn, YearsReturns}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito
+import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -35,10 +37,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
   lazy val checkYourAnswersRoute: String = routes.CheckYourAnswersController.onPageLoad().url
 
-  val mockPrintHelper: PrintHelper = mock[PrintHelper]
-  val mockMapper: Mapper = mock[Mapper]
-  val mockTrustsConnector: TrustsConnector = mock[TrustsConnector]
-  val mockTrustsStoreConnector: TrustsStoreConnector = mock[TrustsStoreConnector]
+  val mockPrintHelper: PrintHelper = Mockito.mock(classOf[PrintHelper])
+  val mockMapper: Mapper = Mockito.mock(classOf[Mapper])
+  val mockTrustsConnector: TrustsConnector = Mockito.mock(classOf[TrustsConnector])
+  val mockTrustsStoreConnector: TrustsStoreConnector = Mockito.mock(classOf[TrustsStoreConnector])
 
   val fakeAnswerSections = Seq(
     AnswerSection("Heading", Seq(AnswerRow("Label", HtmlFormat.escape("Answer"), "url")))
@@ -49,7 +51,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
   ))
 
   override def beforeEach(): Unit = {
-    reset(mockPrintHelper, mockMapper, mockTrustsConnector, mockTrustsStoreConnector)
+    reset(mockPrintHelper)
+    reset(mockMapper)
+    reset(mockTrustsConnector)
+    reset(mockTrustsStoreConnector)
 
     when(mockPrintHelper(any())(any())).thenReturn(fakeAnswerSections)
 
@@ -132,7 +137,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
       verify(mockMapper)(any())
 
-      verify(mockTrustsConnector, never).setYearsReturns(any(), any())(any(), any())
+      verify(mockTrustsConnector, never()).setYearsReturns(any(), any())(any(), any())
       verify(mockTrustsStoreConnector).updateTaskStatus(any(), eqTo(Completed))(any(), any())
 
       application.stop()
