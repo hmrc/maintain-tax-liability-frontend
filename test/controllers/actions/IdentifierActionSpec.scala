@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import base.SpecBase
 import config.AppConfig
 import controllers.routes
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito
+import org.mockito.Mockito.when
 import play.api.Play.materializer
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent, Results}
@@ -34,7 +36,7 @@ class IdentifierActionSpec extends SpecBase {
 
   type RetrievalType = Option[String] ~ Option[AffinityGroup] ~ Enrolments
 
-  val mockAuthConnector: AuthConnector = mock[AuthConnector]
+  val mockAuthConnector: AuthConnector = Mockito.mock(classOf[AuthConnector])
   val appConfig: AppConfig = injector.instanceOf[AppConfig]
 
   class Harness(authAction: IdentifierAction) {
@@ -69,7 +71,7 @@ class IdentifierActionSpec extends SpecBase {
         when(mockAuthConnector.authorise(any(), any[Retrieval[RetrievalType]]())(any(), any()))
           .thenReturn(authRetrievals(AffinityGroup.Agent, noEnrolment))
 
-        val mockAuthService = mock[AuthenticationService]
+        val mockAuthService = Mockito.mock(classOf[AuthenticationService])
         when(mockAuthService.authenticateAgent()(any(), any())).thenReturn(Future.successful(Left(Redirect("test-redirect-url"))))
 
         val action = actionToTest(mockAuthService)

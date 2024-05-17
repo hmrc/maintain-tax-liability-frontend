@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package controllers.actions
 import base.SpecBase
 import models.requests.{IdentifierRequest, OptionalDataRequest}
 import models.{ActiveSession, OrganisationUser}
-import org.mockito.MockitoSugar
-import org.scalatest.concurrent.ScalaFutures
+import org.mockito.Mockito
+import org.mockito.Mockito.when
 import repositories.PlaybackRepository
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier
@@ -28,7 +28,7 @@ import utils.Session
 
 import scala.concurrent.Future
 
-class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
+class DataRetrievalActionSpec extends SpecBase {
 
   class Harness(playbackRepository: PlaybackRepository) extends DataRetrievalActionImpl(mockSessionRepository, playbackRepository) {
     def callTransform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] = transform(request)
@@ -42,7 +42,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
       "set userAnswers to 'None' in the request" in {
 
-        val playbackRepository = mock[PlaybackRepository]
+        val playbackRepository = Mockito.mock(classOf[PlaybackRepository])
 
         when(mockSessionRepository.get(internalId))
           .thenReturn(Future.successful(None))
@@ -62,7 +62,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
       "set userAnswers to 'None' in the request" in {
 
-        val playbackRepository = mock[PlaybackRepository]
+        val playbackRepository = Mockito.mock(classOf[PlaybackRepository])
 
         when(mockSessionRepository.get(internalId))
           .thenReturn(Future.successful(Some(ActiveSession(internalId, identifier))))
@@ -84,7 +84,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
       "build a userAnswers object and add it to the request" in {
 
-        val playbackRepository = mock[PlaybackRepository]
+        val playbackRepository = Mockito.mock(classOf[PlaybackRepository])
 
         when(mockSessionRepository.get(internalId))
           .thenReturn(Future.successful(Some(ActiveSession(internalId, identifier))))

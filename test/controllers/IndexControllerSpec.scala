@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,9 @@ import connectors.{TrustsConnector, TrustsStoreConnector}
 import generators.ModelGenerators
 import models.TaskStatus.{Completed, InProgress, TaskStatus}
 import models.{FirstTaxYearAvailable, UserAnswers}
-import org.mockito.ArgumentCaptor
+import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -38,12 +39,14 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
 
   lazy val indexRoute: String = routes.IndexController.onPageLoad(identifier).url
 
-  val mockTrustsConnector: TrustsConnector = mock[TrustsConnector]
-  val mockTrustsStoreConnector: TrustsStoreConnector = mock[TrustsStoreConnector]
+  val mockTrustsConnector: TrustsConnector = Mockito.mock(classOf[TrustsConnector])
+  val mockTrustsStoreConnector: TrustsStoreConnector = Mockito.mock(classOf[TrustsStoreConnector])
   val errorHandler: ErrorHandler = injector.instanceOf[ErrorHandler]
 
   override def beforeEach(): Unit = {
-    reset(playbackRepository, mockTrustsConnector, mockTrustsStoreConnector)
+    reset(playbackRepository)
+    reset(mockTrustsConnector)
+    reset(mockTrustsStoreConnector)
 
     when(playbackRepository.set(any())).thenReturn(Future.successful(true))
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,8 @@ package base
 import controllers.actions._
 import models.{CYMinusNTaxYears, UserAnswers}
 import navigation.FakeNavigator
-import org.scalatest.{BeforeAndAfter, TestSuite, TryValues}
+import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
+import org.scalatest.{EitherValues, OptionValues, TryValues}
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice._
 import play.api.http.Status.OK
@@ -32,13 +33,25 @@ import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
-trait SpecBaseHelpers extends GuiceOneAppPerSuite with TryValues with Mocked with BeforeAndAfter with FakeApp {
-  this: TestSuite =>
+trait SpecBase extends PlaySpec
+  with GuiceOneAppPerSuite
+  with TryValues
+  with ScalaFutures
+  with IntegrationPatience
+  with Mocked
+  with FakeApp
+  with OptionValues
+  with EitherValues {
 
   val internalId: String = SpecBase.internalId
   val identifier: String = SpecBase.identifier
   val sessionId: String = SpecBase.sessionId
 
+  val defaultAppConfigurations: Map[String, Any] = Map(
+    "auditing.enabled" -> false,
+    "metrics.enabled" -> false,
+    "play.filters.disabled" -> List("play.filters.csrf.CSRFFilter", "play.filters.csp.CSPFilter")
+  )
 
   lazy val okResponse: Future[HttpResponse] = Future.successful(HttpResponse(OK, ""))
 
@@ -53,7 +66,7 @@ trait SpecBaseHelpers extends GuiceOneAppPerSuite with TryValues with Mocked wit
 
   val taxYears: Seq[CYMinusNTaxYears] = CYMinusNTaxYears.taxYears
 
-  val bodyParsers: BodyParsers.Default = injector.instanceOf[BodyParsers.Default]
+  def bodyParsers: BodyParsers.Default = injector.instanceOf[BodyParsers.Default]
 
   protected def applicationBuilder(userAnswers: Option[UserAnswers] = None,
                                    affinityGroup: AffinityGroup = AffinityGroup.Organisation): GuiceApplicationBuilder =
@@ -66,16 +79,13 @@ trait SpecBaseHelpers extends GuiceOneAppPerSuite with TryValues with Mocked wit
         bind[PlaybackRepository].toInstance(playbackRepository),
         bind[ActiveSessionRepository].toInstance(mockSessionRepository)
       )
-      .configure(
-        "play.filters.csp.nonce.enabled" -> false
-      )
+      .configure(defaultAppConfigurations)
 }
-
-trait SpecBase extends PlaySpec with SpecBaseHelpers
 
 object SpecBase {
 
   val internalId: String = "internalId"
   val identifier: String = "identifier"
   val sessionId: String = "sessionId"
+
 }

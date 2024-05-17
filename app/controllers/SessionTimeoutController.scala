@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,8 @@
 package controllers
 
 import config.AppConfig
+import play.api.Configuration
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionLogging
 
@@ -30,9 +29,8 @@ import scala.concurrent.Future
 class SessionTimeoutController @Inject()(
                                           val appConfig: AppConfig,
                                           val config: Configuration,
-                                          val env: Environment,
                                           mcc: MessagesControllerComponents
-                                        ) extends FrontendController(mcc) with AuthRedirects with SessionLogging {
+                                        ) extends FrontendController(mcc) with SessionLogging {
 
   val keepAlive: Action[AnyContent] = Action.async { implicit request =>
     infoLog("user requested to extend the time remaining to maintain a trust, user has not been signed out")

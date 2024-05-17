@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,15 @@ package services
 import base.SpecBase
 import generators.DateGenerators
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import uk.gov.hmrc.time.TaxYear
 
 class TaxYearServiceSpec extends SpecBase with ScalaCheckPropertyChecks with DateGenerators with BeforeAndAfterEach {
 
-  val taxYearService: TaxYearService = mock[TaxYearService]
+  val taxYearService: TaxYearService = Mockito.mock(classOf[TaxYearService])
 
   override def beforeEach(): Unit = {
     reset(taxYearService)

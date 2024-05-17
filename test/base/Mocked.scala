@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,19 @@
 package base
 
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.mockito.Mockito
+import org.mockito.Mockito.when
 import repositories.{ActiveSessionRepository, PlaybackRepository}
 
 import scala.concurrent.Future
 
-trait Mocked extends MockitoSugar {
+trait Mocked {
 
-  val playbackRepository: PlaybackRepository = mock[PlaybackRepository]
+  val playbackRepository: PlaybackRepository = Mockito.mock(classOf[PlaybackRepository])
 
   when(playbackRepository.set(any())).thenReturn(Future.successful(true))
 
-  val mockSessionRepository: ActiveSessionRepository = mock[ActiveSessionRepository]
+  val mockSessionRepository: ActiveSessionRepository = Mockito.mock(classOf[ActiveSessionRepository])
 
   when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,23 @@
 
 package connectors
 
-import base.WireMockHelper
+import base.{SpecBase, WireMockHelper}
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import models.responses._
-import org.scalatest.freespec.AsyncFreeSpec
-import org.scalatest.matchers.must.Matchers
 import play.api.Application
 import play.api.http.Status
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
-import play.api.test.DefaultAwaitTimeout
 import uk.gov.hmrc.http.HeaderCarrier
 
-class TrustsAuthConnectorSpec extends AsyncFreeSpec with Matchers with WireMockHelper with DefaultAwaitTimeout{
+class TrustsAuthConnectorSpec extends SpecBase with WireMockHelper {
 
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
   private val authorisedUrl: String = s"/trusts-auth/agent-authorised"
+
   private def authorisedUrlFor(identifier: String): String = s"/trusts-auth/authorised/$identifier"
 
   private def responseFromJson(json: JsValue): ResponseDefinitionBuilder = {
@@ -42,6 +40,7 @@ class TrustsAuthConnectorSpec extends AsyncFreeSpec with Matchers with WireMockH
   }
 
   private def allowedResponse: ResponseDefinitionBuilder = responseFromJson(Json.obj("authorised" -> true))
+
   private def allowedAgentResponse: ResponseDefinitionBuilder = responseFromJson(Json.obj("arn" -> "SomeArn"))
 
   private def redirectResponse(): ResponseDefinitionBuilder = responseFromJson(Json.obj("redirectUrl" -> "redirect-url"))
@@ -50,20 +49,18 @@ class TrustsAuthConnectorSpec extends AsyncFreeSpec with Matchers with WireMockH
     server.stubFor(get(urlEqualTo(url)).willReturn(response))
   }
 
-  lazy val app: Application = new GuiceApplicationBuilder()
-    .configure(Seq(
-      "microservice.services.trusts-auth.port" -> server.port(),
-      "auditing.enabled" -> false
-    ): _*).build()
+  override lazy val app: Application = new GuiceApplicationBuilder()
+    .configure(defaultAppConfigurations ++ Map("microservice.services.trusts-auth.port" -> server.port()))
+    .build()
 
   private lazy val connector = app.injector.instanceOf[TrustsAuthConnector]
 
-  private val identifier = "0123456789"
+  override val identifier = "0123456789"
 
-  "TrustsAuthConnector" - {
-    "authorisedForIdentifier" - {
+  "TrustsAuthConnector" should {
+    "authorisedForIdentifier" when {
 
-      "returns 'Allowed' when" - {
+      "returns 'Allowed' when" when {
         "service returns with no redirect url" in {
 
           wiremock(authorisedUrlFor(identifier), allowedResponse)
@@ -73,7 +70,7 @@ class TrustsAuthConnectorSpec extends AsyncFreeSpec with Matchers with WireMockH
           }
         }
       }
-      "returns 'Denied' when" - {
+      "returns 'Denied' when" when {
         "service returns a redirect url" in {
 
           wiremock(authorisedUrlFor(identifier), redirectResponse())
@@ -83,7 +80,7 @@ class TrustsAuthConnectorSpec extends AsyncFreeSpec with Matchers with WireMockH
           }
         }
       }
-      "returns 'Internal server error' when" - {
+      "returns 'Internal server error' when" when {
         "service returns something not OK" in {
 
           wiremock(authorisedUrlFor(identifier), aResponse().withStatus(Status.INTERNAL_SERVER_ERROR))
@@ -94,9 +91,9 @@ class TrustsAuthConnectorSpec extends AsyncFreeSpec with Matchers with WireMockH
         }
       }
     }
-    "authorised" - {
+    "authorised" when {
 
-      "returns 'Agent Allowed' when" - {
+      "returns 'Agent Allowed' when" when {
         "service returns with agent authorised response" in {
 
           wiremock(authorisedUrl, allowedAgentResponse)
@@ -107,7 +104,7 @@ class TrustsAuthConnectorSpec extends AsyncFreeSpec with Matchers with WireMockH
         }
       }
 
-      "returns 'Denied' when" - {
+      "returns 'Denied' when" when {
         "service returns a redirect url" in {
 
           wiremock(authorisedUrl, redirectResponse())
@@ -117,7 +114,7 @@ class TrustsAuthConnectorSpec extends AsyncFreeSpec with Matchers with WireMockH
           }
         }
       }
-      "returns 'Internal server error' when" - {
+      "returns 'Internal server error' when" when {
         "service returns something not OK" in {
 
           wiremock(authorisedUrl, aResponse().withStatus(Status.INTERNAL_SERVER_ERROR))
