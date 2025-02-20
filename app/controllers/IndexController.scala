@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +23,14 @@ import controllers.routes._
 import models.TaskStatus.{Completed, InProgress, TaskStatus}
 import models.UserAnswers
 import play.api.mvc._
+import play.twirl.api.Html
 import repositories.PlaybackRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import utils.{Session, SessionLogging}
-import javax.inject.{Inject, Singleton}
+import views.html.ErrorTemplate
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -38,7 +41,7 @@ class IndexController @Inject()(
                                  trustsConnector: TrustsConnector,
                                  errorHandler: ErrorHandler,
                                  trustsStoreConnector: TrustsStoreConnector
-                               )(implicit ec: ExecutionContext) extends FrontendController(mcc) with SessionLogging {
+                               )(implicit val ec: ExecutionContext) extends FrontendController(mcc) with SessionLogging {
 
   def onPageLoad(identifier: String): Action[AnyContent] = actions.authorisedWithSavedSession(identifier).async {
     implicit request =>
@@ -67,6 +70,9 @@ class IndexController @Inject()(
               case x =>
                 errorLog(s"Unexpected result for number of years ago of first tax year available: $x", Some(identifier))
                 InternalServerError(errorHandler.internalServerErrorTemplate)
+//                Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+//                errorHandler.internalServerErrorTemplate.map(html => InternalServerError(html))
+//                Future.successful(errorHandler.internalServerErrorTemplate.map(html => InternalServerError(html)))
             }
           }
       }

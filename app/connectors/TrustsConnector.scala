@@ -18,26 +18,46 @@ package connectors
 
 import config.AppConfig
 import models.{FirstTaxYearAvailable, YearsReturns}
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TrustsConnector @Inject()(http: HttpClient, config: AppConfig) {
+class TrustsConnector @Inject()(http: HttpClientV2, config: AppConfig) {
 
   private val trustsUrl: String = s"${config.trustsUrl}/trusts"
   private val baseUrl: String = s"$trustsUrl/tax-liability"
 
   def getFirstTaxYearToAskFor(identifier: String)(implicit hc: HeaderCarrier, ex: ExecutionContext): Future[FirstTaxYearAvailable] = {
     val url = s"$baseUrl/$identifier/first-year-to-ask-for"
-    http.GET[FirstTaxYearAvailable](url)
+    http.get(url"$url")
+      .execute[FirstTaxYearAvailable]
   }
+
+//  def getFirstTaxYearToAskFor(identifier: String)(implicit hc: HeaderCarrier, ex: ExecutionContext): Future[FirstTaxYearAvailable] = {
+//    val url = s"$baseUrl/$identifier/first-year-to-ask-for"
+//    http.GET[FirstTaxYearAvailable](url)
+//  }
+//
+//
 
   def setYearsReturns(identifier: String, value: YearsReturns)
                      (implicit hc: HeaderCarrier, ex: ExecutionContext): Future[HttpResponse] = {
     val url = s"$baseUrl/$identifier/years-returns"
-    http.PUT[YearsReturns, HttpResponse](url, value)
+    http.put(url"$url")
+    .withBody(Json.toJson(value))
+      .execute[HttpResponse]
   }
+
+//    def setYearsReturns(identifier: String, value: YearsReturns)
+//                     (implicit hc: HeaderCarrier, ex: ExecutionContext): Future[HttpResponse] = {
+//    val url = s"$baseUrl/$identifier/years-returns"
+//    http.PUT[YearsReturns, HttpResponse](url, value)
+//  }
+//
+//
 
 }
