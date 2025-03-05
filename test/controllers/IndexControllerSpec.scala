@@ -260,9 +260,9 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
 
             val result = route(application, request).value
 
-            status(result) mustEqual InternalServerError.toString()
+            status(result) mustEqual INTERNAL_SERVER_ERROR
 
-            contentAsString(result) mustEqual errorHandler.internalServerErrorTemplate(request)
+            contentAsString(result) mustEqual await(errorHandler.internalServerErrorTemplate(request)).toString()
 
             val uaCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
             verify(playbackRepository).set(uaCaptor.capture)
