@@ -23,12 +23,9 @@ import controllers.routes._
 import models.TaskStatus.{Completed, InProgress, TaskStatus}
 import models.UserAnswers
 import play.api.mvc._
-import play.twirl.api.Html
 import repositories.PlaybackRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import utils.{Session, SessionLogging}
-import views.html.ErrorTemplate
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,35 +43,38 @@ class IndexController @Inject()(
   def onPageLoad(identifier: String): Action[AnyContent] = actions.authorisedWithSavedSession(identifier).async {
     implicit request =>
 
-      def redirect(taskStatus: TaskStatus): Future[Result] = request.userAnswers match {
-        case Some(_) if taskStatus == Completed =>
-          Future.successful(Redirect(routes.CheckYourAnswersController.onPageLoad()))
-        case ua =>
-          for {
-            _ <- repository.set(ua.getOrElse(UserAnswers(request.user.internalId, identifier, Session.id(hc),newId = s"${request.user.internalId}-$identifier-${Session.id(hc)}")))
-            firstTaxYearAvailable <- trustsConnector.getFirstTaxYearToAskFor(identifier)
-          } yield {
-            firstTaxYearAvailable.yearsAgo match {
-              case 4 if firstTaxYearAvailable.earlierYearsToDeclare =>
-                Redirect(CYMinusFourEarlierYearsController.onPageLoad())
-              case 4 =>
-                Redirect(CYMinusFourYesNoController.onPageLoad())
-              case 3 if firstTaxYearAvailable.earlierYearsToDeclare =>
-                Redirect(CYMinusThreeEarlierYearsController.onPageLoad())
-              case 3 =>
-                Redirect(CYMinusThreeYesNoController.onPageLoad())
-              case 2 =>
-                Redirect(CYMinusTwoYesNoController.onPageLoad())
-              case 1 =>
-                Redirect(CYMinusOneYesNoController.onPageLoad())
-              case x =>
-                errorLog(s"Unexpected result for number of years ago of first tax year available: $x", Some(identifier))
-                InternalServerError(errorHandler.internalServerErrorTemplate)
-//                Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
-//                errorHandler.internalServerErrorTemplate.map(html => InternalServerError(html))
-//                Future.successful(errorHandler.internalServerErrorTemplate.map(html => InternalServerError(html)))
+      def redirect(taskStatus: TaskStatus): Future[Result] = {
+
+        def futureRedirect(call: Call): Future[Result] = Future.successful(Redirect(call))
+
+        request.userAnswers match {
+          case Some(_) if taskStatus == Completed =>
+            Future.successful(Redirect(routes.CheckYourAnswersController.onPageLoad()))
+          case ua =>
+            for {
+              _ <- repository.set(ua.getOrElse(UserAnswers(request.user.internalId, identifier, Session.id(hc), newId = s"${request.user.internalId}-$identifier-${Session.id(hc)}")))
+              firstTaxYearAvailable <- trustsConnector.getFirstTaxYearToAskFor(identifier)
+              result <- firstTaxYearAvailable.yearsAgo match {
+                case 4 if firstTaxYearAvailable.earlierYearsToDeclare =>
+                  futureRedirect(CYMinusFourEarlierYearsController.onPageLoad())
+                case 4 =>
+                  futureRedirect(CYMinusFourYesNoController.onPageLoad())
+                case 3 if firstTaxYearAvailable.earlierYearsToDeclare =>
+                  futureRedirect(CYMinusThreeEarlierYearsController.onPageLoad())
+                case 3 =>
+                  futureRedirect(CYMinusThreeYesNoController.onPageLoad())
+                case 2 =>
+                  futureRedirect(CYMinusTwoYesNoController.onPageLoad())
+                case 1 =>
+                  futureRedirect(CYMinusOneYesNoController.onPageLoad())
+                case x =>
+                  errorLog(s"Unexpected result for number of years ago of first tax year available: $x", Some(identifier))
+                  errorHandler.internalServerErrorTemplate.map(html => InternalServerError(html))
+              }
+            } yield {
+              result
             }
-          }
+        }
       }
 
       for {
