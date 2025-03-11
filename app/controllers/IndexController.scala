@@ -38,7 +38,7 @@ class IndexController @Inject()(
                                  trustsConnector: TrustsConnector,
                                  errorHandler: ErrorHandler,
                                  trustsStoreConnector: TrustsStoreConnector
-                               )(implicit val ec: ExecutionContext) extends FrontendController(mcc) with SessionLogging {
+                               )(implicit ec: ExecutionContext) extends FrontendController(mcc) with SessionLogging {
 
   def onPageLoad(identifier: String): Action[AnyContent] = actions.authorisedWithSavedSession(identifier).async {
     implicit request =>

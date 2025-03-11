@@ -17,7 +17,7 @@
 package connectors
 
 import config.AppConfig
-import models.{Task, TaskStatus}
+import models.Task
 import models.TaskStatus.TaskStatus
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -38,15 +38,6 @@ class TrustsStoreConnector @Inject()(http: HttpClientV2, config: AppConfig) {
       .execute[HttpResponse]
   }
 
-
-//   def updateTaskStatus(identifier: String, taskStatus: TaskStatus)
-//                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-//    val url: String = s"${config.trustsStoreUrl}/trusts-store/maintain/tasks/update-tax-liability/$identifier"
-//    http.POST[TaskStatus, HttpResponse](url, taskStatus)
-//  }
-
-
-
   def getTaskStatus(identifier: String)
                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[TaskStatus] = {
     val url: String = s"${config.trustsStoreUrl}/trusts-store/maintain/tasks/$identifier"
@@ -55,12 +46,5 @@ class TrustsStoreConnector @Inject()(http: HttpClientV2, config: AppConfig) {
       .execute[Task]
       .map(_.taxLiability)
   }
-
-
-//  def getTaskStatus(identifier: String)
-//                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[TaskStatus] = {
-//    val url: String = s"${config.trustsStoreUrl}/trusts-store/maintain/tasks/$identifier"
-//    http.GET[Task](url).map(_.taxLiability)
-//  }
 
 }

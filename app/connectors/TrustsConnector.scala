@@ -37,13 +37,6 @@ class TrustsConnector @Inject()(http: HttpClientV2, config: AppConfig) {
       .execute[FirstTaxYearAvailable]
   }
 
-//  def getFirstTaxYearToAskFor(identifier: String)(implicit hc: HeaderCarrier, ex: ExecutionContext): Future[FirstTaxYearAvailable] = {
-//    val url = s"$baseUrl/$identifier/first-year-to-ask-for"
-//    http.GET[FirstTaxYearAvailable](url)
-//  }
-//
-//
-
   def setYearsReturns(identifier: String, value: YearsReturns)
                      (implicit hc: HeaderCarrier, ex: ExecutionContext): Future[HttpResponse] = {
     val url = s"$baseUrl/$identifier/years-returns"
@@ -51,13 +44,5 @@ class TrustsConnector @Inject()(http: HttpClientV2, config: AppConfig) {
     .withBody(Json.toJson(value))
       .execute[HttpResponse]
   }
-
-//    def setYearsReturns(identifier: String, value: YearsReturns)
-//                     (implicit hc: HeaderCarrier, ex: ExecutionContext): Future[HttpResponse] = {
-//    val url = s"$baseUrl/$identifier/years-returns"
-//    http.PUT[YearsReturns, HttpResponse](url, value)
-//  }
-//
-//
 
 }

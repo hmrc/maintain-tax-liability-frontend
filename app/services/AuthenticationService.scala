@@ -43,7 +43,6 @@ class AuthenticationServiceImpl @Inject()(trustAuthConnector: TrustsAuthConnecto
         Future.successful(Left(Redirect(redirectUrl)))
       case _ =>
         warnLog("Unable to authenticate agent with trusts-auth")
-//        Future.successful(Left(InternalServerError(errorHandler.internalServerErrorTemplate)))
         errorHandler.internalServerErrorTemplate.map(html => Left(InternalServerError(html)))
 
     }  }
@@ -58,8 +57,6 @@ class AuthenticationServiceImpl @Inject()(trustAuthConnector: TrustsAuthConnecto
       case _ =>
         warnLog("Unable to authenticate with trusts-auth", Some(identifier))
         errorHandler.internalServerErrorTemplate.map(html => Left(InternalServerError(html)))
-
-      //        Future.successful(Left(InternalServerError(errorHandler.internalServerErrorTemplate)))
     }
   }
 
