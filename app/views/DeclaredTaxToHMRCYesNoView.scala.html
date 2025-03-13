@@ -26,7 +26,7 @@
     submitButton: SubmitButton
 )
 
-@(form: Form[_], taxYear: CYMinusNTaxYears, taxYearDates: String*)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], taxYear: CYMinusNTaxYears, taxYearDates: String*)(implicit request: RequestHeader, messages: Messages)
 
 @main_template(
     title = s"${errorPrefix(form)}${messages("declaredToHMRC.title", taxYearDates: _*)}",

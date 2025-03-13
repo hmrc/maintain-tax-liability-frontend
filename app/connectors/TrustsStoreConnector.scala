@@ -19,24 +19,32 @@ package connectors
 import config.AppConfig
 import models.Task
 import models.TaskStatus.TaskStatus
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TrustsStoreConnector @Inject()(http: HttpClient, config: AppConfig) {
+class TrustsStoreConnector @Inject()(http: HttpClientV2, config: AppConfig) {
 
   def updateTaskStatus(identifier: String, taskStatus: TaskStatus)
                       (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
     val url: String = s"${config.trustsStoreUrl}/trusts-store/maintain/tasks/update-tax-liability/$identifier"
-    http.POST[TaskStatus, HttpResponse](url, taskStatus)
+    http
+      .post(url"$url")
+      .withBody(Json.toJson(taskStatus))
+      .execute[HttpResponse]
   }
 
   def getTaskStatus(identifier: String)
                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[TaskStatus] = {
     val url: String = s"${config.trustsStoreUrl}/trusts-store/maintain/tasks/$identifier"
-    http.GET[Task](url).map(_.taxLiability)
+    http
+      .get(url"$url")
+      .execute[Task]
+      .map(_.taxLiability)
   }
 
 }

@@ -23,7 +23,7 @@
     submitButton: SubmitButton
 )
 
-@(year: String, route: Call)(implicit request: Request[_], messages: Messages)
+@(year: String, route: Call)(implicit request: RequestHeader, messages: Messages)
 
 @main_template(
     title = messages("earlierYearsLiability.title", year),

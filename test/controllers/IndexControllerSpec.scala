@@ -29,6 +29,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
+import play.api.mvc.Results.InternalServerError
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HttpResponse
@@ -261,7 +262,7 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
 
             status(result) mustEqual INTERNAL_SERVER_ERROR
 
-            contentAsString(result) mustEqual errorHandler.internalServerErrorTemplate(request).toString
+            contentAsString(result) mustEqual await(errorHandler.internalServerErrorTemplate(request)).toString()
 
             val uaCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
             verify(playbackRepository).set(uaCaptor.capture)

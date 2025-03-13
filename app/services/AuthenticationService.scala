@@ -32,24 +32,31 @@ class AuthenticationServiceImpl @Inject()(trustAuthConnector: TrustsAuthConnecto
                                            errorHandler: ErrorHandler)
                                          (implicit val ec: ExecutionContext) extends AuthenticationService with SessionLogging {
 
+  def futureRedirect(call: Call): Future[Result] = Future.successful(Redirect(call))
+
   override def authenticateAgent[A]()
                                    (implicit request: Request[A], hc: HeaderCarrier): Future[Either[Result, String]] = {
     trustAuthConnector.agentIsAuthorised().flatMap {
-      case TrustsAuthAgentAllowed(arn) => Future.successful(Right(arn))
-      case TrustsAuthDenied(redirectUrl) => Future.successful(Left(Redirect(redirectUrl)))
+      case TrustsAuthAgentAllowed(arn) =>
+        Future.successful(Right(arn))
+      case TrustsAuthDenied(redirectUrl) =>
+        Future.successful(Left(Redirect(redirectUrl)))
       case _ =>
         warnLog("Unable to authenticate agent with trusts-auth")
-        Future.successful(Left(InternalServerError(errorHandler.internalServerErrorTemplate)))
+        errorHandler.internalServerErrorTemplate.map(html => Left(InternalServerError(html)))
+
     }  }
 
   override def authenticateForIdentifier[A](identifier: String)
                                            (implicit request: DataRequest[A], hc: HeaderCarrier): Future[Either[Result, DataRequest[A]]] = {
     trustAuthConnector.authorisedForIdentifier(identifier).flatMap {
-      case _: TrustsAuthAllowed => Future.successful(Right(request))
-      case TrustsAuthDenied(redirectUrl) => Future.successful(Left(Redirect(redirectUrl)))
+      case _: TrustsAuthAllowed =>
+        Future.successful(Right(request))
+      case TrustsAuthDenied(redirectUrl) =>
+        Future.successful(Left(Redirect(redirectUrl)))
       case _ =>
         warnLog("Unable to authenticate with trusts-auth", Some(identifier))
-        Future.successful(Left(InternalServerError(errorHandler.internalServerErrorTemplate)))
+        errorHandler.internalServerErrorTemplate.map(html => Left(InternalServerError(html)))
     }
   }
 

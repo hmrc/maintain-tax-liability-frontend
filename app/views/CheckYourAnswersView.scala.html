@@ -27,7 +27,7 @@
     submitButton: SubmitButton
 )
 
-@(answerSections: Seq[AnswerSection])(implicit request: Request[_], messages: Messages)
+@(answerSections: Seq[AnswerSection])(implicit request: RequestHeader, messages: Messages)
 
 @main_template(
     title = messages("checkYourAnswers.title"),
