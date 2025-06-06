@@ -1,4 +1,4 @@
-service.name = Register and Maintain a Trust
+service.name = Manage a trust
 service.section = Years of tax liability
 
 site.sign_out = Sign out
@@ -20,7 +20,7 @@ featureNotAvailable.p2 = You will be able to update these details online in the 
 session_expired.title = For your security, we signed you out
 session_expired.heading = For your security, we signed you out
 session_expired.guidance = This is because you have been inactive on the service for 15 minutes.
-session_expired.guidance.2 = You will need to sign in to continue maintaining the trust.
+session_expired.guidance.2 = You will need to sign in to continue managing the trust.
 
 pageNotFound.title = Page not found
 pageNotFound.heading = Page not found
