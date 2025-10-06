@@ -19,10 +19,6 @@ To test the service locally run use the following command, this will run both th
 
 `./run_all_tests.sh`
 
-Scalastyle will examine your Scala code and provide warnings for any potential problems. To run this use the following command:
-
-`sbt scalastyle`
-
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
