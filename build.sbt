@@ -1,5 +1,4 @@
 import play.sbt.routes.RoutesKeys
-import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings
 
 ThisBuild / scalaVersion := "2.13.16"
@@ -23,10 +22,7 @@ lazy val microservice = Project("maintain-tax-liability-frontend", file("."))
       "views.ViewUtils._"
     ),
     PlayKeys.playDefaultPort := 9844,
-    ScoverageKeys.coverageExcludedFiles := "<empty>;.*components.*;.*Mode.*;.*Routes.*;",
-    ScoverageKeys.coverageMinimumStmtTotal := 80,
-    ScoverageKeys.coverageFailOnMinimum := true,
-    ScoverageKeys.coverageHighlighting := true,
+    CodeCoverageSettings.settings,
     Assets / pipelineStages := Seq(gzip),
     // concatenate js
     Concat.groups := Seq(
@@ -50,6 +46,3 @@ lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(microservice % "test->test")
   .settings(DefaultBuildSettings.itSettings())
-
-
-addCommandAlias("scalastyleAll", "all scalastyle Test/scalastyle it/Test/scalastyle")
