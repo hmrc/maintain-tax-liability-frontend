@@ -66,6 +66,6 @@ class AppConfig @Inject()(val config: Configuration, servicesConfig: ServicesCon
 
   val cachettlplaybackInSeconds: Long = config.get[Long]("mongodb.playback.ttlSeconds")
 
-  val dropIndexes: Boolean = config.getOptional[Boolean]("microservice.services.features.mongo.dropIndexes").getOrElse(false)
+  val dropIndexes: Boolean = config.getOptional[Boolean]("features.mongo.dropIndexes").getOrElse(false)
 
 }
