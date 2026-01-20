@@ -18,22 +18,26 @@ package repositories
 
 import models.ActiveSession
 import org.mongodb.scala.bson.BsonDocument
+import org.mongodb.scala.model.Indexes.ascending
+import org.mongodb.scala.model.{IndexModel, IndexOptions}
 import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import uk.gov.hmrc.mongo.test.MongoSupport
-import scala.concurrent.ExecutionContext.Implicits.global
+
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import scala.concurrent.ExecutionContext.Implicits.global
+import java.util.concurrent.TimeUnit
 
 class ActiveSessionRepositorySpec extends AnyWordSpec with Matchers
-  with ScalaFutures with OptionValues with MongoSupport with MongoSuite with BeforeAndAfterEach {
+  with ScalaFutures with OptionValues with MongoSupport with MongoSuite with BeforeAndAfterEach with BaseMongoIndexSpec {
 
   override def beforeEach(): Unit =
     Await.result(repository.collection.deleteMany(BsonDocument()).toFuture(), Duration.Inf)
 
-  lazy val repository: ActiveSessionRepositoryImpl = new ActiveSessionRepositoryImpl(mongoComponent, config)
+  lazy val repository: ActiveSessionRepositoryImpl = new ActiveSessionRepositoryImpl(mongoComponent, config)(global)
 
   "an active session repository" should {
 
@@ -77,6 +81,17 @@ class ActiveSessionRepositorySpec extends AnyWordSpec with Matchers
 
         repository.get(internalId).futureValue.value.identifier mustBe "identifier2"
         repository.get(internalId).futureValue.value.internalId mustBe internalId
+    }
+
+    "have all expected indexes" in {
+      val expectedIndexes = Seq(
+        IndexModel(ascending("_id"), IndexOptions().name("_id_")),
+        IndexModel(ascending("updatedAt"), IndexOptions().name("session-updated-at-index").expireAfter(config.cachettlSessionInSeconds, TimeUnit.SECONDS)),
+        IndexModel(ascending("identifier"), IndexOptions().name("identifier-index").unique(false)),
+        IndexModel(ascending("internalId"), IndexOptions().name("internal-id-index").unique(false))
+      )
+
+      assertIndexes(expectedIndexes, getIndexes(repository.collection))
     }
   }
 }
