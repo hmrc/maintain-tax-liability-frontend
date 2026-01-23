@@ -34,8 +34,8 @@ trait ViewBehaviours extends ViewSpecBase {
         "have the correct banner title" in {
 
           val doc = asDocument(view)
-          val bannerTitle = doc.getElementsByClass("govuk-header__link govuk-header__service-name")
-          bannerTitle.html() mustBe messages("service.name")
+          val bannerTitle = doc.getElementsByClass("govuk-service-navigation__service-name")
+          bannerTitle.text().trim mustBe messages("service.name")
         }
 
         "display the correct browser title" in {
@@ -59,7 +59,7 @@ trait ViewBehaviours extends ViewSpecBase {
         "display language toggles" in {
 
           val doc = asDocument(view)
-          assertRenderedByClass(doc, "hmrc-language-select__list")
+          assertRenderedByCssSelector(doc, "a[lang=cy]")
         }
       }
     }
