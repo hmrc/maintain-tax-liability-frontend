@@ -35,4 +35,5 @@ class UnauthorisedViewSpec extends ViewBehaviours {
       messageKeyParams = Nil
     )
   }
+
 }

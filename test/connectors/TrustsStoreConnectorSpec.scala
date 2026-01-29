@@ -23,10 +23,7 @@ import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 
-class TrustsStoreConnectorSpec extends SpecBase
-  with ScalaFutures
-  with IntegrationPatience
-  with WireMockHelper {
+class TrustsStoreConnectorSpec extends SpecBase with ScalaFutures with IntegrationPatience with WireMockHelper {
 
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
@@ -41,9 +38,10 @@ class TrustsStoreConnectorSpec extends SpecBase
           .configure(
             Seq(
               "microservice.services.trusts-store.port" -> server.port(),
-              "auditing.enabled" -> false
+              "auditing.enabled"                        -> false
             ): _*
-          ).build()
+          )
+          .build()
 
         val connector = application.injector.instanceOf[TrustsStoreConnector]
 
@@ -54,9 +52,8 @@ class TrustsStoreConnectorSpec extends SpecBase
 
         val futureResult = connector.updateTaskStatus(identifier, Completed)
 
-        whenReady(futureResult) {
-          r =>
-            r.status mustBe 200
+        whenReady(futureResult) { r =>
+          r.status mustBe 200
         }
 
         application.stop()
@@ -67,9 +64,10 @@ class TrustsStoreConnectorSpec extends SpecBase
           .configure(
             Seq(
               "microservice.services.trusts-store.port" -> server.port(),
-              "auditing.enabled" -> false
+              "auditing.enabled"                        -> false
             ): _*
-          ).build()
+          )
+          .build()
 
         val connector = application.injector.instanceOf[TrustsStoreConnector]
 
@@ -95,14 +93,14 @@ class TrustsStoreConnectorSpec extends SpecBase
           .configure(
             Seq(
               "microservice.services.trusts-store.port" -> server.port(),
-              "auditing.enabled" -> false
+              "auditing.enabled"                        -> false
             ): _*
-          ).build()
+          )
+          .build()
 
         val connector = application.injector.instanceOf[TrustsStoreConnector]
 
-        val json = Json.parse(
-          """
+        val json = Json.parse("""
             |{
             |  "taxLiability": "completed"
             |}
@@ -115,13 +113,13 @@ class TrustsStoreConnectorSpec extends SpecBase
 
         val futureResult = connector.getTaskStatus(identifier)
 
-        whenReady(futureResult) {
-          r =>
-            r mustBe Completed
+        whenReady(futureResult) { r =>
+          r mustBe Completed
         }
 
         application.stop()
       }
     }
   }
+
 }

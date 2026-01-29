@@ -31,27 +31,28 @@ import views.html.DeclaredTaxToHMRCYesNoView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclaredTaxToHMRCYesNoController @Inject()(
-                                                  val controllerComponents: MessagesControllerComponents,
-                                                  navigator: Navigator,
-                                                  actions: StandardActionSets,
-                                                  formProvider: YesNoFormProvider,
-                                                  repository: PlaybackRepository,
-                                                  view: DeclaredTaxToHMRCYesNoView,
-                                                  taxYearRange: TaxYearRange
-                                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class DeclaredTaxToHMRCYesNoController @Inject() (
+  val controllerComponents: MessagesControllerComponents,
+  navigator: Navigator,
+  actions: StandardActionSets,
+  formProvider: YesNoFormProvider,
+  repository: PlaybackRepository,
+  view: DeclaredTaxToHMRCYesNoView,
+  taxYearRange: TaxYearRange
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController with I18nSupport {
 
-  private def taxYearDates(taxYear: CYMinusNTaxYears)(implicit messages: Messages): Seq[String] = taxYearRange.taxYearDates(taxYear)
+  private def taxYearDates(taxYear: CYMinusNTaxYears)(implicit messages: Messages): Seq[String] =
+    taxYearRange.taxYearDates(taxYear)
 
   private def form(taxYearDates: Seq[String]): Form[Boolean] = formProvider.withPrefix("declaredToHMRC", taxYearDates)
 
   def onPageLoad(taxYear: CYMinusNTaxYears): Action[AnyContent] = actions.authorisedWithRequiredData {
     implicit request =>
-
       val tyd = taxYearDates(taxYear)
 
       val preparedForm = request.userAnswers.get(DeclaredTaxToHMRCYesNoPage(taxYear)) match {
-        case None => form(tyd)
+        case None        => form(tyd)
         case Some(value) => form(tyd).fill(value)
       }
 
@@ -60,20 +61,20 @@ class DeclaredTaxToHMRCYesNoController @Inject()(
 
   def onSubmit(taxYear: CYMinusNTaxYears): Action[AnyContent] = actions.authorisedWithRequiredData.async {
     implicit request =>
-
       val tyd = taxYearDates(taxYear)
 
-      form(tyd).bindFromRequest().fold(
-        formWithErrors => {
-          Future.successful(BadRequest(view(formWithErrors, taxYear, tyd: _*)))
-        },
-        value => {
-          val page = DeclaredTaxToHMRCYesNoPage(taxYear)
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(page, value))
-            _ <- repository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(page, updatedAnswers))
-        }
-      )
+      form(tyd)
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, tyd: _*))),
+          value => {
+            val page = DeclaredTaxToHMRCYesNoPage(taxYear)
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(page, value))
+              _              <- repository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(page, updatedAnswers))
+          }
+        )
   }
+
 }

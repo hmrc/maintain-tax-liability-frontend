@@ -37,18 +37,20 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
   lazy val checkYourAnswersRoute: String = routes.CheckYourAnswersController.onPageLoad().url
 
-  val mockPrintHelper: PrintHelper = Mockito.mock(classOf[PrintHelper])
-  val mockMapper: Mapper = Mockito.mock(classOf[Mapper])
-  val mockTrustsConnector: TrustsConnector = Mockito.mock(classOf[TrustsConnector])
+  val mockPrintHelper: PrintHelper                   = Mockito.mock(classOf[PrintHelper])
+  val mockMapper: Mapper                             = Mockito.mock(classOf[Mapper])
+  val mockTrustsConnector: TrustsConnector           = Mockito.mock(classOf[TrustsConnector])
   val mockTrustsStoreConnector: TrustsStoreConnector = Mockito.mock(classOf[TrustsStoreConnector])
 
   val fakeAnswerSections = Seq(
     AnswerSection("Heading", Seq(AnswerRow("Label", HtmlFormat.escape("Answer"), "url")))
   )
 
-  val fakeYearsReturns: YearsReturns = YearsReturns(List(
-    YearReturn(taxReturnYear = "20", taxConsequence = true)
-  ))
+  val fakeYearsReturns: YearsReturns = YearsReturns(
+    List(
+      YearReturn(taxReturnYear = "20", taxConsequence = true)
+    )
+  )
 
   override def beforeEach(): Unit = {
     reset(mockPrintHelper)
@@ -94,7 +96,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           bind[Mapper].toInstance(mockMapper),
           bind[TrustsConnector].toInstance(mockTrustsConnector),
           bind[TrustsStoreConnector].toInstance(mockTrustsStoreConnector)
-        ).build()
+        )
+        .build()
 
       val controller = application.injector.instanceOf[CheckYourAnswersController]
 
@@ -123,7 +126,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           bind[Mapper].toInstance(mockMapper),
           bind[TrustsConnector].toInstance(mockTrustsConnector),
           bind[TrustsStoreConnector].toInstance(mockTrustsStoreConnector)
-        ).build()
+        )
+        .build()
 
       val controller = application.injector.instanceOf[CheckYourAnswersController]
 
@@ -174,4 +178,5 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
     }
 
   }
+
 }

@@ -33,7 +33,7 @@ import views.html.DeclaredTaxToHMRCYesNoView
 
 class DeclaredTaxToHMRCYesNoControllerSpec extends SpecBase with BeforeAndAfterEach {
 
-  val taxYearDates: Seq[String] = Seq("6 April 2019", "5 April 2020")
+  val taxYearDates: Seq[String]      = Seq("6 April 2019", "5 April 2020")
   val mockTaxYearRange: TaxYearRange = Mockito.mock(classOf[TaxYearRange])
 
   val form: Form[Boolean] = new YesNoFormProvider().withPrefix("declaredToHMRC", taxYearDates)
@@ -48,7 +48,6 @@ class DeclaredTaxToHMRCYesNoControllerSpec extends SpecBase with BeforeAndAfterE
   "DeclaredTaxToHMRCYesNoController" when {
 
     taxYears.foreach { taxYear =>
-
       s"Tax year ${taxYear.messagePrefix}" must {
 
         lazy val declaredTaxToHMRCYesNoRoute: String = routes.DeclaredTaxToHMRCYesNoController.onPageLoad(taxYear).url
@@ -171,4 +170,5 @@ class DeclaredTaxToHMRCYesNoControllerSpec extends SpecBase with BeforeAndAfterE
     }
 
   }
+
 }

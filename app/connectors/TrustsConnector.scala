@@ -26,22 +26,28 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TrustsConnector @Inject()(http: HttpClientV2, config: AppConfig) {
+class TrustsConnector @Inject() (http: HttpClientV2, config: AppConfig) {
 
   private val trustsUrl: String = s"${config.trustsUrl}/trusts"
-  private val baseUrl: String = s"$trustsUrl/tax-liability"
+  private val baseUrl: String   = s"$trustsUrl/tax-liability"
 
-  def getFirstTaxYearToAskFor(identifier: String)(implicit hc: HeaderCarrier, ex: ExecutionContext): Future[FirstTaxYearAvailable] = {
+  def getFirstTaxYearToAskFor(
+    identifier: String
+  )(implicit hc: HeaderCarrier, ex: ExecutionContext): Future[FirstTaxYearAvailable] = {
     val url = s"$baseUrl/$identifier/first-year-to-ask-for"
-    http.get(url"$url")
+    http
+      .get(url"$url")
       .execute[FirstTaxYearAvailable]
   }
 
-  def setYearsReturns(identifier: String, value: YearsReturns)
-                     (implicit hc: HeaderCarrier, ex: ExecutionContext): Future[HttpResponse] = {
+  def setYearsReturns(identifier: String, value: YearsReturns)(implicit
+    hc: HeaderCarrier,
+    ex: ExecutionContext
+  ): Future[HttpResponse] = {
     val url = s"$baseUrl/$identifier/years-returns"
-    http.put(url"$url")
-    .withBody(Json.toJson(value))
+    http
+      .put(url"$url")
+      .withBody(Json.toJson(value))
       .execute[HttpResponse]
   }
 

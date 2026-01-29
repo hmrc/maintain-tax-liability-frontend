@@ -21,23 +21,28 @@ import play.api.libs.json.{Format, Json, Reads, __}
 sealed trait TrustsAuthResponse
 
 object TrustsAuthResponse {
+
   implicit val reads: Reads[TrustsAuthResponse] =
     __.read[TrustsAuthAllowed].widen[TrustsAuthResponse] orElse
       __.read[TrustsAuthAgentAllowed].widen[TrustsAuthResponse] orElse
       __.read[TrustsAuthDenied].widen[TrustsAuthResponse]
+
 }
 
 case class TrustsAuthAllowed(authorised: Boolean = true) extends TrustsAuthResponse
+
 case object TrustsAuthAllowed {
   implicit val format: Format[TrustsAuthAllowed] = Json.format[TrustsAuthAllowed]
 }
 
 case class TrustsAuthAgentAllowed(arn: String) extends TrustsAuthResponse
+
 case object TrustsAuthAgentAllowed {
   implicit val format: Format[TrustsAuthAgentAllowed] = Json.format[TrustsAuthAgentAllowed]
 }
 
 case class TrustsAuthDenied(redirectUrl: String) extends TrustsAuthResponse
+
 case object TrustsAuthDenied {
   implicit val format: Format[TrustsAuthDenied] = Json.format[TrustsAuthDenied]
 }

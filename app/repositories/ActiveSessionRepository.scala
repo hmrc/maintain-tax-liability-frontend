@@ -33,34 +33,38 @@ import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ActiveSessionRepositoryImpl @Inject()(
-                                             val mongoComponent: MongoComponent,
-                                             val config: AppConfig
-                                           )(implicit val ec: ExecutionContext)
-  extends PlayMongoRepository[ActiveSession](
-    collectionName = "session",
-    mongoComponent = mongoComponent,
-    domainFormat = Format(ActiveSession.reads,ActiveSession.writes),
-    indexes = Seq(
-      IndexModel(
-        ascending("updatedAt"),
-        IndexOptions()
-          .unique(false)
-          .name("session-updated-at-index")
-          .expireAfter(config.cachettlSessionInSeconds, TimeUnit.SECONDS)),
-      IndexModel(
-        ascending("identifier"),
-        IndexOptions()
-          .unique(false)
-          .name("identifier-index")),
-      IndexModel(
-        ascending("internalId"),
-        IndexOptions()
-          .unique(false)
-          .name("internal-id-index"))
-    ), replaceIndexes = config.dropIndexes
-
-  ) with ActiveSessionRepository {
+class ActiveSessionRepositoryImpl @Inject() (
+  val mongoComponent: MongoComponent,
+  val config: AppConfig
+)(implicit val ec: ExecutionContext)
+    extends PlayMongoRepository[ActiveSession](
+      collectionName = "session",
+      mongoComponent = mongoComponent,
+      domainFormat = Format(ActiveSession.reads, ActiveSession.writes),
+      indexes = Seq(
+        IndexModel(
+          ascending("updatedAt"),
+          IndexOptions()
+            .unique(false)
+            .name("session-updated-at-index")
+            .expireAfter(config.cachettlSessionInSeconds, TimeUnit.SECONDS)
+        ),
+        IndexModel(
+          ascending("identifier"),
+          IndexOptions()
+            .unique(false)
+            .name("identifier-index")
+        ),
+        IndexModel(
+          ascending("internalId"),
+          IndexOptions()
+            .unique(false)
+            .name("internal-id-index")
+        )
+      ),
+      replaceIndexes = config.dropIndexes
+    )
+    with ActiveSessionRepository {
 
   private def selector(internalId: String): Bson =
     Filters.eq("internalId", internalId)
@@ -76,12 +80,13 @@ class ActiveSessionRepositoryImpl @Inject()(
 
   override def set(session: ActiveSession): Future[Boolean] = {
 
-    val find = selector(session.internalId)
+    val find          = selector(session.internalId)
     val updatedObject = session.copy(updatedAt = LocalDateTime.now)
-    val options = ReplaceOptions().upsert(true)
+    val options       = ReplaceOptions().upsert(true)
 
     collection.replaceOne(find, updatedObject, options).headOption().map(_.exists(_.wasAcknowledged()))
   }
+
 }
 
 @ImplementedBy(classOf[ActiveSessionRepositoryImpl])

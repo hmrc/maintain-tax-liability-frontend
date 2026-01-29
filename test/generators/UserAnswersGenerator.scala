@@ -28,27 +28,25 @@ trait UserAnswersGenerator extends TryValues {
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] = Nil
 
-  implicit lazy val arbitraryUserData: Arbitrary[UserAnswers] = {
-
+  implicit lazy val arbitraryUserData: Arbitrary[UserAnswers] =
     Arbitrary {
       for {
-        id <- nonEmptyString
+        id         <- nonEmptyString
         identifier <- nonEmptyString
-        sessionId <- nonEmptyString
-        data <- generators match {
-          case Nil => Gen.const(Map[QuestionPage[_], JsValue]())
-          case _   => Gen.mapOf(oneOf(generators))
-        }
-      } yield UserAnswers (
+        sessionId  <- nonEmptyString
+        data       <- generators match {
+                        case Nil => Gen.const(Map[QuestionPage[_], JsValue]())
+                        case _   => Gen.mapOf(oneOf(generators))
+                      }
+      } yield UserAnswers(
         internalId = id,
         identifier = identifier,
         sessionId = sessionId,
         newId = s"$id-$identifier-$sessionId",
-        data = data.foldLeft(Json.obj()) {
-          case (obj, (path, value)) =>
-            obj.setObject(path.path, value).get
+        data = data.foldLeft(Json.obj()) { case (obj, (path, value)) =>
+          obj.setObject(path.path, value).get
         }
       )
     }
-  }
+
 }

@@ -33,23 +33,24 @@ import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
-trait SpecBase extends PlaySpec
-  with GuiceOneAppPerSuite
-  with TryValues
-  with ScalaFutures
-  with IntegrationPatience
-  with Mocked
-  with FakeApp
-  with OptionValues
-  with EitherValues {
+trait SpecBase
+    extends PlaySpec
+    with GuiceOneAppPerSuite
+    with TryValues
+    with ScalaFutures
+    with IntegrationPatience
+    with Mocked
+    with FakeApp
+    with OptionValues
+    with EitherValues {
 
   val internalId: String = SpecBase.internalId
   val identifier: String = SpecBase.identifier
-  val sessionId: String = SpecBase.sessionId
+  val sessionId: String  = SpecBase.sessionId
 
   val defaultAppConfigurations: Map[String, Any] = Map(
-    "auditing.enabled" -> false,
-    "metrics.enabled" -> false,
+    "auditing.enabled"      -> false,
+    "metrics.enabled"       -> false,
     "play.filters.disabled" -> List("play.filters.csrf.CSRFFilter", "play.filters.csp.CSPFilter")
   )
 
@@ -68,8 +69,10 @@ trait SpecBase extends PlaySpec
 
   def bodyParsers: BodyParsers.Default = injector.instanceOf[BodyParsers.Default]
 
-  protected def applicationBuilder(userAnswers: Option[UserAnswers] = None,
-                                   affinityGroup: AffinityGroup = AffinityGroup.Organisation): GuiceApplicationBuilder =
+  protected def applicationBuilder(
+    userAnswers: Option[UserAnswers] = None,
+    affinityGroup: AffinityGroup = AffinityGroup.Organisation
+  ): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
         bind[IdentifierAction].toInstance(new FakeIdentifierAction(bodyParsers, affinityGroup)),
@@ -80,12 +83,13 @@ trait SpecBase extends PlaySpec
         bind[ActiveSessionRepository].toInstance(mockSessionRepository)
       )
       .configure(defaultAppConfigurations)
+
 }
 
 object SpecBase {
 
   val internalId: String = "internalId"
   val identifier: String = "identifier"
-  val sessionId: String = "sessionId"
+  val sessionId: String  = "sessionId"
 
 }

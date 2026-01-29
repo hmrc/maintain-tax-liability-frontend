@@ -26,9 +26,9 @@ trait Generators extends DateGenerators with UserAnswersGenerator {
 
   def nonBooleans: Gen[String] =
     arbitrary[String]
-      .suchThat (_.nonEmpty)
-      .suchThat (_ != "true")
-      .suchThat (_ != "false")
+      .suchThat(_.nonEmpty)
+      .suchThat(_ != "true")
+      .suchThat(_ != "false")
 
   def nonEmptyString: Gen[String] =
     arbitrary[String] suchThat (_.nonEmpty)
@@ -40,4 +40,5 @@ trait Generators extends DateGenerators with UserAnswersGenerator {
       val vector = xs.toVector
       choose(0, vector.size - 1).flatMap(vector(_))
     }
+
 }

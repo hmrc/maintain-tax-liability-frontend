@@ -28,26 +28,24 @@ import views.html.EarlierYearsToPayThanAskedYesNoView
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class CYMinusThreeEarlierYearsController @Inject()(
-                                                   val controllerComponents: MessagesControllerComponents,
-                                                   navigator: Navigator,
-                                                   actions: StandardActionSets,
-                                                   view: EarlierYearsToPayThanAskedYesNoView,
-                                                   taxYearRange: TaxYearRange
-                                                 ) extends FrontendBaseController with I18nSupport {
+class CYMinusThreeEarlierYearsController @Inject() (
+  val controllerComponents: MessagesControllerComponents,
+  navigator: Navigator,
+  actions: StandardActionSets,
+  view: EarlierYearsToPayThanAskedYesNoView,
+  taxYearRange: TaxYearRange
+) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = actions.authorisedWithRequiredData {
-    implicit request =>
+  def onPageLoad(): Action[AnyContent] = actions.authorisedWithRequiredData { implicit request =>
+    val year = taxYearRange.yearAtStart(CYMinus3TaxYears)
 
-      val year = taxYearRange.yearAtStart(CYMinus3TaxYears)
+    val route = routes.CYMinusThreeEarlierYearsController.onSubmit()
 
-      val route = routes.CYMinusThreeEarlierYearsController.onSubmit()
-
-      Ok(view(year, route))
+    Ok(view(year, route))
   }
 
-  def onSubmit(): Action[AnyContent] = actions.authorisedWithRequiredData.async {
-    implicit request =>
-      Future.successful(Redirect(navigator.nextPage(CYMinusThreeEarlierYearsPage, request.userAnswers)))
+  def onSubmit(): Action[AnyContent] = actions.authorisedWithRequiredData.async { implicit request =>
+    Future.successful(Redirect(navigator.nextPage(CYMinusThreeEarlierYearsPage, request.userAnswers)))
   }
+
 }

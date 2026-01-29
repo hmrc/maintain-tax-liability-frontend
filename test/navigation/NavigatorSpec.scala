@@ -21,24 +21,24 @@ import models.{CYMinus1TaxYear, CYMinus2TaxYears, CYMinus3TaxYears, CYMinus4TaxY
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 
-class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks  {
+class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks {
 
   val navigator: Navigator = injector.instanceOf[Navigator]
 
   "Navigator" when {
 
     "CYMinusFourEarlierYearsPage" must {
-      "-> CYMinusFourYesNoController" in {
-        navigator.nextPage(CYMinusFourEarlierYearsPage, emptyUserAnswers)
+      "-> CYMinusFourYesNoController" in
+        navigator
+          .nextPage(CYMinusFourEarlierYearsPage, emptyUserAnswers)
           .mustBe(controllers.routes.CYMinusFourYesNoController.onPageLoad())
-      }
     }
 
     "CYMinusThreeEarlierYearsPage" must {
-      "-> CYMinusThreeYesNoController" in {
-        navigator.nextPage(CYMinusThreeEarlierYearsPage, emptyUserAnswers)
+      "-> CYMinusThreeYesNoController" in
+        navigator
+          .nextPage(CYMinusThreeEarlierYearsPage, emptyUserAnswers)
           .mustBe(controllers.routes.CYMinusThreeYesNoController.onPageLoad())
-      }
     }
 
     "CYMinusFourYesNoPage" when {
@@ -47,14 +47,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks  {
       "-> Yes -> DeclaredTaxToHMRCYesNoController" in {
         val answers = emptyUserAnswers.set(page, true).success.value
 
-        navigator.nextPage(page, answers)
+        navigator
+          .nextPage(page, answers)
           .mustBe(controllers.routes.DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus4TaxYears))
       }
 
       "-> No -> CYMinusThreeYesNoController" in {
         val answers = emptyUserAnswers.set(page, false).success.value
 
-        navigator.nextPage(page, answers)
+        navigator
+          .nextPage(page, answers)
           .mustBe(controllers.routes.CYMinusThreeYesNoController.onPageLoad())
       }
     }
@@ -65,14 +67,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks  {
       "-> Yes -> DeclaredTaxToHMRCYesNoController" in {
         val answers = emptyUserAnswers.set(page, true).success.value
 
-        navigator.nextPage(page, answers)
+        navigator
+          .nextPage(page, answers)
           .mustBe(controllers.routes.DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus3TaxYears))
       }
 
       "-> No -> CYMinusTwoYesNoController" in {
         val answers = emptyUserAnswers.set(page, false).success.value
 
-        navigator.nextPage(page, answers)
+        navigator
+          .nextPage(page, answers)
           .mustBe(controllers.routes.CYMinusTwoYesNoController.onPageLoad())
       }
     }
@@ -83,14 +87,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks  {
       "-> Yes -> DeclaredTaxToHMRCYesNoController" in {
         val answers = emptyUserAnswers.set(page, true).success.value
 
-        navigator.nextPage(page, answers)
+        navigator
+          .nextPage(page, answers)
           .mustBe(controllers.routes.DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus2TaxYears))
       }
 
       "-> No -> CYMinusOneYesNoController" in {
         val answers = emptyUserAnswers.set(page, false).success.value
 
-        navigator.nextPage(page, answers)
+        navigator
+          .nextPage(page, answers)
           .mustBe(controllers.routes.CYMinusOneYesNoController.onPageLoad())
       }
     }
@@ -101,14 +107,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks  {
       "-> Yes -> DeclaredTaxToHMRCYesNoController" in {
         val answers = emptyUserAnswers.set(page, true).success.value
 
-        navigator.nextPage(page, answers)
+        navigator
+          .nextPage(page, answers)
           .mustBe(controllers.routes.DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus1TaxYear))
       }
 
       "-> No -> CheckYourAnswersController" in {
         val answers = emptyUserAnswers.set(page, false).success.value
 
-        navigator.nextPage(page, answers)
+        navigator
+          .nextPage(page, answers)
           .mustBe(controllers.routes.CheckYourAnswersController.onPageLoad())
       }
     }
@@ -118,33 +126,34 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks  {
       val page = DeclaredTaxToHMRCYesNoPage
 
       "CYMinus4TaxYear" must {
-        "-> CYMinusThreeYesNoController" in {
-          navigator.nextPage(page(CYMinus4TaxYears), emptyUserAnswers)
+        "-> CYMinusThreeYesNoController" in
+          navigator
+            .nextPage(page(CYMinus4TaxYears), emptyUserAnswers)
             .mustBe(controllers.routes.CYMinusThreeYesNoController.onPageLoad())
-        }
       }
 
       "CYMinus3TaxYear" must {
-        "-> CYMinusTwoYesNoController" in {
-          navigator.nextPage(page(CYMinus3TaxYears), emptyUserAnswers)
+        "-> CYMinusTwoYesNoController" in
+          navigator
+            .nextPage(page(CYMinus3TaxYears), emptyUserAnswers)
             .mustBe(controllers.routes.CYMinusTwoYesNoController.onPageLoad())
-        }
       }
 
       "CYMinus2TaxYear" must {
-        "-> CYMinusOneYesNoController" in {
-          navigator.nextPage(page(CYMinus2TaxYears), emptyUserAnswers)
+        "-> CYMinusOneYesNoController" in
+          navigator
+            .nextPage(page(CYMinus2TaxYears), emptyUserAnswers)
             .mustBe(controllers.routes.CYMinusOneYesNoController.onPageLoad())
-        }
       }
 
       "CYMinus1TaxYear" must {
-        "-> CheckYourAnswersController" in {
-          navigator.nextPage(page(CYMinus1TaxYear), emptyUserAnswers)
+        "-> CheckYourAnswersController" in
+          navigator
+            .nextPage(page(CYMinus1TaxYear), emptyUserAnswers)
             .mustBe(controllers.routes.CheckYourAnswersController.onPageLoad())
-        }
       }
     }
 
   }
+
 }

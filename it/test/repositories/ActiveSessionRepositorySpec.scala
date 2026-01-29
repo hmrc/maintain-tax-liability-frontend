@@ -31,8 +31,15 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext.Implicits.global
 import java.util.concurrent.TimeUnit
 
-class ActiveSessionRepositorySpec extends AnyWordSpec with Matchers
-  with ScalaFutures with OptionValues with MongoSupport with MongoSuite with BeforeAndAfterEach with BaseMongoIndexSpec {
+class ActiveSessionRepositorySpec
+    extends AnyWordSpec
+    with Matchers
+    with ScalaFutures
+    with OptionValues
+    with MongoSupport
+    with MongoSuite
+    with BeforeAndAfterEach
+    with BaseMongoIndexSpec {
 
   override def beforeEach(): Unit =
     Await.result(repository.collection.deleteMany(BsonDocument()).toFuture(), Duration.Inf)
@@ -43,50 +50,53 @@ class ActiveSessionRepositorySpec extends AnyWordSpec with Matchers
 
     "must return None when no session exists" in {
 
-        val internalId = "Int-328969d0-557e-4559-sdba-074d0597107e"
+      val internalId = "Int-328969d0-557e-4559-sdba-074d0597107e"
 
-        repository.get(internalId).futureValue mustBe None
+      repository.get(internalId).futureValue mustBe None
 
     }
 
     "must return an ActiveSession when one exists" in {
 
-        val internalId = "Int-328969d0-557e-2559-96ba-074d0597107e"
+      val internalId = "Int-328969d0-557e-2559-96ba-074d0597107e"
 
-        val session = ActiveSession(internalId, "identifier")
+      val session = ActiveSession(internalId, "identifier")
 
-        val initial = repository.set(session).futureValue
+      val initial = repository.set(session).futureValue
 
-        initial mustBe true
+      initial mustBe true
 
-        repository.get(internalId).futureValue.value.identifier mustBe "identifier"
+      repository.get(internalId).futureValue.value.identifier mustBe "identifier"
     }
 
     "must override an existing session for an internalId" in {
 
-        val internalId = "Int-328969d0-557e-4559-96ba-0d4d0597107e"
+      val internalId = "Int-328969d0-557e-4559-96ba-0d4d0597107e"
 
-        val session = ActiveSession(internalId, "identifier")
+      val session = ActiveSession(internalId, "identifier")
 
-        repository.set(session).futureValue
+      repository.set(session).futureValue
 
-        repository.get(internalId).futureValue.value.identifier mustBe "identifier"
-        repository.get(internalId).futureValue.value.internalId mustBe internalId
+      repository.get(internalId).futureValue.value.identifier mustBe "identifier"
+      repository.get(internalId).futureValue.value.internalId mustBe internalId
 
-        // update
+      // update
 
-        val session2 = ActiveSession(internalId, "identifier2")
+      val session2 = ActiveSession(internalId, "identifier2")
 
-        repository.set(session2).futureValue
+      repository.set(session2).futureValue
 
-        repository.get(internalId).futureValue.value.identifier mustBe "identifier2"
-        repository.get(internalId).futureValue.value.internalId mustBe internalId
+      repository.get(internalId).futureValue.value.identifier mustBe "identifier2"
+      repository.get(internalId).futureValue.value.internalId mustBe internalId
     }
 
     "have all expected indexes" in {
       val expectedIndexes = Seq(
         IndexModel(ascending("_id"), IndexOptions().name("_id_")),
-        IndexModel(ascending("updatedAt"), IndexOptions().name("session-updated-at-index").expireAfter(config.cachettlSessionInSeconds, TimeUnit.SECONDS)),
+        IndexModel(
+          ascending("updatedAt"),
+          IndexOptions().name("session-updated-at-index").expireAfter(config.cachettlSessionInSeconds, TimeUnit.SECONDS)
+        ),
         IndexModel(ascending("identifier"), IndexOptions().name("identifier-index").unique(false)),
         IndexModel(ascending("internalId"), IndexOptions().name("internal-id-index").unique(false))
       )
@@ -94,4 +104,5 @@ class ActiveSessionRepositorySpec extends AnyWordSpec with Matchers
       assertIndexes(expectedIndexes, getIndexes(repository.collection))
     }
   }
+
 }

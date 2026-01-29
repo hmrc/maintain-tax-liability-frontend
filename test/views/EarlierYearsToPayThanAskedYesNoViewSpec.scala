@@ -24,8 +24,8 @@ import views.html.EarlierYearsToPayThanAskedYesNoView
 
 class EarlierYearsToPayThanAskedYesNoViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "earlierYearsLiability"
-  val year: String = "2017"
+  val messageKeyPrefix  = "earlierYearsLiability"
+  val year: String      = "2017"
   val continueUrl: Call = Call(POST, "#")
 
   "EarlierYearsToPayThanAskedYesNoView" must {
@@ -46,4 +46,5 @@ class EarlierYearsToPayThanAskedYesNoViewSpec extends ViewBehaviours {
 
     behave like pageWithSubmitButton(applyView)
   }
+
 }

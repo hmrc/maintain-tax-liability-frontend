@@ -33,7 +33,7 @@ import views.html.CYMinusTwoYesNoView
 
 class CYMinusTwoYesNoControllerSpec extends SpecBase with BeforeAndAfterEach {
 
-  val taxYearDates: Seq[String] = Seq("6 April 2019", "5 April 2020")
+  val taxYearDates: Seq[String]      = Seq("6 April 2019", "5 April 2020")
   val mockTaxYearRange: TaxYearRange = Mockito.mock(classOf[TaxYearRange])
 
   val form: Form[Boolean] = new YesNoFormProvider().withPrefix("cyMinusTwo.liability", taxYearDates)
@@ -173,4 +173,5 @@ class CYMinusTwoYesNoControllerSpec extends SpecBase with BeforeAndAfterEach {
     }
 
   }
+
 }

@@ -29,28 +29,31 @@ sealed trait CYMinusNTaxYears {
 }
 
 case object CYMinus4TaxYears extends CYMinusNTaxYears {
-  override val n: Int = 4
-  override val messagePrefix: String = "cyMinusFour"
+  override val n: Int                      = 4
+  override val messagePrefix: String       = "cyMinusFour"
   override val page: QuestionPage[Boolean] = CYMinusFourYesNoPage
-  override def changeUrl: String = CYMinusFourYesNoController.onPageLoad().url
+  override def changeUrl: String           = CYMinusFourYesNoController.onPageLoad().url
 }
+
 case object CYMinus3TaxYears extends CYMinusNTaxYears {
-  override val n: Int = 3
-  override val messagePrefix: String = "cyMinusThree"
+  override val n: Int                      = 3
+  override val messagePrefix: String       = "cyMinusThree"
   override val page: QuestionPage[Boolean] = CYMinusThreeYesNoPage
-  override def changeUrl: String = CYMinusThreeYesNoController.onPageLoad().url
+  override def changeUrl: String           = CYMinusThreeYesNoController.onPageLoad().url
 }
+
 case object CYMinus2TaxYears extends CYMinusNTaxYears {
-  override val n: Int = 2
-  override val messagePrefix: String = "cyMinusTwo"
+  override val n: Int                      = 2
+  override val messagePrefix: String       = "cyMinusTwo"
   override val page: QuestionPage[Boolean] = CYMinusTwoYesNoPage
-  override def changeUrl: String = CYMinusTwoYesNoController.onPageLoad().url
+  override def changeUrl: String           = CYMinusTwoYesNoController.onPageLoad().url
 }
+
 case object CYMinus1TaxYear extends CYMinusNTaxYears {
-  override val n: Int = 1
-  override val messagePrefix: String = "cyMinusOne"
+  override val n: Int                      = 1
+  override val messagePrefix: String       = "cyMinusOne"
   override val page: QuestionPage[Boolean] = CYMinusOneYesNoPage
-  override def changeUrl: String = CYMinusOneYesNoController.onPageLoad().url
+  override def changeUrl: String           = CYMinusOneYesNoController.onPageLoad().url
 }
 
 object CYMinusNTaxYears {
@@ -59,26 +62,26 @@ object CYMinusNTaxYears {
 
   implicit val jsLiteral: JavascriptLiteral[CYMinusNTaxYears] = (value: CYMinusNTaxYears) => value.toString
 
-  implicit def pathBindable(implicit intBinder: PathBindable[Int]): PathBindable[CYMinusNTaxYears] = new PathBindable[CYMinusNTaxYears] {
-    override def bind(key: String, value: String): Either[String, CYMinusNTaxYears] = {
+  implicit def pathBindable(implicit intBinder: PathBindable[Int]): PathBindable[CYMinusNTaxYears] =
+    new PathBindable[CYMinusNTaxYears] {
+      override def bind(key: String, value: String): Either[String, CYMinusNTaxYears] = {
 
-      def taxYearFromId(id: Int): Option[CYMinusNTaxYears] = {
-        id match {
-          case CYMinus4TaxYears.n => Some(CYMinus4TaxYears)
-          case CYMinus3TaxYears.n => Some(CYMinus3TaxYears)
-          case CYMinus2TaxYears.n => Some(CYMinus2TaxYears)
-          case CYMinus1TaxYear.n => Some(CYMinus1TaxYear)
-          case _ => None
-        }
+        def taxYearFromId(id: Int): Option[CYMinusNTaxYears] =
+          id match {
+            case CYMinus4TaxYears.n => Some(CYMinus4TaxYears)
+            case CYMinus3TaxYears.n => Some(CYMinus3TaxYears)
+            case CYMinus2TaxYears.n => Some(CYMinus2TaxYears)
+            case CYMinus1TaxYear.n  => Some(CYMinus1TaxYear)
+            case _                  => None
+          }
+
+        for {
+          id      <- intBinder.bind(key, value)
+          taxYear <- taxYearFromId(id).toRight("Not a valid tax year")
+        } yield taxYear
       }
 
-      for {
-        id <- intBinder.bind(key, value)
-        taxYear <- taxYearFromId(id).toRight("Not a valid tax year")
-      } yield taxYear
+      override def unbind(key: String, value: CYMinusNTaxYears): String = value.toString.trim.toLowerCase
     }
-
-    override def unbind(key: String, value: CYMinusNTaxYears): String = value.toString.trim.toLowerCase
-  }
 
 }

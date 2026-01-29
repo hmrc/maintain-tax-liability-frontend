@@ -30,32 +30,39 @@ import scala.concurrent.{ExecutionContext, Future}
 @ImplementedBy(classOf[TrustsAuthConnectorImpl])
 trait TrustsAuthConnector {
   def agentIsAuthorised()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[TrustsAuthResponse]
-  def authorisedForIdentifier(identifier: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[TrustsAuthResponse]
+
+  def authorisedForIdentifier(
+    identifier: String
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[TrustsAuthResponse]
+
 }
 
-class TrustsAuthConnectorImpl @Inject()(http: HttpClientV2, config: AppConfig)
-  extends TrustsAuthConnector with SessionLogging {
+class TrustsAuthConnectorImpl @Inject() (http: HttpClientV2, config: AppConfig)
+    extends TrustsAuthConnector with SessionLogging {
 
   private val baseUrl: String = s"${config.trustsAuthUrl}/trusts-auth"
 
-  override def agentIsAuthorised()
-                                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[TrustsAuthResponse] = {
-    http.get(url"$baseUrl/agent-authorised")
+  override def agentIsAuthorised()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[TrustsAuthResponse] =
+    http
+      .get(url"$baseUrl/agent-authorised")
       .execute[TrustsAuthResponse]
-      .recover {
-        case e =>
-          warnLog(s"unable to authenticate agent due to an exception ${e.getMessage}")
-          TrustsAuthInternalServerError
+      .recover { case e =>
+        warnLog(s"unable to authenticate agent due to an exception ${e.getMessage}")
+        TrustsAuthInternalServerError
       }
-  }
 
-  override def authorisedForIdentifier(identifier: String)
-                                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[TrustsAuthResponse] = {
-    http.get(url"$baseUrl/authorised/$identifier")
-      .execute[TrustsAuthResponse].recover {
-        case e =>
-          warnLog(s"unable to authenticate organisation for $identifier due to an exception ${e.getMessage}", Some(identifier))
-          TrustsAuthInternalServerError
+  override def authorisedForIdentifier(
+    identifier: String
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[TrustsAuthResponse] =
+    http
+      .get(url"$baseUrl/authorised/$identifier")
+      .execute[TrustsAuthResponse]
+      .recover { case e =>
+        warnLog(
+          s"unable to authenticate organisation for $identifier due to an exception ${e.getMessage}",
+          Some(identifier)
+        )
+        TrustsAuthInternalServerError
       }
-  }
+
 }

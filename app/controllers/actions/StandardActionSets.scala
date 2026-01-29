@@ -21,10 +21,12 @@ import play.api.mvc.{ActionBuilder, AnyContent}
 
 import javax.inject.Inject
 
-class StandardActionSets @Inject()(identify: IdentifierAction,
-                                   getData: DataRetrievalAction,
-                                   saveSession: SaveActiveSessionProvider,
-                                   requireData: DataRequiredAction) {
+class StandardActionSets @Inject() (
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  saveSession: SaveActiveSessionProvider,
+  requireData: DataRequiredAction
+) {
 
   def authorised: ActionBuilder[IdentifierRequest, AnyContent] =
     identify

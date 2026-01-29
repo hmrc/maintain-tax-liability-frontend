@@ -27,8 +27,13 @@ import play.api.http.Status.OK
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 
-class TrustsConnectorSpec extends SpecBase with ScalaFutures
-  with Inside with BeforeAndAfterAll with BeforeAndAfterEach with IntegrationPatience {
+class TrustsConnectorSpec
+    extends SpecBase
+    with ScalaFutures
+    with Inside
+    with BeforeAndAfterAll
+    with BeforeAndAfterEach
+    with IntegrationPatience {
 
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
@@ -55,8 +60,7 @@ class TrustsConnectorSpec extends SpecBase with ScalaFutures
 
     "getFirstTaxYearToAskFor" in {
 
-      val json = Json.parse(
-        """
+      val json = Json.parse("""
           |{
           | "yearsAgo": 1,
           | "earlierYearsToDeclare": false
@@ -67,9 +71,10 @@ class TrustsConnectorSpec extends SpecBase with ScalaFutures
         .configure(
           Seq(
             "microservice.services.trusts.port" -> server.port(),
-            "auditing.enabled" -> false
+            "auditing.enabled"                  -> false
           ): _*
-        ).build()
+        )
+        .build()
 
       val connector = application.injector.instanceOf[TrustsConnector]
 
@@ -80,12 +85,11 @@ class TrustsConnectorSpec extends SpecBase with ScalaFutures
 
       val processed = connector.getFirstTaxYearToAskFor(identifier)
 
-      whenReady(processed) {
-        r =>
-          r mustBe FirstTaxYearAvailable(
-            yearsAgo = 1,
-            earlierYearsToDeclare = false
-          )
+      whenReady(processed) { r =>
+        r mustBe FirstTaxYearAvailable(
+          yearsAgo = 1,
+          earlierYearsToDeclare = false
+        )
       }
     }
 
@@ -95,9 +99,10 @@ class TrustsConnectorSpec extends SpecBase with ScalaFutures
         .configure(
           Seq(
             "microservice.services.trusts.port" -> server.port(),
-            "auditing.enabled" -> false
+            "auditing.enabled"                  -> false
           ): _*
-        ).build()
+        )
+        .build()
 
       val connector = application.injector.instanceOf[TrustsConnector]
 
@@ -117,4 +122,5 @@ class TrustsConnectorSpec extends SpecBase with ScalaFutures
     }
 
   }
+
 }

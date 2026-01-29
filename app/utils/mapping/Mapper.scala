@@ -22,14 +22,14 @@ import services.TaxYearService
 
 import javax.inject.Inject
 
-class Mapper @Inject()(taxYearService: TaxYearService) {
+class Mapper @Inject() (taxYearService: TaxYearService) {
 
   def apply(userAnswers: UserAnswers): YearsReturns = {
 
     val halfwayThroughTaxYear = taxYearService.currentTaxYear.finishes.minusMonths(6) // October 5th
 
     YearsReturns {
-      CYMinusNTaxYears.taxYears.foldLeft[List[YearReturn]](Nil)((acc, taxYear) => {
+      CYMinusNTaxYears.taxYears.foldLeft[List[YearReturn]](Nil)((acc, taxYear) =>
         if (userAnswers.get(DeclaredTaxToHMRCYesNoPage(taxYear)).contains(false)) {
           taxYear match {
             case CYMinus1TaxYear =>
@@ -37,7 +37,7 @@ class Mapper @Inject()(taxYearService: TaxYearService) {
                 taxReturnYear = taxYearService.nTaxYearsAgoFinishYear(taxYear.n),
                 taxConsequence = taxYearService.currentDate.isAfter(halfwayThroughTaxYear)
               )
-            case _ =>
+            case _               =>
               acc :+ YearReturn(
                 taxReturnYear = taxYearService.nTaxYearsAgoFinishYear(taxYear.n),
                 taxConsequence = true
@@ -46,7 +46,7 @@ class Mapper @Inject()(taxYearService: TaxYearService) {
         } else {
           acc
         }
-      })
+      )
     }
   }
 

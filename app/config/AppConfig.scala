@@ -24,7 +24,11 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class AppConfig @Inject()(val config: Configuration, servicesConfig: ServicesConfig, contactFrontendConfig: ContactFrontendConfig) {
+class AppConfig @Inject() (
+  val config: Configuration,
+  servicesConfig: ServicesConfig,
+  contactFrontendConfig: ContactFrontendConfig
+) {
 
   val en: String = "en"
   val cy: String = "cy"
@@ -34,30 +38,32 @@ class AppConfig @Inject()(val config: Configuration, servicesConfig: ServicesCon
     "cymraeg" -> Lang(cy)
   )
 
-  val welshLanguageSupportEnabled: Boolean = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
+  val welshLanguageSupportEnabled: Boolean =
+    config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
 
   val appName: String = config.get[String]("appName")
 
-  lazy val loginUrl: String = config.get[String]("urls.login")
-  lazy val loginContinueUrl: String = config.get[String]("urls.loginContinue")
-  lazy val logoutUrl: String = config.get[String]("urls.logout")
+  lazy val loginUrl: String                  = config.get[String]("urls.login")
+  lazy val loginContinueUrl: String          = config.get[String]("urls.loginContinue")
+  lazy val logoutUrl: String                 = config.get[String]("urls.logout")
   lazy val maintainATrustOverviewUrl: String = config.get[String]("urls.maintainATrustOverview")
 
-  lazy val trustsUrl: String = servicesConfig.baseUrl("trusts")
-  lazy val trustsAuthUrl: String = servicesConfig.baseUrl("trusts-auth")
+  lazy val trustsUrl: String      = servicesConfig.baseUrl("trusts")
+  lazy val trustsAuthUrl: String  = servicesConfig.baseUrl("trusts-auth")
   lazy val trustsStoreUrl: String = servicesConfig.baseUrl("trusts-store")
 
   lazy val logoutAudit: Boolean = config.get[Boolean]("features.auditing.logout")
 
-  val betaFeedbackUrl = s"${contactFrontendConfig.baseUrl.get}/contact/beta-feedback?service=${contactFrontendConfig.serviceId.get}"
+  val betaFeedbackUrl =
+    s"${contactFrontendConfig.baseUrl.get}/contact/beta-feedback?service=${contactFrontendConfig.serviceId.get}"
 
   lazy val countdownLength: Int = config.get[Int]("timeout.countdown")
-  lazy val timeoutLength: Int = config.get[Int]("timeout.length")
+  lazy val timeoutLength: Int   = config.get[Int]("timeout.length")
 
   def helplineUrl(implicit messages: Messages): String = {
     val path = messages.lang.code match {
       case `cy` => "urls.welshHelpline"
-      case _ => "urls.trustsHelpline"
+      case _    => "urls.trustsHelpline"
     }
     config.get[String](path)
   }

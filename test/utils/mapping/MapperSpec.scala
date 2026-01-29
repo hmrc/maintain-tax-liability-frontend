@@ -32,7 +32,7 @@ import services.TaxYearService
 class MapperSpec extends SpecBase with ScalaCheckPropertyChecks with DateGenerators with BeforeAndAfterEach {
 
   val mockTaxYearService: TaxYearService = Mockito.mock(classOf[TaxYearService])
-  val mapper = new Mapper(mockTaxYearService)
+  val mapper                             = new Mapper(mockTaxYearService)
 
   override def beforeEach(): Unit = {
     reset(mockTaxYearService)
@@ -45,91 +45,117 @@ class MapperSpec extends SpecBase with ScalaCheckPropertyChecks with DateGenerat
     "map user answers to YearsReturns" when {
 
       "need to pay tax for CY-2, CY-3 and CY-4" must {
-        "create returns with tax consequences for these years" in {
-
+        "create returns with tax consequences for these years" in
           forAll(arbitrary[LocalDate](arbitraryDateInTaxYear)) { date =>
-
             when(mockTaxYearService.currentDate).thenReturn(date)
 
             val userAnswers = emptyUserAnswers
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYears), false).success.value
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus3TaxYears), false).success.value
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYears), false).success.value
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus1TaxYear), true).success.value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYears), false)
+              .success
+              .value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus3TaxYears), false)
+              .success
+              .value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYears), false)
+              .success
+              .value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus1TaxYear), true)
+              .success
+              .value
 
             val result = mapper(userAnswers)
 
-            result mustEqual YearsReturns(List(
-              YearReturn(taxReturnYear = "17", taxConsequence = true),
-              YearReturn(taxReturnYear = "18", taxConsequence = true),
-              YearReturn(taxReturnYear = "19", taxConsequence = true)
-            ))
+            result mustEqual YearsReturns(
+              List(
+                YearReturn(taxReturnYear = "17", taxConsequence = true),
+                YearReturn(taxReturnYear = "18", taxConsequence = true),
+                YearReturn(taxReturnYear = "19", taxConsequence = true)
+              )
+            )
           }
-        }
       }
 
       "need to pay tax for CY-1 (on or before October 5th)" must {
-        "create return without tax consequence for that year" in {
-
+        "create return without tax consequence for that year" in
           forAll(arbitrary[LocalDate](arbitraryDateInTaxYearOnOrBeforeOctober5th)) { date =>
-
             when(mockTaxYearService.currentDate).thenReturn(date)
 
             val userAnswers = emptyUserAnswers
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYears), true).success.value
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus3TaxYears), true).success.value
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYears), true).success.value
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYears), true)
+              .success
+              .value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus3TaxYears), true)
+              .success
+              .value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYears), true)
+              .success
+              .value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus1TaxYear), false)
+              .success
+              .value
 
             val result = mapper(userAnswers)
 
-            result mustEqual YearsReturns(List(
-              YearReturn(taxReturnYear = "20", taxConsequence = false)
-            ))
+            result mustEqual YearsReturns(
+              List(
+                YearReturn(taxReturnYear = "20", taxConsequence = false)
+              )
+            )
           }
-        }
       }
 
       "need to pay tax for CY-1 (after October 5th)" must {
-        "create return with tax consequence for that year" in {
-
+        "create return with tax consequence for that year" in
           forAll(arbitrary[LocalDate](arbitraryDateInTaxYearAfterOctober5th)) { date =>
-
             when(mockTaxYearService.currentDate).thenReturn(date)
 
             val userAnswers = emptyUserAnswers
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYears), true).success.value
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus3TaxYears), true).success.value
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYears), true).success.value
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYears), true)
+              .success
+              .value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus3TaxYears), true)
+              .success
+              .value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYears), true)
+              .success
+              .value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus1TaxYear), false)
+              .success
+              .value
 
             val result = mapper(userAnswers)
 
-            result mustEqual YearsReturns(List(
-              YearReturn(taxReturnYear = "20", taxConsequence = true)
-            ))
+            result mustEqual YearsReturns(
+              List(
+                YearReturn(taxReturnYear = "20", taxConsequence = true)
+              )
+            )
           }
-        }
       }
 
       "all tax paid" must {
-        "create no returns" in {
-
+        "create no returns" in
           forAll(arbitrary[LocalDate](arbitraryDateInTaxYear)) { date =>
-
             when(mockTaxYearService.currentDate).thenReturn(date)
 
             val userAnswers = emptyUserAnswers
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYears), true).success.value
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus3TaxYears), true).success.value
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYears), true).success.value
-              .set(DeclaredTaxToHMRCYesNoPage(CYMinus1TaxYear), true).success.value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYears), true)
+              .success
+              .value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus3TaxYears), true)
+              .success
+              .value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYears), true)
+              .success
+              .value
+              .set(DeclaredTaxToHMRCYesNoPage(CYMinus1TaxYear), true)
+              .success
+              .value
 
             val result = mapper(userAnswers)
 
             result mustEqual YearsReturns(Nil)
           }
-        }
       }
     }
   }

@@ -25,7 +25,7 @@ class CheckYourAnswersViewSpec extends SummaryListViewBehaviours {
 
   val messageKeyPrefix = "checkYourAnswers"
 
-  val answerSections: Seq[AnswerSection] = (1 to 4).foldLeft[Seq[AnswerSection]](Nil)((acc, i) => {
+  val answerSections: Seq[AnswerSection] = (1 to 4).foldLeft[Seq[AnswerSection]](Nil)((acc, i) =>
     acc :+ AnswerSection(
       heading = s"Heading $i",
       rows = Seq(
@@ -36,7 +36,7 @@ class CheckYourAnswersViewSpec extends SummaryListViewBehaviours {
         )
       )
     )
-  })
+  )
 
   "CheckAnswers view" must {
 
@@ -52,4 +52,5 @@ class CheckYourAnswersViewSpec extends SummaryListViewBehaviours {
 
     behave like pageWithSubmitButton(applyView)
   }
+
 }

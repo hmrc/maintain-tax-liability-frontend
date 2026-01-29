@@ -23,15 +23,13 @@ import viewmodels.{AnswerRow, AnswerSection}
 
 import javax.inject.Inject
 
-class PrintHelper @Inject()(taxYearRange: TaxYearRange,
-                            answerRowConverter: AnswerRowConverter) {
+class PrintHelper @Inject() (taxYearRange: TaxYearRange, answerRowConverter: AnswerRowConverter) {
 
   def apply(userAnswers: UserAnswers)(implicit messages: Messages): Seq[AnswerSection] = {
 
     val bound = answerRowConverter.bind(userAnswers)
 
-    CYMinusNTaxYears.taxYears.foldLeft[Seq[AnswerSection]](Nil)((acc, taxYear) => {
-
+    CYMinusNTaxYears.taxYears.foldLeft[Seq[AnswerSection]](Nil) { (acc, taxYear) =>
       val taxYearDates = taxYearRange.taxYearDates(taxYear)
 
       val answerRows: Seq[AnswerRow] = Seq(
@@ -51,9 +49,9 @@ class PrintHelper @Inject()(taxYearRange: TaxYearRange,
 
       answerRows match {
         case Nil => acc
-        case _ => acc :+ AnswerSection(messages("checkYourAnswersSection.heading", taxYearDates: _*), answerRows)
+        case _   => acc :+ AnswerSection(messages("checkYourAnswersSection.heading", taxYearDates: _*), answerRows)
       }
-    })
+    }
   }
 
 }

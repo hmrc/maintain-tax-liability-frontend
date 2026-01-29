@@ -23,17 +23,14 @@ import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisationException, AuthorisedFunctions, NoActiveSession}
 
-class TrustsAuthorisedFunctions @Inject()(override val authConnector: AuthConnector,
-                                          val config: AppConfig) extends AuthorisedFunctions {
+class TrustsAuthorisedFunctions @Inject() (override val authConnector: AuthConnector, val config: AppConfig)
+    extends AuthorisedFunctions {
 
   def recoverFromAuthorisation: PartialFunction[Throwable, Result] = {
-    case _: NoActiveSession =>
-      Redirect(config.loginUrl,
-        Map("continue" -> Seq(config.loginContinueUrl),
-          "origin" -> Seq(config.appName)
-        )
-      )
+    case _: NoActiveSession        =>
+      Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl), "origin" -> Seq(config.appName)))
     case _: AuthorisationException =>
       Redirect(routes.UnauthorisedController.onPageLoad)
   }
+
 }

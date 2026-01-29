@@ -30,39 +30,37 @@ import views.html.CheckYourAnswersView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersController @Inject()(
-                                            val controllerComponents: MessagesControllerComponents,
-                                            actions: StandardActionSets,
-                                            printHelper: PrintHelper,
-                                            mapper: Mapper,
-                                            appConfig: AppConfig,
-                                            trustsConnector: TrustsConnector,
-                                            trustsStoreConnector: TrustsStoreConnector,
-                                            view: CheckYourAnswersView
-                                          )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class CheckYourAnswersController @Inject() (
+  val controllerComponents: MessagesControllerComponents,
+  actions: StandardActionSets,
+  printHelper: PrintHelper,
+  mapper: Mapper,
+  appConfig: AppConfig,
+  trustsConnector: TrustsConnector,
+  trustsStoreConnector: TrustsStoreConnector,
+  view: CheckYourAnswersView
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = actions.authorisedWithRequiredData {
-    implicit request =>
-      Ok(view(printHelper(request.userAnswers)))
+  def onPageLoad(): Action[AnyContent] = actions.authorisedWithRequiredData { implicit request =>
+    Ok(view(printHelper(request.userAnswers)))
   }
 
-  def onSubmit(): Action[AnyContent] = actions.authorisedWithRequiredData.async {
-    implicit request =>
+  def onSubmit(): Action[AnyContent] = actions.authorisedWithRequiredData.async { implicit request =>
+    val userAnswers  = request.userAnswers
+    val identifier   = userAnswers.identifier
+    val yearsReturns = mapper(userAnswers)
 
-      val userAnswers = request.userAnswers
-      val identifier = userAnswers.identifier
-      val yearsReturns = mapper(userAnswers)
-
-      for {
-        _ <- {
-          if (yearsReturns.returns.nonEmpty) {
-            trustsConnector.setYearsReturns(identifier, yearsReturns).map(_ => ())
-          } else {
-            Future.successful(())
-          }
+    for {
+      _ <- {
+        if (yearsReturns.returns.nonEmpty) {
+          trustsConnector.setYearsReturns(identifier, yearsReturns).map(_ => ())
+        } else {
+          Future.successful(())
         }
-        _ <- trustsStoreConnector.updateTaskStatus(identifier, Completed)
-      } yield Redirect(appConfig.maintainATrustOverviewUrl)
+      }
+      _ <- trustsStoreConnector.updateTaskStatus(identifier, Completed)
+    } yield Redirect(appConfig.maintainATrustOverviewUrl)
   }
 
 }

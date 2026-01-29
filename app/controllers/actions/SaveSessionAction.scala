@@ -24,10 +24,11 @@ import repositories.ActiveSessionRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SaveActiveSessionImpl @Inject()(
-                                       identifier: String,
-                                       activeSessionRepository: ActiveSessionRepository
-                                     )(override implicit val executionContext: ExecutionContext) extends SaveSessionAction {
+class SaveActiveSessionImpl @Inject() (
+  identifier: String,
+  activeSessionRepository: ActiveSessionRepository
+)(implicit override val executionContext: ExecutionContext)
+    extends SaveSessionAction {
 
   override protected def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] = {
     val session = ActiveSession(request.user.internalId, identifier)
@@ -35,13 +36,15 @@ class SaveActiveSessionImpl @Inject()(
       None
     }
   }
+
 }
 
 @ImplementedBy(classOf[SaveActiveSessionImpl])
 trait SaveSessionAction extends ActionFilter[IdentifierRequest]
 
-class SaveActiveSessionProvider @Inject()(activeSessionRepository: ActiveSessionRepository)
-                                         (implicit ec: ExecutionContext) {
+class SaveActiveSessionProvider @Inject() (activeSessionRepository: ActiveSessionRepository)(implicit
+  ec: ExecutionContext
+) {
 
   def apply(identifier: String) = new SaveActiveSessionImpl(identifier, activeSessionRepository)
 }

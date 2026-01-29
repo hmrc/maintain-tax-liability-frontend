@@ -21,9 +21,7 @@ import play.api.libs.json.{OWrites, Reads, __}
 
 import java.time.LocalDateTime
 
-case class ActiveSession(internalId: String,
-                         identifier: String,
-                         updatedAt: LocalDateTime = LocalDateTime.now)
+case class ActiveSession(internalId: String, identifier: String, updatedAt: LocalDateTime = LocalDateTime.now)
 
 object ActiveSession {
 
@@ -31,12 +29,12 @@ object ActiveSession {
     (__ \ "internalId").read[String] and
       (__ \ "identifier").read[String] and
       (__ \ "updatedAt").read(MongoDateTimeFormats.localDateTimeRead)
-    )(ActiveSession.apply _)
+  )(ActiveSession.apply _)
 
   implicit lazy val writes: OWrites[ActiveSession] = (
     (__ \ "internalId").write[String] and
       (__ \ "identifier").write[String] and
       (__ \ "updatedAt").write(MongoDateTimeFormats.localDateTimeWrite)
-    )(unlift(ActiveSession.unapply))
+  )(unlift(ActiveSession.unapply))
 
 }

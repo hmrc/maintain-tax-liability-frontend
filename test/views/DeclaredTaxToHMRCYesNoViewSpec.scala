@@ -24,15 +24,13 @@ import views.html.DeclaredTaxToHMRCYesNoView
 
 class DeclaredTaxToHMRCYesNoViewSpec extends YesNoViewBehaviours {
 
-  val messageKeyPrefix = "declaredToHMRC"
+  val messageKeyPrefix          = "declaredToHMRC"
   val taxYearDates: Seq[String] = Seq("6 April 2019", "5 April 2020")
 
   val form: Form[Boolean] = new YesNoFormProvider().withPrefix(messageKeyPrefix, taxYearDates)
 
-  "DeclaredTaxToHMRCYesNoView" when {
-
+  "DeclaredTaxToHMRCYesNoView" when
     taxYears.foreach { taxYear =>
-
       s"Tax year ${taxYear.messagePrefix}" must {
 
         val view = viewFor[DeclaredTaxToHMRCYesNoView](Some(emptyUserAnswers))
@@ -55,5 +53,5 @@ class DeclaredTaxToHMRCYesNoViewSpec extends YesNoViewBehaviours {
         behave like pageWithSubmitButton(applyView(form))
       }
     }
-  }
+
 }

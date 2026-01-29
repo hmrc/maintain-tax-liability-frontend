@@ -22,10 +22,12 @@ import views.ViewSpecBase
 
 trait ViewBehaviours extends ViewSpecBase {
 
-  def normalPage(view: HtmlFormat.Appendable,
-                 messageKeyPrefix: String,
-                 messageKeyParams: Seq[String],
-                 expectedGuidanceKeys: String*): Unit = {
+  def normalPage(
+    view: HtmlFormat.Appendable,
+    messageKeyPrefix: String,
+    messageKeyParams: Seq[String],
+    expectedGuidanceKeys: String*
+  ): Unit =
 
     "behave like a normal page" when {
 
@@ -33,7 +35,7 @@ trait ViewBehaviours extends ViewSpecBase {
 
         "have the correct banner title" in {
 
-          val doc = asDocument(view)
+          val doc         = asDocument(view)
           val bannerTitle = doc.getElementsByClass("govuk-service-navigation__service-name")
           bannerTitle.text().trim mustBe messages("service.name")
         }
@@ -63,56 +65,45 @@ trait ViewBehaviours extends ViewSpecBase {
         }
       }
     }
-  }
 
-  def pageWithHint[A](form: Form[A],
-                      createView: Form[A] => HtmlFormat.Appendable,
-                      expectedHintKey: String): Unit = {
+  def pageWithHint[A](form: Form[A], createView: Form[A] => HtmlFormat.Appendable, expectedHintKey: String): Unit =
 
     "behave like a page with hint text" in {
 
       val doc = asDocument(createView(form))
       assertContainsHint(doc, "value", Some(messages(expectedHintKey)))
     }
-  }
 
-  def pageWithBackLink(view: HtmlFormat.Appendable): Unit = {
+  def pageWithBackLink(view: HtmlFormat.Appendable): Unit =
 
     "behave like a page with a back link" in {
 
       val doc = asDocument(view)
       assertRenderedById(doc, "back-link")
     }
-  }
 
-  def pageWithSubmitButton(view: HtmlFormat.Appendable): Unit = {
+  def pageWithSubmitButton(view: HtmlFormat.Appendable): Unit =
 
     "behave like a page with a submit button" in {
 
       val doc = asDocument(view)
       assertRenderedById(doc, "submit")
     }
-  }
 
-  def pageWithLink(view: HtmlFormat.Appendable,
-                   linkUrl: String,
-                   linkText: String): Unit = {
+  def pageWithLink(view: HtmlFormat.Appendable, linkUrl: String, linkText: String): Unit =
 
     "behave like a page with a link" in {
 
       val doc = asDocument(view)
       assertContainsLink(doc, linkUrl, linkText)
     }
-  }
 
-  def pageWithContent(view: HtmlFormat.Appendable,
-                      content: String): Unit = {
+  def pageWithContent(view: HtmlFormat.Appendable, content: String): Unit =
 
     "behave like a page with content" in {
 
       val doc = asDocument(view)
       assertContainsText(doc, content)
     }
-  }
 
 }

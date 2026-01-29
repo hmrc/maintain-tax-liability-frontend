@@ -25,7 +25,7 @@ import viewmodels.{AnswerRow, AnswerSection}
 
 class PrintHelperSpec extends SpecBase {
 
-  val printHelper: PrintHelper = injector.instanceOf[PrintHelper]
+  val printHelper: PrintHelper   = injector.instanceOf[PrintHelper]
   val taxYearRange: TaxYearRange = injector.instanceOf[TaxYearRange]
 
   "PrintHelper" must {
@@ -33,17 +33,30 @@ class PrintHelperSpec extends SpecBase {
     "render answer rows" in {
 
       val userAnswers = emptyUserAnswers
-        .set(CYMinusFourYesNoPage, true).success.value
-        .set(DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYears), true).success.value
-
-        .set(CYMinusThreeYesNoPage, true).success.value
-        .set(DeclaredTaxToHMRCYesNoPage(CYMinus3TaxYears), true).success.value
-
-        .set(CYMinusTwoYesNoPage, true).success.value
-        .set(DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYears), false).success.value
-
-        .set(CYMinusOneYesNoPage, true).success.value
-        .set(DeclaredTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
+        .set(CYMinusFourYesNoPage, true)
+        .success
+        .value
+        .set(DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYears), true)
+        .success
+        .value
+        .set(CYMinusThreeYesNoPage, true)
+        .success
+        .value
+        .set(DeclaredTaxToHMRCYesNoPage(CYMinus3TaxYears), true)
+        .success
+        .value
+        .set(CYMinusTwoYesNoPage, true)
+        .success
+        .value
+        .set(DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYears), false)
+        .success
+        .value
+        .set(CYMinusOneYesNoPage, true)
+        .success
+        .value
+        .set(DeclaredTaxToHMRCYesNoPage(CYMinus1TaxYear), false)
+        .success
+        .value
 
       val result = printHelper.apply(userAnswers)
 
@@ -52,7 +65,10 @@ class PrintHelperSpec extends SpecBase {
           heading = messages("checkYourAnswersSection.heading", taxYearRange.taxYearDates(CYMinus4TaxYears): _*),
           rows = Seq(
             AnswerRow(
-              label = messages("cyMinusFour.liability.checkYourAnswersLabel", taxYearRange.taxYearDates(CYMinus4TaxYears): _*),
+              label = messages(
+                "cyMinusFour.liability.checkYourAnswersLabel",
+                taxYearRange.taxYearDates(CYMinus4TaxYears): _*
+              ),
               answer = Html("Yes"),
               changeUrl = routes.CYMinusFourYesNoController.onPageLoad().url
             ),
@@ -67,7 +83,10 @@ class PrintHelperSpec extends SpecBase {
           heading = messages("checkYourAnswersSection.heading", taxYearRange.taxYearDates(CYMinus3TaxYears): _*),
           rows = Seq(
             AnswerRow(
-              label = messages("cyMinusThree.liability.checkYourAnswersLabel", taxYearRange.taxYearDates(CYMinus3TaxYears): _*),
+              label = messages(
+                "cyMinusThree.liability.checkYourAnswersLabel",
+                taxYearRange.taxYearDates(CYMinus3TaxYears): _*
+              ),
               answer = Html("Yes"),
               changeUrl = routes.CYMinusThreeYesNoController.onPageLoad().url
             ),
@@ -82,21 +101,24 @@ class PrintHelperSpec extends SpecBase {
           heading = messages("checkYourAnswersSection.heading", taxYearRange.taxYearDates(CYMinus2TaxYears): _*),
           rows = Seq(
             AnswerRow(
-              label = messages("cyMinusTwo.liability.checkYourAnswersLabel", taxYearRange.taxYearDates(CYMinus2TaxYears): _*),
+              label =
+                messages("cyMinusTwo.liability.checkYourAnswersLabel", taxYearRange.taxYearDates(CYMinus2TaxYears): _*),
               answer = Html("Yes"),
               changeUrl = routes.CYMinusTwoYesNoController.onPageLoad().url
             ),
             AnswerRow(
               label = messages("declaredToHMRC.checkYourAnswersLabel", taxYearRange.taxYearDates(CYMinus2TaxYears): _*),
               answer = Html("No"),
-              changeUrl = routes.DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus2TaxYears).url)
+              changeUrl = routes.DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus2TaxYears).url
+            )
           )
         ),
         AnswerSection(
           heading = messages("checkYourAnswersSection.heading", taxYearRange.taxYearDates(CYMinus1TaxYear): _*),
           rows = Seq(
             AnswerRow(
-              label = messages("cyMinusOne.liability.checkYourAnswersLabel", taxYearRange.taxYearDates(CYMinus1TaxYear): _*),
+              label =
+                messages("cyMinusOne.liability.checkYourAnswersLabel", taxYearRange.taxYearDates(CYMinus1TaxYear): _*),
               answer = Html("Yes"),
               changeUrl = routes.CYMinusOneYesNoController.onPageLoad().url
             ),

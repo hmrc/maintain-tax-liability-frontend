@@ -31,55 +31,71 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext.Implicits.global
 import java.util.concurrent.TimeUnit
 
-class PlaybackRepositorySpec extends AnyWordSpec with Matchers
-  with ScalaFutures with OptionValues with MongoSupport with MongoSuite with BeforeAndAfterEach with BaseMongoIndexSpec {
+class PlaybackRepositorySpec
+    extends AnyWordSpec
+    with Matchers
+    with ScalaFutures
+    with OptionValues
+    with MongoSupport
+    with MongoSuite
+    with BeforeAndAfterEach
+    with BaseMongoIndexSpec {
 
-
-  override def beforeEach(): Unit = Await.result(repository.collection.deleteMany(BsonDocument()).toFuture(),Duration.Inf)
+  override def beforeEach(): Unit =
+    Await.result(repository.collection.deleteMany(BsonDocument()).toFuture(), Duration.Inf)
 
   lazy val repository: PlaybackRepositoryImpl = new PlaybackRepositoryImpl(mongoComponent, config)(global)
 
   val identifier: String = "1234567890"
-  val sessionId: String = "sessionId"
-  val newId: String = s"$identifier-$sessionId"
+  val sessionId: String  = "sessionId"
+  val newId: String      = s"$identifier-$sessionId"
 
   "a playback repository" should {
 
     "must return None when no cache exists" in {
 
-        val internalId = "Int-328969d0-557e-4559-sdba-074d0597107e"
+      val internalId = "Int-328969d0-557e-4559-sdba-074d0597107e"
 
-        repository.get(internalId, identifier, sessionId).futureValue mustBe None
+      repository.get(internalId, identifier, sessionId).futureValue mustBe None
     }
 
     "must return user answers when cache exists" in {
 
-        val internalId = "Int-328969d0-557e-2559-96ba-074d0597107e"
-        val identifier = "Testing"
-        val sessionId = "Test"
-        val newId = s"$internalId-$identifier-$sessionId"
+      val internalId = "Int-328969d0-557e-2559-96ba-074d0597107e"
+      val identifier = "Testing"
+      val sessionId  = "Test"
+      val newId      = s"$internalId-$identifier-$sessionId"
 
-        val userAnswers: UserAnswers = UserAnswers(internalId,identifier,sessionId,newId)
+      val userAnswers: UserAnswers = UserAnswers(internalId, identifier, sessionId, newId)
 
-        val initial = repository.set(userAnswers).futureValue
+      val initial = repository.set(userAnswers).futureValue
 
-        initial mustBe true
+      initial mustBe true
 
-        val cachedAnswers = repository.get(internalId, identifier, sessionId).futureValue.value
-        cachedAnswers.internalId mustBe internalId
-        cachedAnswers.identifier mustBe identifier
-        cachedAnswers.sessionId mustBe sessionId
+      val cachedAnswers = repository.get(internalId, identifier, sessionId).futureValue.value
+      cachedAnswers.internalId mustBe internalId
+      cachedAnswers.identifier mustBe identifier
+      cachedAnswers.sessionId  mustBe sessionId
 
     }
 
     "have all expected indexes" in {
       val expectedIndexes = Seq(
         IndexModel(ascending("_id"), IndexOptions().name("_id_")),
-        IndexModel(ascending("updatedAt"), IndexOptions().name("user-answers-updated-at-index").expireAfter(config.cachettlplaybackInSeconds, TimeUnit.SECONDS)),
-        IndexModel(ascending("newId"), IndexOptions().name("internal-id-and-utr-and-sessionId-compound-index").unique(false))
+        IndexModel(
+          ascending("updatedAt"),
+          IndexOptions()
+            .name("user-answers-updated-at-index")
+            .expireAfter(config.cachettlplaybackInSeconds, TimeUnit.SECONDS)
+        ),
+        IndexModel(
+          ascending("newId"),
+          IndexOptions().name("internal-id-and-utr-and-sessionId-compound-index").unique(false)
+        )
       )
 
       assertIndexes(expectedIndexes, getIndexes(repository.collection))
     }
   }
+
 }

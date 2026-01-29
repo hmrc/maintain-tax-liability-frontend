@@ -40,9 +40,9 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
 
   lazy val indexRoute: String = routes.IndexController.onPageLoad(identifier).url
 
-  val mockTrustsConnector: TrustsConnector = Mockito.mock(classOf[TrustsConnector])
+  val mockTrustsConnector: TrustsConnector           = Mockito.mock(classOf[TrustsConnector])
   val mockTrustsStoreConnector: TrustsStoreConnector = Mockito.mock(classOf[TrustsStoreConnector])
-  val errorHandler: ErrorHandler = injector.instanceOf[ErrorHandler]
+  val errorHandler: ErrorHandler                     = injector.instanceOf[ErrorHandler]
 
   override def beforeEach(): Unit = {
     reset(playbackRepository)
@@ -243,8 +243,7 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
       }
 
       "unexpected result for number of years ago of first tax year available" must {
-        "return internal server error" in {
-          
+        "return internal server error" in
           forAll(arbitrary[Int].suchThat(x => x == 0 || x > 4)) { int =>
             beforeEach()
 
@@ -273,7 +272,6 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
 
             application.stop()
           }
-        }
       }
     }
 
@@ -304,8 +302,7 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
       }
 
       "task is not completed" must {
-        "not redirect to CheckYourAnswersController" in {
-
+        "not redirect to CheckYourAnswersController" in
           forAll(arbitrary[TaskStatus].suchThat(_ != Completed)) { taskStatus =>
             beforeEach()
 
@@ -335,8 +332,8 @@ class IndexControllerSpec extends SpecBase with ScalaCheckPropertyChecks with Be
 
             application.stop()
           }
-        }
       }
     }
   }
+
 }

@@ -35,19 +35,19 @@ class TrustsAuthConnectorSpec extends SpecBase with WireMockHelper {
 
   private def authorisedUrlFor(identifier: String): String = s"/trusts-auth/authorised/$identifier"
 
-  private def responseFromJson(json: JsValue): ResponseDefinitionBuilder = {
+  private def responseFromJson(json: JsValue): ResponseDefinitionBuilder =
     aResponse().withStatus(Status.OK).withBody(json.toString())
-  }
 
   private def allowedResponse: ResponseDefinitionBuilder = responseFromJson(Json.obj("authorised" -> true))
 
   private def allowedAgentResponse: ResponseDefinitionBuilder = responseFromJson(Json.obj("arn" -> "SomeArn"))
 
-  private def redirectResponse(): ResponseDefinitionBuilder = responseFromJson(Json.obj("redirectUrl" -> "redirect-url"))
+  private def redirectResponse(): ResponseDefinitionBuilder = responseFromJson(
+    Json.obj("redirectUrl" -> "redirect-url")
+  )
 
-  private def wiremock(url: String, response: ResponseDefinitionBuilder): StubMapping = {
+  private def wiremock(url: String, response: ResponseDefinitionBuilder): StubMapping =
     server.stubFor(get(urlEqualTo(url)).willReturn(response))
-  }
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(defaultAppConfigurations ++ Map("microservice.services.trusts-auth.port" -> server.port()))
@@ -126,4 +126,5 @@ class TrustsAuthConnectorSpec extends SpecBase with WireMockHelper {
       }
     }
   }
+
 }

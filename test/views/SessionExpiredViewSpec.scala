@@ -33,9 +33,11 @@ class SessionExpiredViewSpec extends ViewBehaviours {
       view = applyView,
       messageKeyPrefix = "session_expired",
       messageKeyParams = Nil,
-      expectedGuidanceKeys = "guidance", "guidance.2"
+      expectedGuidanceKeys = "guidance",
+      "guidance.2"
     )
 
     behave like pageWithSubmitButton(applyView)
   }
+
 }

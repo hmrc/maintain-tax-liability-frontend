@@ -24,21 +24,18 @@ import views.html.SessionExpiredView
 
 import javax.inject.Inject
 
-class SessionExpiredController @Inject()(
-                                          val controllerComponents: MessagesControllerComponents,
-                                          appConfig: AppConfig,
-                                          view: SessionExpiredView
-                                        ) extends FrontendBaseController with I18nSupport {
+class SessionExpiredController @Inject() (
+  val controllerComponents: MessagesControllerComponents,
+  appConfig: AppConfig,
+  view: SessionExpiredView
+) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = Action { implicit request =>
     Ok(view())
   }
 
   def onSubmit: Action[AnyContent] = Action { _ =>
-    Redirect(appConfig.loginUrl,
-      Map("continue" -> Seq(appConfig.loginContinueUrl),
-        "origin" -> Seq(appConfig.appName)
-      )
-    )
+    Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl), "origin" -> Seq(appConfig.appName)))
   }
+
 }

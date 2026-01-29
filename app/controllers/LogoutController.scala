@@ -29,26 +29,26 @@ import utils.{Session, SessionLogging}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class LogoutController @Inject()(
-                                  appConfig: AppConfig,
-                                  val controllerComponents: MessagesControllerComponents,
-                                  actions: StandardActionSets,
-                                  auditConnector: AuditConnector
-                                )(implicit val ec: ExecutionContext) extends FrontendBaseController with SessionLogging {
+class LogoutController @Inject() (
+  appConfig: AppConfig,
+  val controllerComponents: MessagesControllerComponents,
+  actions: StandardActionSets,
+  auditConnector: AuditConnector
+)(implicit val ec: ExecutionContext)
+    extends FrontendBaseController with SessionLogging {
 
   def logout: Action[AnyContent] = actions.authorisedWithRequiredData { request =>
-
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     infoLog("user signed out from the service, asking for feedback")
 
-    if(appConfig.logoutAudit) {
+    if (appConfig.logoutAudit) {
 
       val auditData = Map(
-        "sessionId" -> Session.id,
-        "event" -> "signout",
-        "service" -> "maintain-trust-details-frontend",
-        "userGroup" -> request.user.affinityGroup.toString,
+        "sessionId"  -> Session.id,
+        "event"      -> "signout",
+        "service"    -> "maintain-trust-details-frontend",
+        "userGroup"  -> request.user.affinityGroup.toString,
         "identifier" -> request.userAnswers.identifier
       )
 
@@ -62,4 +62,5 @@ class LogoutController @Inject()(
     Redirect(appConfig.logoutUrl).withSession(session = ("feedbackId", Session.id))
 
   }
+
 }
