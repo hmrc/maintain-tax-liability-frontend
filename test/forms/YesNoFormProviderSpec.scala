@@ -22,7 +22,7 @@ import play.api.data.{Form, FormError}
 class YesNoFormProviderSpec extends BooleanFieldBehaviours {
 
   val messagePrefix = "yesNo"
-  val requiredKey = s"$messagePrefix.error.required"
+  val requiredKey   = s"$messagePrefix.error.required"
 
   val args: Seq[String] = Seq("arg1", "arg2")
 

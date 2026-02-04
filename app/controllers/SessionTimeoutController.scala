@@ -26,11 +26,11 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class SessionTimeoutController @Inject()(
-                                          val appConfig: AppConfig,
-                                          val config: Configuration,
-                                          mcc: MessagesControllerComponents
-                                        ) extends FrontendController(mcc) with SessionLogging {
+class SessionTimeoutController @Inject() (
+  val appConfig: AppConfig,
+  val config: Configuration,
+  mcc: MessagesControllerComponents
+) extends FrontendController(mcc) with SessionLogging {
 
   val keepAlive: Action[AnyContent] = Action.async { implicit request =>
     infoLog("user requested to extend the time remaining to maintain a trust, user has not been signed out")

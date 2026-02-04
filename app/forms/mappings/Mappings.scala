@@ -21,7 +21,7 @@ import play.api.data.Forms.of
 
 trait Mappings extends Formatters {
 
-  protected def boolean(requiredKey: String = "error.required",
-                        args: Seq[String]): FieldMapping[Boolean] =
+  protected def boolean(requiredKey: String = "error.required", args: Seq[String]): FieldMapping[Boolean] =
     of(booleanFormatter(requiredKey, args))
+
 }

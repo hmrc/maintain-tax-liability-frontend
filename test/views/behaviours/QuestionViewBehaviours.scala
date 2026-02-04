@@ -20,9 +20,9 @@ import play.api.data.{Form, FormError}
 
 trait QuestionViewBehaviours[A] extends ViewBehaviours {
 
-  val errorKey = "value"
-  val errorPrefix = "site.error"
-  val errorMessage = "error.number"
+  val errorKey         = "value"
+  val errorPrefix      = "site.error"
+  val errorMessage     = "error.number"
   val error: FormError = FormError(errorKey, errorMessage)
 
   val form: Form[A]

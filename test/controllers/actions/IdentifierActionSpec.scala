@@ -37,28 +37,34 @@ class IdentifierActionSpec extends SpecBase {
   type RetrievalType = Option[String] ~ Option[AffinityGroup] ~ Enrolments
 
   val mockAuthConnector: AuthConnector = Mockito.mock(classOf[AuthConnector])
-  val appConfig: AppConfig = injector.instanceOf[AppConfig]
+  val appConfig: AppConfig             = injector.instanceOf[AppConfig]
 
   class Harness(authAction: IdentifierAction) {
-    def onPageLoad(): Action[AnyContent] = authAction { _ => Results.Ok }
+    def onPageLoad(): Action[AnyContent] = authAction(_ => Results.Ok)
   }
 
   class ThrowingHarness(authAction: IdentifierAction) {
-    def onPageLoad(): Action[AnyContent] = authAction { _ => throw new IllegalStateException("Thrown by test") }
+    def onPageLoad(): Action[AnyContent] = authAction(_ => throw new IllegalStateException("Thrown by test"))
   }
 
   lazy val trustsAuthFunctions = new TrustsAuthorisedFunctions(mockAuthConnector, appConfig)
 
   private val noEnrolment = Enrolments(Set())
 
-  private def authRetrievals(affinityGroup: AffinityGroup, enrolment: Enrolments): Future[Some[String] ~ Some[AffinityGroup] ~ Enrolments] =
+  private def authRetrievals(
+    affinityGroup: AffinityGroup,
+    enrolment: Enrolments
+  ): Future[Some[String] ~ Some[AffinityGroup] ~ Enrolments] =
     Future.successful(new ~(new ~(Some("id"), Some(affinityGroup)), enrolment))
 
-  private val agentEnrolment = Enrolments(Set(Enrolment("HMRC-AS-AGENT", List(EnrolmentIdentifier("AgentReferenceNumber", "SomeVal")), "Activated", None)))
+  private val agentEnrolment = Enrolments(
+    Set(Enrolment("HMRC-AS-AGENT", List(EnrolmentIdentifier("AgentReferenceNumber", "SomeVal")), "Activated", None))
+  )
 
-  private def actionToTest(authService: AuthenticationService = new FakeAuthenticationService): AuthenticatedIdentifierAction = {
+  private def actionToTest(
+    authService: AuthenticationService = new FakeAuthenticationService
+  ): AuthenticatedIdentifierAction =
     new AuthenticatedIdentifierAction(trustsAuthFunctions, bodyParsers, authService)
-  }
 
   "invoking an AuthenticatedIdentifier" when {
 
@@ -72,14 +78,15 @@ class IdentifierActionSpec extends SpecBase {
           .thenReturn(authRetrievals(AffinityGroup.Agent, noEnrolment))
 
         val mockAuthService = Mockito.mock(classOf[AuthenticationService])
-        when(mockAuthService.authenticateAgent()(any(), any())).thenReturn(Future.successful(Left(Redirect("test-redirect-url"))))
+        when(mockAuthService.authenticateAgent()(any(), any()))
+          .thenReturn(Future.successful(Left(Redirect("test-redirect-url"))))
 
         val action = actionToTest(mockAuthService)
 
         val controller = new Harness(action)
-        val result = controller.onPageLoad()(fakeRequest)
+        val result     = controller.onPageLoad()(fakeRequest)
 
-        status(result) mustBe SEE_OTHER
+        status(result)           mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("test-redirect-url")
         application.stop()
       }
@@ -93,9 +100,9 @@ class IdentifierActionSpec extends SpecBase {
         when(mockAuthConnector.authorise(any(), any[Retrieval[RetrievalType]]())(any(), any()))
           .thenReturn(authRetrievals(AffinityGroup.Agent, agentEnrolment))
 
-        val action = actionToTest()
+        val action     = actionToTest()
         val controller = new Harness(action)
-        val result = controller.onPageLoad()(fakeRequest)
+        val result     = controller.onPageLoad()(fakeRequest)
 
         status(result) mustBe OK
         application.stop()
@@ -110,9 +117,9 @@ class IdentifierActionSpec extends SpecBase {
         when(mockAuthConnector.authorise(any(), any[Retrieval[RetrievalType]]())(any(), any()))
           .thenReturn(authRetrievals(AffinityGroup.Organisation, agentEnrolment))
 
-        val action = actionToTest()
+        val action     = actionToTest()
         val controller = new Harness(action)
-        val result = controller.onPageLoad()(fakeRequest)
+        val result     = controller.onPageLoad()(fakeRequest)
 
         status(result) mustBe OK
         application.stop()
@@ -127,11 +134,11 @@ class IdentifierActionSpec extends SpecBase {
         when(mockAuthConnector.authorise(any(), any[Retrieval[RetrievalType]]())(any(), any()))
           .thenReturn(authRetrievals(AffinityGroup.Individual, noEnrolment))
 
-        val action = actionToTest()
+        val action     = actionToTest()
         val controller = new Harness(action)
-        val result = controller.onPageLoad()(fakeRequest)
+        val result     = controller.onPageLoad()(fakeRequest)
 
-        status(result) mustBe SEE_OTHER
+        status(result)           mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad.url)
 
         application.stop()
@@ -143,15 +150,19 @@ class IdentifierActionSpec extends SpecBase {
 
         val application = applicationBuilder().build()
 
-        when(mockAuthConnector.authorise(any(), any[Retrieval[RetrievalType]]())(any(), any())) thenReturn (Future failed MissingBearerToken())
+        when(
+          mockAuthConnector.authorise(any(), any[Retrieval[RetrievalType]]())(any(), any())
+        ) thenReturn (Future failed MissingBearerToken())
 
-        val action = actionToTest()
+        val action     = actionToTest()
         val controller = new Harness(action)
-        val result = controller.onPageLoad()(fakeRequest)
+        val result     = controller.onPageLoad()(fakeRequest)
 
         status(result) mustBe SEE_OTHER
 
-        redirectLocation(result).get mustBe "http://localhost:9949/auth-login-stub/gg-sign-in?continue=http%3A%2F%2Flocalhost%3A9781%2Ftrusts-registration&origin=maintain-tax-liability-frontend"
+        redirectLocation(
+          result
+        ).get mustBe "http://localhost:9949/auth-login-stub/gg-sign-in?continue=http%3A%2F%2Flocalhost%3A9781%2Ftrusts-registration&origin=maintain-tax-liability-frontend"
         application.stop()
       }
     }
@@ -161,15 +172,19 @@ class IdentifierActionSpec extends SpecBase {
 
         val application = applicationBuilder().build()
 
-        when(mockAuthConnector.authorise(any(), any[Retrieval[RetrievalType]]())(any(), any())) thenReturn (Future failed BearerTokenExpired())
+        when(
+          mockAuthConnector.authorise(any(), any[Retrieval[RetrievalType]]())(any(), any())
+        ) thenReturn (Future failed BearerTokenExpired())
 
-        val action = actionToTest()
+        val action     = actionToTest()
         val controller = new Harness(action)
-        val result = controller.onPageLoad()(fakeRequest)
+        val result     = controller.onPageLoad()(fakeRequest)
 
         status(result) mustBe SEE_OTHER
 
-        redirectLocation(result).get mustBe "http://localhost:9949/auth-login-stub/gg-sign-in?continue=http%3A%2F%2Flocalhost%3A9781%2Ftrusts-registration&origin=maintain-tax-liability-frontend"
+        redirectLocation(
+          result
+        ).get mustBe "http://localhost:9949/auth-login-stub/gg-sign-in?continue=http%3A%2F%2Flocalhost%3A9781%2Ftrusts-registration&origin=maintain-tax-liability-frontend"
         application.stop()
       }
     }
@@ -179,11 +194,13 @@ class IdentifierActionSpec extends SpecBase {
 
         val application = applicationBuilder().build()
 
-        when(mockAuthConnector.authorise(any(), any[Retrieval[RetrievalType]]())(any(), any())) thenReturn (Future failed InsufficientEnrolments())
+        when(
+          mockAuthConnector.authorise(any(), any[Retrieval[RetrievalType]]())(any(), any())
+        ) thenReturn (Future failed InsufficientEnrolments())
 
-        val action = actionToTest()
+        val action     = actionToTest()
         val controller = new Harness(action)
-        val result = controller.onPageLoad()(fakeRequest)
+        val result     = controller.onPageLoad()(fakeRequest)
 
         status(result) mustBe SEE_OTHER
 
@@ -197,11 +214,13 @@ class IdentifierActionSpec extends SpecBase {
 
         val application = applicationBuilder().build()
 
-        when(mockAuthConnector.authorise(any(), any[Retrieval[RetrievalType]]())(any(), any())) thenReturn (Future failed InsufficientConfidenceLevel())
+        when(
+          mockAuthConnector.authorise(any(), any[Retrieval[RetrievalType]]())(any(), any())
+        ) thenReturn (Future failed InsufficientConfidenceLevel())
 
-        val action = actionToTest()
+        val action     = actionToTest()
         val controller = new Harness(action)
-        val result = controller.onPageLoad()(fakeRequest)
+        val result     = controller.onPageLoad()(fakeRequest)
 
         status(result) mustBe SEE_OTHER
 
@@ -215,11 +234,13 @@ class IdentifierActionSpec extends SpecBase {
 
         val application = applicationBuilder().build()
 
-        when(mockAuthConnector.authorise(any(), any[Retrieval[RetrievalType]]())(any(), any())) thenReturn (Future failed UnsupportedAuthProvider())
+        when(
+          mockAuthConnector.authorise(any(), any[Retrieval[RetrievalType]]())(any(), any())
+        ) thenReturn (Future failed UnsupportedAuthProvider())
 
-        val action = actionToTest()
+        val action     = actionToTest()
         val controller = new Harness(action)
-        val result = controller.onPageLoad()(fakeRequest)
+        val result     = controller.onPageLoad()(fakeRequest)
 
         status(result) mustBe SEE_OTHER
 
@@ -233,11 +254,13 @@ class IdentifierActionSpec extends SpecBase {
 
         val application = applicationBuilder().build()
 
-        when(mockAuthConnector.authorise(any(), any[Retrieval[RetrievalType]]())(any(), any())) thenReturn (Future failed UnsupportedAffinityGroup())
+        when(
+          mockAuthConnector.authorise(any(), any[Retrieval[RetrievalType]]())(any(), any())
+        ) thenReturn (Future failed UnsupportedAffinityGroup())
 
-        val action = actionToTest()
+        val action     = actionToTest()
         val controller = new Harness(action)
-        val result = controller.onPageLoad()(fakeRequest)
+        val result     = controller.onPageLoad()(fakeRequest)
 
         status(result) mustBe SEE_OTHER
 
@@ -251,11 +274,13 @@ class IdentifierActionSpec extends SpecBase {
 
         val application = applicationBuilder().build()
 
-        when(mockAuthConnector.authorise(any(), any[Retrieval[RetrievalType]]())(any(), any())) thenReturn (Future failed UnsupportedCredentialRole())
+        when(
+          mockAuthConnector.authorise(any(), any[Retrieval[RetrievalType]]())(any(), any())
+        ) thenReturn (Future failed UnsupportedCredentialRole())
 
-        val action = actionToTest()
+        val action     = actionToTest()
         val controller = new Harness(action)
-        val result = controller.onPageLoad()(fakeRequest)
+        val result     = controller.onPageLoad()(fakeRequest)
 
         status(result) mustBe SEE_OTHER
 
@@ -273,12 +298,13 @@ class IdentifierActionSpec extends SpecBase {
       when(mockAuthConnector.authorise(any(), any[Retrieval[RetrievalType]]())(any(), any()))
         .thenReturn(authRetrievals(AffinityGroup.Organisation, agentEnrolment))
 
-      val action = actionToTest()
+      val action     = actionToTest()
       val controller = new ThrowingHarness(action)
-      val result = controller.onPageLoad()(fakeRequest)
+      val result     = controller.onPageLoad()(fakeRequest)
 
       assertThrows[IllegalStateException](status(result))
       application.stop()
     }
   }
+
 }

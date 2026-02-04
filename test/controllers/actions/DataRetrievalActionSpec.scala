@@ -30,7 +30,8 @@ import scala.concurrent.Future
 
 class DataRetrievalActionSpec extends SpecBase {
 
-  class Harness(playbackRepository: PlaybackRepository) extends DataRetrievalActionImpl(mockSessionRepository, playbackRepository) {
+  class Harness(playbackRepository: PlaybackRepository)
+      extends DataRetrievalActionImpl(mockSessionRepository, playbackRepository) {
     def callTransform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] = transform(request)
   }
 
@@ -49,7 +50,8 @@ class DataRetrievalActionSpec extends SpecBase {
 
         val action = new Harness(playbackRepository)
 
-        val futureResult = action.callTransform(IdentifierRequest(fakeRequest, OrganisationUser(internalId, Enrolments(Set()))))
+        val futureResult =
+          action.callTransform(IdentifierRequest(fakeRequest, OrganisationUser(internalId, Enrolments(Set()))))
 
         whenReady(futureResult) { result =>
           result.userAnswers.isEmpty mustBe true
@@ -72,7 +74,8 @@ class DataRetrievalActionSpec extends SpecBase {
 
         val action = new Harness(playbackRepository)
 
-        val futureResult = action.callTransform(IdentifierRequest(fakeRequest, OrganisationUser(internalId, Enrolments(Set()))))
+        val futureResult =
+          action.callTransform(IdentifierRequest(fakeRequest, OrganisationUser(internalId, Enrolments(Set()))))
 
         whenReady(futureResult) { result =>
           result.userAnswers.isEmpty mustBe true
@@ -94,7 +97,8 @@ class DataRetrievalActionSpec extends SpecBase {
 
         val action = new Harness(playbackRepository)
 
-        val futureResult = action.callTransform(IdentifierRequest(fakeRequest, OrganisationUser(internalId, Enrolments(Set()))))
+        val futureResult =
+          action.callTransform(IdentifierRequest(fakeRequest, OrganisationUser(internalId, Enrolments(Set()))))
 
         whenReady(futureResult) { result =>
           result.userAnswers.isDefined mustBe true
@@ -102,4 +106,5 @@ class DataRetrievalActionSpec extends SpecBase {
       }
     }
   }
+
 }

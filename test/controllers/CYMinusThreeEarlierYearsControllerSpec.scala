@@ -31,11 +31,11 @@ import views.html.EarlierYearsToPayThanAskedYesNoView
 
 class CYMinusThreeEarlierYearsControllerSpec extends SpecBase with BeforeAndAfterEach {
 
-  val year = "2017"
+  val year                           = "2017"
   val mockTaxYearRange: TaxYearRange = Mockito.mock(classOf[TaxYearRange])
 
   lazy val cyMinusThreeEarlierYearsRoute: String = routes.CYMinusThreeEarlierYearsController.onPageLoad().url
-  lazy val onSubmitRoute: Call = routes.CYMinusThreeEarlierYearsController.onSubmit()
+  lazy val onSubmitRoute: Call                   = routes.CYMinusThreeEarlierYearsController.onSubmit()
 
   override def beforeEach(): Unit = {
     reset(mockTaxYearRange)
@@ -115,4 +115,5 @@ class CYMinusThreeEarlierYearsControllerSpec extends SpecBase with BeforeAndAfte
     }
 
   }
+
 }

@@ -22,18 +22,19 @@ import uk.gov.hmrc.play.language.LanguageUtils
 
 import javax.inject.Inject
 
-class TaxYearRange @Inject()(languageUtils: LanguageUtils, taxYearService: TaxYearService) {
+class TaxYearRange @Inject() (languageUtils: LanguageUtils, taxYearService: TaxYearService) {
 
   def taxYearDates(cYMinusNTaxYears: CYMinusNTaxYears)(implicit messages: Messages): Seq[String] = {
 
     val taxYear = taxYearService.currentTaxYear.back(cYMinusNTaxYears.n)
 
     lazy val startDate: String = languageUtils.Dates.formatDate(taxYear.starts)
-    lazy val endDate: String = languageUtils.Dates.formatDate(taxYear.finishes)
+    lazy val endDate: String   = languageUtils.Dates.formatDate(taxYear.finishes)
 
     startDate :: endDate :: Nil
   }
 
-  def yearAtStart(cYMinusNTaxYears: CYMinusNTaxYears): String = taxYearService.currentTaxYear.back(cYMinusNTaxYears.n).startYear.toString
+  def yearAtStart(cYMinusNTaxYears: CYMinusNTaxYears): String =
+    taxYearService.currentTaxYear.back(cYMinusNTaxYears.n).startYear.toString
 
 }

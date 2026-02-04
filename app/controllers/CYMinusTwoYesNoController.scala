@@ -31,43 +31,42 @@ import views.html.CYMinusTwoYesNoView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CYMinusTwoYesNoController @Inject()(
-                                           val controllerComponents: MessagesControllerComponents,
-                                           navigator: Navigator,
-                                           actions: StandardActionSets,
-                                           formProvider: YesNoFormProvider,
-                                           repository: PlaybackRepository,
-                                           view: CYMinusTwoYesNoView,
-                                           taxYearRange: TaxYearRange
-                                         )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class CYMinusTwoYesNoController @Inject() (
+  val controllerComponents: MessagesControllerComponents,
+  navigator: Navigator,
+  actions: StandardActionSets,
+  formProvider: YesNoFormProvider,
+  repository: PlaybackRepository,
+  view: CYMinusTwoYesNoView,
+  taxYearRange: TaxYearRange
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController with I18nSupport {
 
   private def taxYearDates(implicit messages: Messages): Seq[String] = taxYearRange.taxYearDates(CYMinus2TaxYears)
 
-  private def form(implicit messages: Messages): Form[Boolean] = formProvider.withPrefix("cyMinusTwo.liability", taxYearDates)
+  private def form(implicit messages: Messages): Form[Boolean] =
+    formProvider.withPrefix("cyMinusTwo.liability", taxYearDates)
 
-  def onPageLoad(): Action[AnyContent] = actions.authorisedWithRequiredData {
-    implicit request =>
+  def onPageLoad(): Action[AnyContent] = actions.authorisedWithRequiredData { implicit request =>
+    val preparedForm = request.userAnswers.get(CYMinusTwoYesNoPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
 
-      val preparedForm = request.userAnswers.get(CYMinusTwoYesNoPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-
-      Ok(view(preparedForm, taxYearDates: _*))
+    Ok(view(preparedForm, taxYearDates: _*))
   }
 
-  def onSubmit(): Action[AnyContent] = actions.authorisedWithRequiredData.async {
-    implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, taxYearDates: _*))),
-
+  def onSubmit(): Action[AnyContent] = actions.authorisedWithRequiredData.async { implicit request =>
+    form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYearDates: _*))),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(CYMinusTwoYesNoPage, value))
-            _ <- repository.set(updatedAnswers)
+            _              <- repository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(CYMinusTwoYesNoPage, updatedAnswers))
       )
   }
+
 }

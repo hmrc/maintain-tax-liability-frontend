@@ -25,26 +25,26 @@ import utils.RichJson._
 import java.time.LocalDateTime
 import scala.util.{Failure, Success, Try}
 
-case class UserAnswers(internalId: String,
-                       identifier: String,
-                       sessionId: String,
-                       newId: String,
-                       data: JsObject = Json.obj(),
-                       updatedAt: LocalDateTime = LocalDateTime.now) extends Logging {
+case class UserAnswers(
+  internalId: String,
+  identifier: String,
+  sessionId: String,
+  newId: String,
+  data: JsObject = Json.obj(),
+  updatedAt: LocalDateTime = LocalDateTime.now
+) extends Logging {
 
-  def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] = {
+  def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
     Reads.at(page.path).reads(data) match {
       case JsSuccess(value, _) => Some(value)
-      case JsError(_) => None
+      case JsError(_)          => None
     }
-  }
 
-  def set[A](page: Settable[A], value: Option[A])(implicit writes: Writes[A]): Try[UserAnswers] = {
+  def set[A](page: Settable[A], value: Option[A])(implicit writes: Writes[A]): Try[UserAnswers] =
     value match {
       case Some(v) => setValue(page, v)
-      case None => page.cleanup(value, this)
+      case None    => page.cleanup(value, this)
     }
-  }
 
   def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = setValue(page, value)
 
@@ -52,16 +52,15 @@ case class UserAnswers(internalId: String,
     val updatedData = data.setObject(page.path, Json.toJson(value)) match {
       case JsSuccess(jsValue, _) =>
         Success(jsValue)
-      case JsError(errors) =>
+      case JsError(errors)       =>
         val errorPaths = errors.collectFirst { case (path, e) => s"$path $e" }
         logger.warn(s"Unable to set path ${page.path} due to errors $errorPaths")
         Failure(JsResultException(errors))
     }
 
-    updatedData.flatMap {
-      d =>
-        val updatedAnswers = copy(data = d)
-        page.cleanup(Some(value), updatedAnswers)
+    updatedData.flatMap { d =>
+      val updatedAnswers = copy(data = d)
+      page.cleanup(Some(value), updatedAnswers)
     }
   }
 
@@ -70,23 +69,24 @@ case class UserAnswers(internalId: String,
     val updatedData = data.removeObject(query.path) match {
       case JsSuccess(jsValue, _) =>
         Success(jsValue)
-      case JsError(_) =>
+      case JsError(_)            =>
         Success(data)
     }
 
-    updatedData.flatMap {
-      d =>
-        val updatedAnswers = copy(data = d)
-        query.cleanup(None, updatedAnswers)
+    updatedData.flatMap { d =>
+      val updatedAnswers = copy(data = d)
+      query.cleanup(None, updatedAnswers)
     }
   }
 
-  def deleteAtPath(path: JsPath): Try[UserAnswers] = {
-    data.removeObject(path).map(obj => copy(data = obj)).fold(
-      _ => Success(this),
-      result => Success(result)
-    )
-  }
+  def deleteAtPath(path: JsPath): Try[UserAnswers] =
+    data
+      .removeObject(path)
+      .map(obj => copy(data = obj))
+      .fold(
+        _ => Success(this),
+        result => Success(result)
+      )
 
 }
 
@@ -99,7 +99,7 @@ object UserAnswers {
       (__ \ "newId").read[String] and
       (__ \ "data").read[JsObject] and
       (__ \ "updatedAt").read(MongoDateTimeFormats.localDateTimeRead)
-    )(UserAnswers.apply _)
+  )(UserAnswers.apply _)
 
   implicit lazy val writes: Writes[UserAnswers] = (
     (__ \ "internalId").write[String] and
@@ -108,6 +108,6 @@ object UserAnswers {
       (__ \ "newId").write[String] and
       (__ \ "data").write[JsObject] and
       (__ \ "updatedAt").write(MongoDateTimeFormats.localDateTimeWrite)
-    )(unlift(UserAnswers.unapply))
+  )(unlift(UserAnswers.unapply))
 
 }

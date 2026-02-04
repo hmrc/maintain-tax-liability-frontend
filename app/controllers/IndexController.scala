@@ -31,18 +31,18 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IndexController @Inject()(
-                                 mcc: MessagesControllerComponents,
-                                 actions: StandardActionSets,
-                                 repository: PlaybackRepository,
-                                 trustsConnector: TrustsConnector,
-                                 errorHandler: ErrorHandler,
-                                 trustsStoreConnector: TrustsStoreConnector
-                               )(implicit ec: ExecutionContext) extends FrontendController(mcc) with SessionLogging {
+class IndexController @Inject() (
+  mcc: MessagesControllerComponents,
+  actions: StandardActionSets,
+  repository: PlaybackRepository,
+  trustsConnector: TrustsConnector,
+  errorHandler: ErrorHandler,
+  trustsStoreConnector: TrustsStoreConnector
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) with SessionLogging {
 
-  def onPageLoad(identifier: String): Action[AnyContent] = actions.authorisedWithSavedSession(identifier).async {
-    implicit request =>
-
+  def onPageLoad(identifier: String): Action[AnyContent] =
+    actions.authorisedWithSavedSession(identifier).async { implicit request =>
       def redirect(taskStatus: TaskStatus): Future[Result] = {
 
         def futureRedirect(call: Call): Future[Result] = Future.successful(Redirect(call))
@@ -50,38 +50,48 @@ class IndexController @Inject()(
         request.userAnswers match {
           case Some(_) if taskStatus == Completed =>
             Future.successful(Redirect(routes.CheckYourAnswersController.onPageLoad()))
-          case ua =>
+          case ua                                 =>
             for {
-              _ <- repository.set(ua.getOrElse(UserAnswers(request.user.internalId, identifier, Session.id(hc), newId = s"${request.user.internalId}-$identifier-${Session.id(hc)}")))
+              _                     <- repository.set(
+                                         ua.getOrElse(
+                                           UserAnswers(
+                                             request.user.internalId,
+                                             identifier,
+                                             Session.id(hc),
+                                             newId = s"${request.user.internalId}-$identifier-${Session.id(hc)}"
+                                           )
+                                         )
+                                       )
               firstTaxYearAvailable <- trustsConnector.getFirstTaxYearToAskFor(identifier)
-              result <- firstTaxYearAvailable.yearsAgo match {
-                case 4 if firstTaxYearAvailable.earlierYearsToDeclare =>
-                  futureRedirect(CYMinusFourEarlierYearsController.onPageLoad())
-                case 4 =>
-                  futureRedirect(CYMinusFourYesNoController.onPageLoad())
-                case 3 if firstTaxYearAvailable.earlierYearsToDeclare =>
-                  futureRedirect(CYMinusThreeEarlierYearsController.onPageLoad())
-                case 3 =>
-                  futureRedirect(CYMinusThreeYesNoController.onPageLoad())
-                case 2 =>
-                  futureRedirect(CYMinusTwoYesNoController.onPageLoad())
-                case 1 =>
-                  futureRedirect(CYMinusOneYesNoController.onPageLoad())
-                case x =>
-                  errorLog(s"Unexpected result for number of years ago of first tax year available: $x", Some(identifier))
-                  errorHandler.internalServerErrorTemplate.map(html => InternalServerError(html))
-              }
-            } yield {
-              result
-            }
+              result                <- firstTaxYearAvailable.yearsAgo match {
+                                         case 4 if firstTaxYearAvailable.earlierYearsToDeclare =>
+                                           futureRedirect(CYMinusFourEarlierYearsController.onPageLoad())
+                                         case 4                                                =>
+                                           futureRedirect(CYMinusFourYesNoController.onPageLoad())
+                                         case 3 if firstTaxYearAvailable.earlierYearsToDeclare =>
+                                           futureRedirect(CYMinusThreeEarlierYearsController.onPageLoad())
+                                         case 3                                                =>
+                                           futureRedirect(CYMinusThreeYesNoController.onPageLoad())
+                                         case 2                                                =>
+                                           futureRedirect(CYMinusTwoYesNoController.onPageLoad())
+                                         case 1                                                =>
+                                           futureRedirect(CYMinusOneYesNoController.onPageLoad())
+                                         case x                                                =>
+                                           errorLog(
+                                             s"Unexpected result for number of years ago of first tax year available: $x",
+                                             Some(identifier)
+                                           )
+                                           errorHandler.internalServerErrorTemplate.map(html => InternalServerError(html))
+                                       }
+            } yield result
         }
       }
 
       for {
         taskStatus <- trustsStoreConnector.getTaskStatus(identifier)
-        _ <- trustsStoreConnector.updateTaskStatus(identifier, InProgress)
-        result <- redirect(taskStatus)
+        _          <- trustsStoreConnector.updateTaskStatus(identifier, InProgress)
+        result     <- redirect(taskStatus)
       } yield result
-  }
+    }
 
 }

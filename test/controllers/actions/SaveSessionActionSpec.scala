@@ -43,7 +43,8 @@ class SaveSessionActionSpec extends SpecBase {
 
         val action = new Harness(identifier)
 
-        val futureResult = action.callFilter(IdentifierRequest(fakeRequest, OrganisationUser(internalId, Enrolments(Set()))))
+        val futureResult =
+          action.callFilter(IdentifierRequest(fakeRequest, OrganisationUser(internalId, Enrolments(Set()))))
 
         whenReady(futureResult) { result =>
           result mustBe None
@@ -51,4 +52,5 @@ class SaveSessionActionSpec extends SpecBase {
       }
     }
   }
+
 }

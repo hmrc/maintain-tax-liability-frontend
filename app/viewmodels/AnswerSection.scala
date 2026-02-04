@@ -16,5 +16,4 @@
 
 package viewmodels
 
-case class AnswerSection(heading: String,
-                         rows: Seq[AnswerRow] = Nil)
+case class AnswerSection(heading: String, rows: Seq[AnswerRow] = Nil)

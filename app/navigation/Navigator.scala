@@ -26,49 +26,56 @@ class Navigator {
   def nextPage(page: Page, userAnswers: UserAnswers): Call = routes(page)(userAnswers)
 
   private def routes: PartialFunction[Page, UserAnswers => Call] =
-    simpleNavigation andThen (c => (_:UserAnswers) => c) orElse
+    simpleNavigation andThen (c => (_: UserAnswers) => c) orElse
       conditionalNavigation
 
   private def simpleNavigation: PartialFunction[Page, Call] = {
-    case CYMinusFourEarlierYearsPage => CYMinusFourYesNoController.onPageLoad()
-    case CYMinusThreeEarlierYearsPage => CYMinusThreeYesNoController.onPageLoad()
+    case CYMinusFourEarlierYearsPage                  => CYMinusFourYesNoController.onPageLoad()
+    case CYMinusThreeEarlierYearsPage                 => CYMinusThreeYesNoController.onPageLoad()
     case DeclaredTaxToHMRCYesNoPage(CYMinus4TaxYears) => CYMinusThreeYesNoController.onPageLoad()
     case DeclaredTaxToHMRCYesNoPage(CYMinus3TaxYears) => CYMinusTwoYesNoController.onPageLoad()
     case DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYears) => CYMinusOneYesNoController.onPageLoad()
-    case DeclaredTaxToHMRCYesNoPage(CYMinus1TaxYear) => CheckYourAnswersController.onPageLoad()
+    case DeclaredTaxToHMRCYesNoPage(CYMinus1TaxYear)  => CheckYourAnswersController.onPageLoad()
   }
 
   private def conditionalNavigation: PartialFunction[Page, UserAnswers => Call] = {
-    case CYMinusFourYesNoPage => ua => yesNoNav(
-      ua = ua,
-      fromPage = CYMinusFourYesNoPage,
-      yesCall = DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus4TaxYears),
-      noCall = CYMinusThreeYesNoController.onPageLoad()
-    )
-    case CYMinusThreeYesNoPage => ua => yesNoNav(
-      ua = ua,
-      fromPage = CYMinusThreeYesNoPage,
-      yesCall = DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus3TaxYears),
-      noCall = CYMinusTwoYesNoController.onPageLoad()
-    )
-    case CYMinusTwoYesNoPage => ua => yesNoNav(
-      ua = ua,
-      fromPage = CYMinusTwoYesNoPage,
-      yesCall = DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus2TaxYears),
-      noCall = CYMinusOneYesNoController.onPageLoad()
-    )
-    case CYMinusOneYesNoPage => ua => yesNoNav(
-      ua = ua,
-      fromPage = CYMinusOneYesNoPage,
-      yesCall = DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus1TaxYear),
-      noCall = CheckYourAnswersController.onPageLoad()
-    )
+    case CYMinusFourYesNoPage  =>
+      ua =>
+        yesNoNav(
+          ua = ua,
+          fromPage = CYMinusFourYesNoPage,
+          yesCall = DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus4TaxYears),
+          noCall = CYMinusThreeYesNoController.onPageLoad()
+        )
+    case CYMinusThreeYesNoPage =>
+      ua =>
+        yesNoNav(
+          ua = ua,
+          fromPage = CYMinusThreeYesNoPage,
+          yesCall = DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus3TaxYears),
+          noCall = CYMinusTwoYesNoController.onPageLoad()
+        )
+    case CYMinusTwoYesNoPage   =>
+      ua =>
+        yesNoNav(
+          ua = ua,
+          fromPage = CYMinusTwoYesNoPage,
+          yesCall = DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus2TaxYears),
+          noCall = CYMinusOneYesNoController.onPageLoad()
+        )
+    case CYMinusOneYesNoPage   =>
+      ua =>
+        yesNoNav(
+          ua = ua,
+          fromPage = CYMinusOneYesNoPage,
+          yesCall = DeclaredTaxToHMRCYesNoController.onPageLoad(CYMinus1TaxYear),
+          noCall = CheckYourAnswersController.onPageLoad()
+        )
   }
 
-  private def yesNoNav(ua: UserAnswers, fromPage: QuestionPage[Boolean], yesCall: => Call, noCall: => Call): Call = {
+  private def yesNoNav(ua: UserAnswers, fromPage: QuestionPage[Boolean], yesCall: => Call, noCall: => Call): Call =
     ua.get(fromPage)
       .map(if (_) yesCall else noCall)
       .getOrElse(controllers.routes.SessionExpiredController.onPageLoad)
-  }
 
 }

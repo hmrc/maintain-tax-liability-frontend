@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.language.LanguageUtils
 
 class TaxYearRangeSpec extends SpecBase with BeforeAndAfterEach {
 
-  val languageUtils: LanguageUtils = injector.instanceOf[LanguageUtils]
+  val languageUtils: LanguageUtils       = injector.instanceOf[LanguageUtils]
   val mockTaxYearService: TaxYearService = Mockito.mock(classOf[TaxYearService])
 
   override def beforeEach(): Unit = {
@@ -137,4 +137,5 @@ class TaxYearRangeSpec extends SpecBase with BeforeAndAfterEach {
       }
     }
   }
+
 }

@@ -31,12 +31,17 @@ class CYMinusTwoYesNoPageSpec extends PageBehaviours {
 
     "implement cleanup logic when NO selected" in {
       val answers = emptyUserAnswers
-        .set(CYMinusTwoYesNoPage, true).success.value
-        .set(DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYears), true).success.value
+        .set(CYMinusTwoYesNoPage, true)
+        .success
+        .value
+        .set(DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYears), true)
+        .success
+        .value
 
       val cleaned = answers.set(CYMinusTwoYesNoPage, false).success.value
 
       cleaned.get(DeclaredTaxToHMRCYesNoPage(CYMinus2TaxYears)) mustNot be(defined)
     }
   }
+
 }

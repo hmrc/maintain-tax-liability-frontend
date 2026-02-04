@@ -35,7 +35,8 @@ class FeatureNotAvailableViewSpec extends ViewBehaviours {
       view = applyView,
       messageKeyPrefix = messageKeyPrefix,
       messageKeyParams = Nil,
-      expectedGuidanceKeys = "p1", "p2"
+      expectedGuidanceKeys = "p1",
+      "p2"
     )
 
     behave like pageWithLink(
@@ -44,4 +45,5 @@ class FeatureNotAvailableViewSpec extends ViewBehaviours {
       linkText = messages(s"$messageKeyPrefix.link")
     )
   }
+
 }
