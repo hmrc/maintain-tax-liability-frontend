@@ -52,6 +52,29 @@ class LogoutControllerSpec extends SpecBase {
 
       application.stop()
     }
+
+    "audit and redirect to feedback when logout audit enabled" in {
+
+      val mockAuditConnector = Mockito.mock(classOf[AuditConnector])
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[AuditConnector].toInstance(mockAuditConnector))
+        .configure("features.auditing.logout" -> true)
+        .build()
+
+      val request = FakeRequest(GET, logoutRoute)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustBe frontendAppConfig.logoutUrl
+
+      verify(mockAuditConnector)
+        .sendExplicitAudit(eqTo("trusts"), any[Map[String, String]])(any(), any())
+
+      application.stop()
+    }
   }
 
 }
