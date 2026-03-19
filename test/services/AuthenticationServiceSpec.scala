@@ -40,7 +40,7 @@ class AuthenticationServiceSpec extends SpecBase {
 
   val service = new AuthenticationServiceImpl(mockTrustsAuthConnector, mockErrorHandler)
 
-  implicit val hc: HeaderCarrier = HeaderCarrier()
+  implicit val hc: HeaderCarrier                            = HeaderCarrier()
   implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
 
   def dataRequest: DataRequest[AnyContentAsEmpty.type] =

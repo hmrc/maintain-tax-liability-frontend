@@ -95,7 +95,7 @@ class RichJsonSpec extends SpecBase {
 
       "set a nested index path" in {
         val obj = Json.obj()
-        obj.set(__ \ "a" \ "b" \ (0), JsString("value")) mustBe
+        obj.set(__ \ "a" \ "b" \ 0, JsString("value")) mustBe
           JsSuccess(Json.obj("a" -> Json.obj("b" -> Json.arr("value"))))
       }
     }
