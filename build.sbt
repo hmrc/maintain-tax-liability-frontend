@@ -22,8 +22,7 @@ lazy val microservice = Project("maintain-tax-liability-frontend", file("."))
       "views.ViewUtils._"
     ),
     PlayKeys.playDefaultPort := 9844,
-    CodeCoverageSettings.settings,
-    Assets / pipelineStages := Seq(gzip)
+    CodeCoverageSettings.settings
   )
 
 lazy val it = project
