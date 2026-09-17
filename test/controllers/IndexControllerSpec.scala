@@ -22,14 +22,13 @@ import connectors.{TrustsConnector, TrustsStoreConnector}
 import generators.ModelGenerators
 import models.TaskStatus.{Completed, InProgress, TaskStatus}
 import models.{FirstTaxYearAvailable, UserAnswers}
-import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
-import play.api.mvc.Results.InternalServerError
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HttpResponse

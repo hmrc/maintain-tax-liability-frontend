@@ -18,7 +18,6 @@ package config
 
 import play.api.Configuration
 import play.api.i18n.{Lang, Messages}
-import uk.gov.hmrc.hmrcfrontend.config.ContactFrontendConfig
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.{Inject, Singleton}
@@ -26,8 +25,7 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class AppConfig @Inject() (
   val config: Configuration,
-  servicesConfig: ServicesConfig,
-  contactFrontendConfig: ContactFrontendConfig
+  servicesConfig: ServicesConfig
 ) {
 
   val en: String = "en"
@@ -38,14 +36,11 @@ class AppConfig @Inject() (
     "cymraeg" -> Lang(cy)
   )
 
-  val welshLanguageSupportEnabled: Boolean =
-    config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
-
   val appName: String = config.get[String]("appName")
 
   lazy val loginUrl: String                  = config.get[String]("urls.login")
   lazy val loginContinueUrl: String          = config.get[String]("urls.loginContinue")
-  lazy val logoutUrl: String                 = config.get[String]("urls.logout")
+  lazy val logoutUrl: String                 = s"${config.get[String]("urls.logout")}?useServiceNavigation"
   lazy val maintainATrustOverviewUrl: String = config.get[String]("urls.maintainATrustOverview")
 
   lazy val trustsUrl: String      = servicesConfig.baseUrl("trusts")
@@ -53,9 +48,6 @@ class AppConfig @Inject() (
   lazy val trustsStoreUrl: String = servicesConfig.baseUrl("trusts-store")
 
   lazy val logoutAudit: Boolean = config.get[Boolean]("features.auditing.logout")
-
-  val betaFeedbackUrl =
-    s"${contactFrontendConfig.baseUrl.get}/contact/beta-feedback?service=${contactFrontendConfig.serviceId.get}"
 
   lazy val countdownLength: Int = config.get[Int]("timeout.countdown")
   lazy val timeoutLength: Int   = config.get[Int]("timeout.length")
