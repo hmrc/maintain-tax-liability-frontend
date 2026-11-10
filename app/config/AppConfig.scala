@@ -40,7 +40,7 @@ class AppConfig @Inject() (
 
   lazy val loginUrl: String                  = config.get[String]("urls.login")
   lazy val loginContinueUrl: String          = config.get[String]("urls.loginContinue")
-  lazy val logoutUrl: String                 = s"${config.get[String]("urls.logout")}?useServiceNavigation"
+  lazy val logoutUrl: String                 = config.get[String]("urls.logout")
   lazy val maintainATrustOverviewUrl: String = config.get[String]("urls.maintainATrustOverview")
 
   lazy val trustsUrl: String      = servicesConfig.baseUrl("trusts")
@@ -51,6 +51,11 @@ class AppConfig @Inject() (
 
   lazy val countdownLength: Int = config.get[Int]("timeout.countdown")
   lazy val timeoutLength: Int   = config.get[Int]("timeout.length")
+
+  lazy val basGatewayBaseUrl: String       = config.get[String]("bas-gateway.host")
+  lazy val feedbackFrontendUrl: String     = s"${config.get[String]("feedback-frontend.url")}?useServiceNavigation"
+  lazy val timeOutUrl: String              = config.get[String]("urls.timeOut")
+  lazy val logoutWithBasGatewayUrl: String = s"$basGatewayBaseUrl$logoutUrl"
 
   def helplineUrl(implicit messages: Messages): String = {
     val path = messages.lang.code match {
